@@ -474,16 +474,6 @@ function doRedo() {
 	if (_redo.length == 0) $("#redo").disable();
 }
 
-// check if we are online (or at least we know that we are offline)
-function checkOnline() {
-	if (navigator.onLine) {
-		return true;
-	} else {
-		alert("Sorry. That can't be done at the moment because you're offline.")
-		return false;
-	}
-}
-
 //reusable function for removing the header and footer before adding new controls or saving
 function removeHeaderAndFooter() {
 	// remove the header and footer - first check if page and page object
@@ -1357,8 +1347,8 @@ function loadVersion(forceLoad) {
 		for (var j in _version.actions) {
 			// get a reference to the action
 			var action = _version.actions[j];
-			// add to our _actionOptions excluding the rapid action unless this is the rapid app
-			if ((action.visible === undefined || !action.visible === false) && (action.type != "rapid" || _version.id == "rapid")) _actionOptions += "<option value='" + action.type + "'>" + action.name + "</option>";
+			// add to our _actionOptions if not hidden, unless the rapid action unless this is the rapid app
+			if ((action.visible === undefined || !action.visible === false) || (action.type == "rapid" || _version.id == "rapid")) _actionOptions += "<option value='" + action.type + "'>" + action.name + "</option>";
 		}
 		
 		// retain the app styleclasses
@@ -2809,10 +2799,7 @@ $(document).ready( function() {
 	$("#designCover").on("mousedown", coverMouseDown ); // cover mouseDown	
 	
 	// administration
-	$("#appAdmin").click( function(ev) {
-		
-		if (!checkOnline()) return;
-		
+	$("#appAdmin").click( function(ev) {		
 		if (_version && _version.id) {
 			window.location = "~?a=rapid&appId=" + _version.id + "&version=" + _version.version;
 		} else {
@@ -2822,9 +2809,6 @@ $(document).ready( function() {
 	
 	// administration, new tab
 	$("#appAdminNewTab").click( function(ev) {
-		
-		if (!checkOnline()) return;
-		
 		if (_version && _version.id) {
 			window.open("~?a=rapid&appId=" + _version.id + "&version=" + _version.version,"_blank");
 		} else {
@@ -2833,8 +2817,6 @@ $(document).ready( function() {
 	});
 	
 	// load app
-	$("#appSelect").click(checkOnline);
-	
 	$("#appSelect").change(function() {
     	// load the selected app and its pages in the drop down 
     	if (checkDirty()) {
@@ -2851,9 +2833,7 @@ $(document).ready( function() {
 	// applications header clicked on
 	$("#applicationsHeader").click( toggleHeader );
 	
-	// load version
-	$("#versionSelect").click(checkOnline);
-	
+	// version changed
 	$("#versionSelect").change(function() {
     	// load the selected app and its pages in the drop down 
     	if (checkDirty()) {
@@ -2868,8 +2848,6 @@ $(document).ready( function() {
 	});
 			
 	// load page
-	$("#pageSelect").click(checkOnline);
-	
 	$("#pageSelect").change( function() {
 		// load the selected page
 		if (checkDirty()) {
@@ -2882,9 +2860,6 @@ $(document).ready( function() {
 	
 	// previous page
 	$("#pagePrev").click( function(ev) {
-		
-		if (!checkOnline()) return;
-		
 		// if not disabled
 		if (!$(this).is(".pageNavDisabled")) {
 			// get the page select
@@ -2900,9 +2875,6 @@ $(document).ready( function() {
 	
 	// next page
 	$("#pageNext").click( function(ev) {
-		
-		if (!checkOnline()) return;
-		
 		// if not disabled
 		if (!$(this).is(".pageNavDisabled")) {
 			// get the page select
@@ -2929,17 +2901,11 @@ $(document).ready( function() {
 	
 	// new page
 	$("#pageNew").click( function(ev) {
-		
-		if (!checkOnline()) return;
-		
 		if (checkDirty()) showDialogue('~?action=page&a=rapid&p=P3'); 
 	});
 	
 	// save page
 	$("#pageSave").click( function() {
-		
-		if (!checkOnline()) return;
-		
 		// get a reference to the button
 		var button = $(this);
 		
