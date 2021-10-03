@@ -9,13 +9,16 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="7.4674215mm"
-   height="5.0339503mm"
-   viewBox="0 0 7.4674215 5.0339503"
+   width="8.5827255mm"
+   height="8.5827255mm"
+   viewBox="0 0 8.5827255 8.5827255"
    version="1.1"
    id="svg1021"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
-   sodipodi:docname="RapidLogo-small.svg">
+   sodipodi:docname="RapidLogo-small.svg"
+   inkscape:export-filename="/home/gareth/Desktop/RapidLogo_72x72.png"
+   inkscape:export-xdpi="213.08"
+   inkscape:export-ydpi="213.08">
   <defs
      id="defs1015">
     <clipPath
@@ -42,9 +45,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4"
-     inkscape:cx="-383.68266"
-     inkscape:cy="-49.051344"
+     inkscape:zoom="11.2"
+     inkscape:cx="-3.3115502"
+     inkscape:cy="14.980466"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -52,11 +55,11 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1920"
-     inkscape:window-height="1056"
-     inkscape:window-x="0"
-     inkscape:window-y="24"
-     inkscape:window-maximized="1" />
+     inkscape:window-width="1222"
+     inkscape:window-height="970"
+     inkscape:window-x="601"
+     inkscape:window-y="69"
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata1018">
     <rdf:RDF>
@@ -73,10 +76,21 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-12.519267,-28.954751)">
+     transform="translate(-12.397454,-27.228678)">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:3.01113558;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:36.79999924;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+       id="rect829"
+       width="5.5715904"
+       height="5.5715904"
+       x="13.903022"
+       y="28.734245"
+       inkscape:export-xdpi="213.08"
+       inkscape:export-ydpi="213.08" />
     <g
        id="g5027"
-       transform="translate(-33.415703,-11.002894)">
+       transform="translate(-33.122776,-11.002894)"
+       inkscape:export-xdpi="213.08"
+       inkscape:export-ydpi="213.08">
       <path
          inkscape:export-ydpi="442.18765"
          inkscape:export-xdpi="442.18765"
