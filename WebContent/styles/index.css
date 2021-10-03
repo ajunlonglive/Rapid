@@ -31,11 +31,9 @@ div.midTitle {
 }
 
 .image img {
-	width: 70px;
-	height: 60px;
+	width: 110px;
+	height: 80px;
 	background: white;
-	padding: 10px;
-	padding-right: 15px;
 	position: absolute;
 	top: 0;
 	right: 0;

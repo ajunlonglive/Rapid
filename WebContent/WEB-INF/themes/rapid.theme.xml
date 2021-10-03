@@ -318,10 +318,9 @@ body {
     cursor: pointer;
     top: 0;
     right: 0;
-   	width: 70px;
-    height: 60px;
+   	width: 110px;
+    height: 80px;
     background: white;
-    padding: 10px;
     border-bottom: 2px solid #f4091b;
 }
 

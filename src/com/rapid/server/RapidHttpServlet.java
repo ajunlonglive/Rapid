@@ -436,7 +436,7 @@ public class RapidHttpServlet extends HttpServlet {
 		writer.write("    <link rel='stylesheet' type='text/css' href='styles/index.css'></link>\n");
 
 		// write body
-		writer.write("    <div class=\"image\"><a href=\"http://www.rapid-is.co.uk\"><img title=\"Rapid Information Systems\" src=\"images/RapidLogo.svg\" /></a></div>\n    <div class=\"midTitle\"><span>Rapid</span></div>\n    <div class=\"subBar\"><span class=\"link\"><a href=\"logout.jsp\">LOG OUT</a></span><span class=\"versionColumn\">" + Rapid.VERSION + "</span></div>\n    <div class=\"body\">\n      <div class=\"columnMiddle\">\n          <div class=\"info\">\n            <h1>" + title + "</h1>\n            <p>" + message + "</p>\n          </div>\n        </div>\n      </div>\n    </div>");
+		writer.write("    <div class=\"image\"><a href=\"http://www.rapid-is.co.uk\"><img title=\"Rapid Information Systems\" src=\"images/RapidLogo-small.svg\" /></a></div>\n    <div class=\"midTitle\"><span>Rapid</span></div>\n    <div class=\"subBar\"><span class=\"link\"><a href=\"logout.jsp\">LOG OUT</a></span><span class=\"versionColumn\">" + Rapid.VERSION + "</span></div>\n    <div class=\"body\">\n      <div class=\"columnMiddle\">\n          <div class=\"info\">\n            <h1>" + title + "</h1>\n            <p>" + message + "</p>\n          </div>\n        </div>\n      </div>\n    </div>");
 
 	}
 

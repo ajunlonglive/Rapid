@@ -84,7 +84,7 @@ if (hasPasswordUpdate) {
 <body onload="document.update.password.focus();">
 
 <div class="image">
-	<a href="http://www.rapid-is.co.uk"><img title="Rapid Information Systems" src="images/RapidLogo.svg" /></a>	
+	<a href="http://www.rapid-is.co.uk"><img title="Rapid Information Systems" src="images/RapidLogo-small.svg" /></a>	
 </div>
 
 <div class="midTitle" style="">
