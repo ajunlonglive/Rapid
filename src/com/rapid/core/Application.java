@@ -578,7 +578,7 @@ public class Application {
 
 	// instance variables
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
-	private String _id, _version, _name, _title, _description, _startPageId, _formAdapterType, _formEmailFrom, _formEmailTo, _formEmailAttachmentType, _formEmailCustomerControlId, _formEmailCustomerSubject, _formEmailCustomerType, _formEmailCustomerBody, _formEmailCustomerAttachmentType, _formFileType, _formFilePath, _formFileUserName, _formFilePassword, _formWebserviceURL, _formWebserviceType, _formWebserviceSOAPAction, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _securityAdapterType, _storePasswordDuration, _functions, _createdBy, _modifiedBy, _resourcesJSON;
+	private String _id, _version, _name, _title, _description, _startPageId, _formAdapterType, _formEmailFrom, _formEmailTo, _formEmailAttachmentType, _formEmailCustomerControlId, _formEmailCustomerSubject, _formEmailCustomerType, _formEmailCustomerBody, _formEmailCustomerAttachmentType, _formFileType, _formFilePath, _formFileUserName, _formFilePassword, _formWebserviceURL, _formWebserviceType, _formWebserviceSOAPAction, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _securityAdapterType, _storePasswordDuration, _functions, _createdBy, _modifiedBy, _resourcesJSON, _settingsId;
 	private boolean _isForm, _isMobile, _pageNameIds, _showConrolIds, _showActionIds, _isHidden, _deviceSecurity, _formShowSummary, _formDisableAutoComplete, _formEmail, _formEmailCustomer, _formFile, _formWebservice;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,Integer> _pageOrders;
@@ -593,6 +593,7 @@ public class Application {
 	private Resources _appResources, _resources;
 	private List<String> _styleClasses;
 	private Variables _pageVariables;
+	private List<Settings> _settings;
 
 	// properties
 
@@ -831,9 +832,13 @@ public class Application {
 	public int getPageBackupsMaxSize() { return _pageBackupsMaxSize; }
 	public void setPageBackupsMaxSize(int pageBackupsMaxSize) { _pageBackupsMaxSize = pageBackupsMaxSize; }
 
-	// these are app resources which are marshalled to the application.xml file and add to all pages
+	// these are app resources which are marshaled to the application.xml file and add to all pages
 	public Resources getAppResources() { return _appResources; }
 	public void setAppResources(Resources appResources) { _appResources = appResources; }
+
+	// these are app settings which are marshaled to their own id.settings.xml files, the get/setter are named differently to avoid marshaling
+	public String getSettingsId() { return _settingsId; }
+	public void setSettingsId(String settingsId) { _settingsId = settingsId; }
 
 	// constructors
 
@@ -1357,10 +1362,10 @@ public class Application {
     	// not found
     	return null;
 	}
-	
+
 	// scan the css for classes
 	private static List<String> scanStyleClasses(String css, List<String> classes) {
-		
+
 		// only if we got something we can use
 		if (css != null) {
 			Matcher cssClassMatcher = Pattern.compile("((\\.)|(\\[class\\s*~=\\s*))(?<className>[^\\s{\\.\\[\\]]+)").matcher(css);
@@ -1369,12 +1374,12 @@ public class Application {
 				if (!classes.contains(className)) classes.add(className);
 			}
 		}
-		
+
 		// sort the classes into alphabetical order
 		Collections.sort(classes);
-		
+
 		return classes;
-		
+
 	}
 
 	// this adds resources from either a control or action, they are added to the resources collection for printing in the top of each page if they are files, or amended to the application .js or .css files

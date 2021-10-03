@@ -117,8 +117,11 @@ return [
  ["SAVEPAGEBACKUPSIZE","Save number of page backups"],
  ["ADDADMINUSER","Add Rapid Admin user to the app"],
  ["NEWPROCESS","New process"],
- ["DELPROCESS","Delete"],
- ["SAVEPROCESS","Save process"]
+ ["DELPROCESS","Delete process"],
+ ["SAVEPROCESS","Save process"],
+ ["GETSETTINGS","Get settings"],
+ ["NEWSETTINGS","New settings"],
+ ["DELSETTINGS","Delete settings"]
 ];
 					]]>
 	            </getValuesFunction>  
@@ -126,7 +129,8 @@ return [
 	        <property>
 	            <key>rapidApp</key>
 	            <name>Rapid application</name>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>	 
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <helpHtml>Some actions, especially those for users and roles, can operate on the Rapid app (if this is ticked) or the selected app</helpHtml>
 	        </property>
 	        <property>
 	            <key>successActions</key>
@@ -544,6 +548,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				showActionIds: getData_checkbox(ev, "rapid_P0_C382_"),		
 				pageNameIds: getData_checkbox(ev, "rapid_P0_C2409_"),
 				isHidden: getData_checkbox(ev, "rapid_P0_C3209_"), 
+				settingsId: $("#rapid_P0_C3612_").val(),
 				
 				formAdapter: $("#rapid_P0_C1406_").val(),
 				formShowSummary: getData_checkbox(ev, "rapid_P0_C3202_"),
@@ -1151,10 +1156,39 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 						sunday: getData_checkbox(ev,'rapid_P0_C3388_',null) || "false",
 					},
 					parameters:
-						getData_grid(ev,'rapid_P0_C3389_',null,rapid_P0_C3389_details).rows.map(function(row) {
+						getData_grid(ev, 'rapid_P0_C3389_', null, rapid_P0_C3389_details).rows.map(function(row) {
 							return { name: row[0], value: row[1] };
 						}),
 				}
+			};
+		break;
+		case "GETSETTINGS" :
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val() 
+			};
+			callback = function(data) {
+				// empty drop down
+				setData_dropdown(ev, 'rapid_P0_C3612_', null, rapid_P0_C3612_details, null);
+				// add any options
+				if (data) setData_dropdown(ev, 'rapid_P0_C3612_', null, rapid_P0_C3612_details, data, true);
+			};
+		break;
+		case "NEWSETTINGS" :
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val(),
+				name: $("#rapid_P23_C11_").val()
+			};
+		break;
+		case "DELSETTINGS" :
+			data = { 
+				actionType: actionType, 
+				appId: $("#rapid_P0_C43").val(), 
+				version: $("#rapid_P0_C1044_").val() ,
+				id: $("#rapid_P0_C3612_").val()
 			};
 		break;
 		default :

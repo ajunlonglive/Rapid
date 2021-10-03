@@ -322,7 +322,6 @@ body {
     height: 60px;
     background: white;
     padding: 10px;
-    padding-right: 15px;
     border-bottom: 2px solid #f4091b;
 }
 

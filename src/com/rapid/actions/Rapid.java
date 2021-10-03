@@ -70,6 +70,7 @@ import com.rapid.core.Email;
 import com.rapid.core.Page;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Process;
+import com.rapid.core.Settings;
 import com.rapid.core.Theme;
 import com.rapid.core.Workflow;
 import com.rapid.core.Workflows;
@@ -914,12 +915,13 @@ public class Rapid extends Action {
 					JSONArray jsonSendActions = new JSONArray();
 					JSONArray jsonActions = rapidServlet.getJsonActions();
 					for (int i = 0; i < jsonActions.length(); i++) {
+						// get this action
 						JSONObject jsonSysAction = jsonActions.getJSONObject(i);
 						// only if visible
 						if (jsonSysAction.optBoolean("visible",true)) {
 							JSONObject jsonSendAction = new JSONObject();
-							jsonSendAction.put("name", jsonSysAction.get("name"));
-							jsonSendAction.put("type", jsonSysAction.get("type"));
+							jsonSendAction.put("name", jsonSysAction.getString("name"));
+							jsonSendAction.put("type", jsonSysAction.getString("type"));
 							jsonSendAction.put("helpHtml", jsonSysAction.optString("helpHtml"));
 							jsonSendActions.put(jsonSendAction);
 						}
@@ -1115,6 +1117,8 @@ public class Rapid extends Action {
 					result.put("showActionIds", app.getShowActionIds());
 					// add the is hidden
 					result.put("isHidden", app.getIsHidden());
+					// add the is get seetings id
+					result.put("settingsId", app.getSettingsId());
 
 					// add the form settings
 					result.put("isForm", app.getIsForm());
@@ -1941,36 +1945,39 @@ public class Rapid extends Action {
 						// make our new process! ... (including un-packing the jsonAction JSON we got in, using the new process name to make a safe file name for WEB-INF/processes)
 						// this will come from a new dialogue page called 20_ProcessNew - it should just ask for the new name, save below will be used to set all of the details
 
+						// get the new process name from the front-end json
 						String newProcessName = jsonAction.getString("processName");
-						String className = jsonAction.getString("processClassName");
+						// derive a file name by safing the new process name
+						String filename = Files.safeName(newProcessName) + ".process.xml";
 
-						String[] nameWords = newProcessName.split(" ");
-						String camelCaseName = "";
-						for (int wordIndex = 0; wordIndex < nameWords.length; wordIndex++) {
-							String word = nameWords[wordIndex];
-							if (wordIndex == 0) {
-								camelCaseName += word.toLowerCase();
-							} else {
-								String capitalised = word.substring(0, 1).toUpperCase() + word.substring(1);
-								camelCaseName += capitalised;
-							}
-						}
-						String filename = camelCaseName + ".process.xml";
-
+						// assume the name is not being used
 						boolean nameInUse = false;
-						nameSearch: for (Process process : processes) {
+						// loop all processes
+						for (Process process : processes) {
+							// if the name or file name is in use already
 							if (process.getProcessName().equals(newProcessName) || process.getFileName().equals(filename)) {
+								// retain that this process exists
 								nameInUse = true;
-								break nameSearch;
+								break;
 							}
 						}
 
-						if (!nameInUse) {
+						// if the name is used already
+						if (nameInUse) {
 
-							String dir = servletContext.getRealPath("/") + "/WEB-INF/processes/" + filename;
-							File newTheme = new File(dir);
-							if (newTheme.exists()) throw new Exception("Name is already used");
-							newTheme.createNewFile();
+							// throw exception to the front-end
+							throw new Exception("Name is already used");
+
+						} else {
+
+							// get the class name from the front-end action json
+							String className = jsonAction.getString("processClassName");
+
+
+							String path = servletContext.getRealPath("/") + "/WEB-INF/processes/" + filename;
+							File file = new File(path);
+							if (file.exists()) throw new Exception("Name is already used");
+							file.createNewFile();
 
 							XMLGroup processXML = new XMLGroup("process")
 							.add(new XMLAttribute("xmlVersion", "1"))
@@ -1993,10 +2000,9 @@ public class Rapid extends Action {
 								.add(new XMLValue("sunday", "false"))
 							);
 
-							String newDocumentBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-								+ processXML;
+							String newDocumentBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + processXML;
 
-							Writer writer = new FileWriter(newTheme);
+							Writer writer = new FileWriter(file);
 
 							writer.write(newDocumentBody);
 							writer.close();
@@ -2008,16 +2014,14 @@ public class Rapid extends Action {
 							try {
 								processesCount = RapidServletContextListener.loadProcesses(servletContext);
 							} catch (ClassNotFoundException ex) {
-								newTheme.delete();
-								throw new Exception("Process class not found");
+								// delete the file we made above
+								file.delete();
+								// rethrow
+								throw ex;
 							}
 
 							// load processes and set the result message
 							result.put("message", processes + " process" + (processesCount == 1 ? "" : "es") + " reloaded");
-
-						} else {
-
-							throw new Exception("Name is already used");
 
 						}
 
@@ -2036,22 +2040,35 @@ public class Rapid extends Action {
 							// get the directory in which the process xml files are stored
 							File dir = new File(servletContext.getRealPath("/") + "/WEB-INF/processes/");
 
+							// a reference for the process we want to delete (if we can find it)
+							Process deleteProcess = null;
+
+							// loop through all processes, matching on name to find the right one, then loop all files matching against the process file to find that
 							searchForProcess:
 							for (Process process : processes) {
 								if (process.getProcessName().equals(processName)) {
-
-									String fileName = process.getFileName();
 									for (File xmlFile : dir.listFiles()) {
+										if (process.getFileName().equals(xmlFile.getName())) {
 
-										if ((fileName).equals(xmlFile.getName())) {
+											// retain that this is the process to delete
+											deleteProcess = process;
 
+											// stop the process
+											process.interrupt();
+
+											// delete the file
 											xmlFile.delete();
 
+											// exit both loops
 											break searchForProcess;
 										}
 									}
 								}
 							}
+
+							// remove the deleted process from our collection
+							if (deleteProcess != null) processes.remove(deleteProcess);
+
 						}
 
 						// assume no processes
@@ -2071,8 +2088,10 @@ public class Rapid extends Action {
 						// add the namespace and schema attribues so the xml files you save are exactly like the existing ones! (particually that they validate against the schema)
 						// processes and their info are added to the UI in the GETAPPS action type
 
+						// get the name of the process from the front-end action json
 						String processName = jsonAction.getString("processName");
 
+						// get all processes
 						List<Process> processes = rapidServlet.getProcesses();
 
 						// use the process name to get its process - to get its filename - to get its xml file
@@ -2081,7 +2100,6 @@ public class Rapid extends Action {
 							// get the directory in which the process xml files are stored
 							File dir = new File(servletContext.getRealPath("/") + "/WEB-INF/processes/");
 
-							// loop through all processes, matching on name to find the right one, then loop all files matching against the process file to find that
 							searchForProcess:
 							for (Process process : processes) {
 								if (process.getProcessName().equals(processName)) {
@@ -3344,12 +3362,61 @@ public class Rapid extends Action {
 								// set the result message
 								result.put("message", "Page backup max size updated to " + backupMaxSize);
 
+							} else if ("GETSETTINGS".equals(action)) {
+
+								// get the list of settings for this application
+								List<Settings> settings = Settings.list(servletContext, app);
+
+								// if we have any settings
+								if (settings != null) {
+									// add fields to results
+									result.put("fields", new JSONArray("['text','value']"));
+									// make a json rows object
+									JSONArray jsonRows = new JSONArray();
+									// add any empty first entry
+									jsonRows.put(new JSONArray("['','']"));
+									// loop them
+									for (Settings setting : settings) {
+										// make a new row object
+										JSONArray jsonRow = new JSONArray();
+										// populate it
+										jsonRow.put(setting.getName());
+										jsonRow.put(setting.getId());
+										// add it to the collection
+										jsonRows.put(jsonRow);
+									}
+									// return all settings
+									result.put("rows", jsonRows);
+								}
+
+							} else if ("NEWSETTINGS".equals(action)) {
+
+								// get the name
+								String name = jsonAction.getString("name");
+
+								// make a new settings (will add to the application)
+								Settings settings = new Settings(app, name);
+
+								// save the settings
+								settings.save(servletContext, app);
+
+							} else if ("DELSETTINGS".equals(action)) {
+
+								// get the id
+								String id = jsonAction.getString("id");
+
+								// get this settings
+								Settings settings = Settings.get(servletContext, app, id);
+
+								// delete this settings (and it's file - the success will reload the settings)
+								settings.delete(servletContext, app);
+
 							} // second action type check
 
 						} // user app admin role
 
 
-						// actions that require app admin or app user role
+						// actions that require app admin *or* app user role
 						if (appAdmin || appUsers) {
 
 							// get the securityAdapter type from the jsonAction
