@@ -350,6 +350,10 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 					}],
 					false
 				);
+				
+				var unit = data.interval >= 3600 ? 3600 :
+					data.interval >= 60 ? 60 :
+					1;
 				Action_datacopy(
 					ev,
 					data.interval > 0,
@@ -362,13 +366,25 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				);
 				Action_datacopy(
 					ev,
-					data.interval,
+					data.interval / unit,
 					[{
 						id:'rapid_P0_C3357_',
 						type:'input',
 						field:''
 					}],
 					true
+				);
+				Action_datacopy(
+					ev,
+					unit,
+					[{
+						id:'rapid_P0_C3685_.value',
+						type:'dropdown',
+						field:'',
+						details:rapid_P0_C3685_details
+					}],
+					true,
+					'replace'
 				);
 				Action_datacopy(
 					ev,
@@ -1141,7 +1157,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			data = { actionType: actionType, appId: "rapid", processName: getProperty_grid_selectedRowData(ev,'rapid_P0_C3325_','name',rapid_P0_C3325_details),
 				details: { 
 					className: getData_input(ev,'rapid_P0_C3356_',null),
-					interval: getData_input(ev,'rapid_P0_C3357_',null),
+					interval: Math.max(-1, getData_input(ev,'rapid_P0_C3357_',null) * getData_dropdown(ev,'rapid_P0_C3685_',null)),
 					duration: {
 						start: getData_input(ev,'rapid_P0_C3358_',null),
 						stop: getData_input(ev,'rapid_P0_C3359_',null)
