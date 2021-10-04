@@ -1286,10 +1286,8 @@ public class RapidServletContextListener implements ServletContextListener {
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) {
 
-			// create a process object from the xml
+			// load a process object from the xml, it will add itself to the list of processes
 			Process process = loadProcess(xmlFile, servletContext);
-			// add it to our new list
-			processes.add(process);
 			// inc the visible count if visible
 			if (process.isVisible()) visibleProcesses ++;
 
