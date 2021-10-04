@@ -579,6 +579,7 @@ $( "#" + id ).find("input").datepicker({
     showOtherMonths: details.showOtherMonths,
     selectOtherMonths: details.selectOtherMonths,
     constrainInput: true,
+    monthNamesShort: [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ],
     onChangeMonthYear: function(year, month, inst) {
     	// this changes the default behaviour of the month and year change drop down and arrows to select the previously selected day in the new month or year
     	try {

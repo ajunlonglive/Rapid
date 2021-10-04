@@ -70,7 +70,8 @@
 .ui-datepicker .ui-datepicker-title{margin:0 2.3em;line-height:1.8em;text-align:center;color:#e8e9ea;text-shadow:0 -1px 0 rgba(0,0,0,.4)}
 .ui-datepicker .ui-datepicker-title select{font-size:1em;margin:1px;color:black;}
 .ui-datepicker select.ui-datepicker-month-year{width:100%}
-.ui-datepicker select.ui-datepicker-month,.ui-datepicker select.ui-datepicker-year{width:48%}
+.ui-datepicker select.ui-datepicker-month{width:60%}
+.ui-datepicker select.ui-datepicker-year{width:35%}
 .ui-datepicker table{width:1px;font-size:.9em;border-collapse:collapse;margin:-1px 0 0;font-size: 12px;text-align: center;line-height: 30px;}
 .ui-datepicker th{padding:.7em 0;text-align:center;font-weight:700;font-size:10px;border-bottom:1px solid #cdcdcd!important}
 .ui-datepicker td{padding:0;border:1px solid #cdcdcd}
