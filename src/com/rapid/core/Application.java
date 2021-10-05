@@ -3141,6 +3141,12 @@ public class Application {
 			// unmarshall the application
 			Application application = (Application) unmarshaller.unmarshal(file);
 
+			// get any settings id
+			String settingsId = application.getSettingsId();
+
+			// if we're using settings, load and put them on the application
+			if (settingsId != null && settingsId.length() > 0) application.setSettings(Settings.load(servletContext, application));
+
 			// if we don't want pages loaded or resource generation skip this
 			if (initialise) {
 
