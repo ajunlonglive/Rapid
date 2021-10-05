@@ -1281,6 +1281,8 @@ public class RapidServletContextListener implements ServletContextListener {
  			}
  			// remove all processes
  			processes.removeAll(processes);
+ 			// update the processes list in the context - should be empty now
+ 			servletContext.setAttribute("processes", processes);
  		}
 
 		// loop the xml files in the folder
@@ -1292,9 +1294,6 @@ public class RapidServletContextListener implements ServletContextListener {
 			if (process.isVisible()) visibleProcesses ++;
 
 		}
-
-		// update the processes list in the context
-		servletContext.setAttribute("processes", processes);
 
 		// log that we've loaded the visible ones
 		_logger.info(visibleProcesses + " process" + (visibleProcesses == 1 ? "" : "es") + " loaded");

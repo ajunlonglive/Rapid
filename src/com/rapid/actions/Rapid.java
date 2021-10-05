@@ -1605,15 +1605,18 @@ public class Rapid extends Action {
 						// get the processes
 						List<Process> processes = rapidServlet.getProcesses();
 
+						// if there are some
 						if (processes != null) {
+							// loop them
 							for (Process process : processes) {
+								// if its visible put its name in the list to be returned
 								if (process.isVisible()) {
 									jsonProcesses.put(process.getProcessName());
 								}
 							}
 						}
 
-						// add the email settings
+						// add the processes to our response
 						jsonDetails.put("processes", jsonProcesses);
 						return jsonDetails;
 
