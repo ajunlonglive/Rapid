@@ -2352,6 +2352,7 @@ public class Rapid extends Action {
 								boolean pageNameIds = jsonAction.optBoolean("pageNameIds");
 								boolean showControlIds = jsonAction.optBoolean("showControlIds");
 								boolean showActionIds = jsonAction.optBoolean("showActionIds");
+								String settingsId = jsonAction.optString("settingsId", null);
 
 								String formAdapter = jsonAction.optString("formAdapter");
 								boolean formShowSummary = jsonAction.optBoolean("formShowSummary");
@@ -2409,6 +2410,7 @@ public class Rapid extends Action {
 								app.setPageNameIds(pageNameIds);
 								app.setShowControlIds(showControlIds);
 								app.setShowActionIds(showActionIds);
+								app.setSettingsId(settingsId); // we'll load and set the settings object just before calling the app.save
 
 								app.setFormAdapterType(formAdapter);
 								app.setFormShowSummary(formShowSummary);
@@ -2445,7 +2447,16 @@ public class Rapid extends Action {
 
 								}
 
-								// save
+								// if there are settings
+								if (settingsId == null || settingsId.length() == 0) {
+									// no settings so empty
+									app.setSettings(null);
+								} else {
+									// load and set them!
+									app.setSettings(Settings.load(servletContext, app));
+								}
+
+								// save - this also saves the settings object to its file if one is being used
 								app.save(rapidServlet, rapidActionRequest, true);
 
 								// add the application to the response
@@ -2455,6 +2466,7 @@ public class Rapid extends Action {
 
 							} else if ("SAVESTYLES".equals(action)) {
 
+								// get the values from the front-end json
 								String themeType = jsonAction.getString("themeType");
 								String styles = jsonAction.getString("styles");
 								String statusBarColour = jsonAction.optString("statusBarColour");
@@ -2462,6 +2474,7 @@ public class Rapid extends Action {
 								String statusBarTextColour = jsonAction.optString("statusBarTextColour");
 								String statusBarIconColour = jsonAction.optString("statusBarIconColour");
 
+								// put the values on the app (which will apply to the settings object if in use)
 								app.setThemeType(themeType);
 								app.setStyles(styles);
 								app.setStatusBarColour(statusBarColour);
@@ -2469,6 +2482,7 @@ public class Rapid extends Action {
 								app.setStatusBarTextColour(statusBarTextColour);
 								app.setStatusBarIconColour(statusBarIconColour);
 
+								// save the app (also saves the settings object if in use)
 								app.save(rapidServlet, rapidActionRequest, true);
 
 								// add the application to the response
@@ -2482,12 +2496,20 @@ public class Rapid extends Action {
 								// get the database connections
 								List<DatabaseConnection> dbConns = app.getDatabaseConnections();
 
-								// remeber whether we found the connection
+								// if there weren't any
+								if (dbConns == null) {
+									// make some
+									dbConns = new ArrayList<>();
+									// add them in
+									app.setDatabaseConnections(dbConns);
+								}
+
+								// remember whether we found the connection
 								boolean foundConnection = false;
 
 								// check we have database connections
 								if (dbConns != null) {
-									// check the index we where given will retieve a database connection
+									// check the index we where given will retrieve a database connection
 									if (index > -1 && index < dbConns.size()) {
 										// get the database connection
 										DatabaseConnection dbConn = dbConns.get(index);
@@ -3025,6 +3047,17 @@ public class Rapid extends Action {
 
 							} else if ("NEWPARAM".equals(action)) {
 
+								// get the parameters
+								List<Parameter> parameters = app.getParameters();
+
+								// if there weren't any
+								if (parameters == null) {
+									// make some
+									parameters = new ArrayList<>();
+									// add them in
+									app.setParameters(parameters);
+								}
+
 								// add a new parameter to the collection
 								app.getParameters().add(new Parameter());
 
@@ -3394,8 +3427,22 @@ public class Rapid extends Action {
 								// get the name
 								String name = jsonAction.getString("name");
 
-								// make a new settings (will add to the application)
-								Settings settings = new Settings(app, name);
+								// make a new settings
+								Settings settings = new Settings();
+								// set it's id as the safe version of the name
+								settings.setId(Files.safeName(name));
+								// set it's name
+								settings.setName(name);
+
+								// copy current properties to settings object
+								settings.setThemeType(app.getThemeType());
+								settings.setStyles(app.getStyles());
+								settings.setStatusBarColour(app.getStatusBarColour());
+								settings.setStatusBarHighlightColour(app.getStatusBarHighlightColour());
+								settings.setStatusBarTextColour(app.getStatusBarTextColour());
+								settings.setStatusBarIconColour(app.getStatusBarIconColour());
+								settings.setDatabaseConnections(app.getDatabaseConnections());
+								settings.setParameters(app.getParameters());
 
 								// save the settings
 								settings.save(servletContext, app);
@@ -3406,7 +3453,7 @@ public class Rapid extends Action {
 								String id = jsonAction.getString("id");
 
 								// get this settings
-								Settings settings = Settings.get(servletContext, app, id);
+								Settings settings = Settings.load(servletContext, app, id);
 
 								// delete this settings (and it's file - the success will reload the settings)
 								settings.delete(servletContext, app);

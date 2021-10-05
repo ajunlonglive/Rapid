@@ -96,20 +96,6 @@ import com.rapid.utils.ZipFile.ZipSources;
 @XmlType(namespace="http://rapid-is.co.uk/core")
 public class Application {
 
-	// the version of this class's xml structure when marshalled (if we have any significant changes down the line we can upgrade the xml files before unmarshalling)
-	public static final int XML_VERSION = 1;
-
-	// application version statuses
-	public static final int STATUS_DEVELOPMENT = 0;
-	public static final int STATUS_LIVE = 1;
-	public static final int STATUS_MAINTENANCE = 2;
-
-	// the name of the folder in which to store backups
-	public static final String BACKUP_FOLDER = "_backups";
-
-	// static variables
-	private static Logger _logger = LogManager.getLogger(Application.class);
-
 	// public static classes
 
 	// an exception class when loading
@@ -576,10 +562,36 @@ public class Application {
 
 	}
 
+	// the version of this class's xml structure when marshalled (if we have any significant changes down the line we can upgrade the xml files before unmarshalling)
+	public static final int XML_VERSION = 1;
+
+	// application version statuses
+	public static final int STATUS_DEVELOPMENT = 0;
+	public static final int STATUS_LIVE = 1;
+	public static final int STATUS_MAINTENANCE = 2;
+
+	// the name of the folder in which to store backups
+	public static final String BACKUP_FOLDER = "_backups";
+
+	// different properties that we'll get and set with any settings instead
+	private static enum SettingsProperty {
+		themeType,
+		styles,
+		statusBarColour,
+		statusBarHighlightColour,
+		statusBarTextColour,
+		statusBarIconColour,
+		databaseConnections,
+		parameters
+	}
+
+	// static variables
+	private static Logger _logger = LogManager.getLogger(Application.class);
+
 	// instance variables
 	private int _xmlVersion, _status, _applicationBackupsMaxSize, _pageBackupsMaxSize;
 	private String _id, _version, _name, _title, _description, _startPageId, _formAdapterType, _formEmailFrom, _formEmailTo, _formEmailAttachmentType, _formEmailCustomerControlId, _formEmailCustomerSubject, _formEmailCustomerType, _formEmailCustomerBody, _formEmailCustomerAttachmentType, _formFileType, _formFilePath, _formFileUserName, _formFilePassword, _formWebserviceURL, _formWebserviceType, _formWebserviceSOAPAction, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _securityAdapterType, _storePasswordDuration, _functions, _createdBy, _modifiedBy, _resourcesJSON, _settingsId;
-	private boolean _isForm, _isMobile, _pageNameIds, _showConrolIds, _showActionIds, _isHidden, _deviceSecurity, _formShowSummary, _formDisableAutoComplete, _formEmail, _formEmailCustomer, _formFile, _formWebservice;
+	private boolean _isForm, _isMobile, _pageNameIds, _showConrolIds, _showActionIds, _isHidden, _deviceSecurity, _formShowSummary, _formDisableAutoComplete, _formEmail, _formEmailCustomer, _formFile, _formWebservice, _useSettings;
 	private Date _createdDate, _modifiedDate;
 	private Map<String,Integer> _pageOrders;
 	private SecurityAdapter _securityAdapter;
@@ -593,7 +605,7 @@ public class Application {
 	private Resources _appResources, _resources;
 	private List<String> _styleClasses;
 	private Variables _pageVariables;
-	private List<Settings> _settings;
+	private Settings _settings;
 
 	// properties
 
@@ -761,36 +773,36 @@ public class Application {
 	public void setFormWebserviceSOAPAction(String formWebserviceSOAPAction) { _formWebserviceSOAPAction = formWebserviceSOAPAction; }
 
 	// the CSS theme type which we'll look up and add to the rapid.css file
-	public String getThemeType() { return _themeType; }
-	public void setThemeType(String themeType) { _themeType = themeType; }
+	public String getThemeType() { return (String) getSettings(SettingsProperty.themeType, _themeType); }
+	public void setThemeType(String themeType) { setSettings(SettingsProperty.themeType, themeType); }
 
 	// the CSS styles added to the generated application rapid.css file
-	public String getStyles() { return _styles; }
-	public void setStyles(String styles) { _styles = styles; }
+	public String getStyles() { return (String) getSettings(SettingsProperty.styles, _styles); }
+	public void setStyles(String styles) { setSettings(SettingsProperty.styles, styles); }
 
 	// colour of the status bar in Rapid Mobile
-	public String getStatusBarColour() { return _statusBarColour; }
-	public void setStatusBarColour(String statusBarColour) { _statusBarColour =  statusBarColour; }
+	public String getStatusBarColour() { return (String) getSettings(SettingsProperty.statusBarColour, _statusBarColour); }
+	public void setStatusBarColour(String statusBarColour) { setSettings(SettingsProperty.statusBarColour, statusBarColour); }
 
 	// colour of the status bar highlight in Rapid Mobile
-	public String getStatusBarHighlightColour() { return _statusBarHighlightColour; }
-	public void setStatusBarHighlightColour(String statusBarHighlightColour) { _statusBarHighlightColour =  statusBarHighlightColour; }
+	public String getStatusBarHighlightColour() { return (String) getSettings(SettingsProperty.statusBarHighlightColour, _statusBarHighlightColour); }
+	public void setStatusBarHighlightColour(String statusBarHighlightColour) { setSettings(SettingsProperty.statusBarHighlightColour, statusBarHighlightColour); }
 
 	// colour of the status bar text in Rapid Mobile
-	public String getStatusBarTextColour() { return _statusBarTextColour; }
-	public void setStatusBarTextColour(String statusBarTextColour) { _statusBarTextColour =  statusBarTextColour; }
+	public String getStatusBarTextColour() { return (String) getSettings(SettingsProperty.statusBarTextColour, _statusBarTextColour); }
+	public void setStatusBarTextColour(String statusBarTextColour) { setSettings(SettingsProperty.statusBarTextColour, statusBarTextColour); }
 
 	// colour of icons in Rapid Mobile
-	public String getStatusBarIconColour() { return _statusBarIconColour; }
-	public void setStatusBarIconColour(String statusBarIconColour) { _statusBarIconColour =  statusBarIconColour; }
+	public String getStatusBarIconColour() { return (String) getSettings(SettingsProperty.statusBarIconColour, _statusBarIconColour); }
+	public void setStatusBarIconColour(String statusBarIconColour) { setSettings(SettingsProperty.statusBarIconColour, statusBarIconColour); }
 
 	// the JavaScript functions added to the generated application rapid.js file (this has been replaced by application resources)
 	public String getFunctions() { return _functions; }
 	public void setFunctions(String functions) { _functions = functions; }
 
 	// a collection of database connections used via the connection adapter class to produce database connections
-	public List<DatabaseConnection> getDatabaseConnections() { return _databaseConnections; }
-	public void setDatabaseConnections(List<DatabaseConnection> databaseConnections) { _databaseConnections = databaseConnections; }
+	public List<DatabaseConnection> getDatabaseConnections() { return (List<DatabaseConnection>) getSettings(SettingsProperty.databaseConnections, _databaseConnections); }
+	public void setDatabaseConnections(List<DatabaseConnection> databaseConnections) { setSettings(SettingsProperty.databaseConnections, databaseConnections); }
 
 	// a collection of webservices for this application
 	public List<Webservice> getWebservices() { return _webservices; }
@@ -813,8 +825,8 @@ public class Application {
 	public void setValueLists(List<ValueList> valueLists) { _valueLists = valueLists; }
 
 	// a collection of parameters for this application
-	public List<Parameter> getParameters() { return _parameters; }
-	public void setParameters(List<Parameter> parameters) { _parameters = parameters; }
+	public List<Parameter> getParameters() { return (List<Parameter>) getSettings(SettingsProperty.parameters, _parameters); }
+	public void setParameters(List<Parameter> parameters) { setSettings(SettingsProperty.parameters, parameters); }
 
 	// control types used in this application
 	public List<String> getControlTypes() { return _controlTypes; }
@@ -836,9 +848,12 @@ public class Application {
 	public Resources getAppResources() { return _appResources; }
 	public void setAppResources(Resources appResources) { _appResources = appResources; }
 
-	// these are app settings which are marshaled to their own id.settings.xml files, the get/setter are named differently to avoid marshaling
+	// the id of any settings file, that if present, we'll get and set certain properties from instead of the ones on this class
 	public String getSettingsId() { return _settingsId; }
 	public void setSettingsId(String settingsId) { _settingsId = settingsId; }
+
+	// a settings object that if present we'll get and set with instead of the other properties. No getting so should not be marshalled into the application.xml
+	public void setSettings(Settings settings) { _settings = settings; }
 
 	// constructors
 
@@ -857,9 +872,67 @@ public class Application {
 		_parameters = new ArrayList<>();
 		_applicationBackupsMaxSize = 3;
 		_pageBackupsMaxSize = 3;
+		_useSettings = true;
 	};
 
 	// instance methods
+
+	// if settings are in place and being used return values from there instead of our instance variables
+	private Object getSettings(SettingsProperty property, Object value) {
+
+		if (_useSettings && _settings != null) {
+
+			switch(property) {
+			case themeType : return _settings.getThemeType();
+			case styles : return _settings.getStyles();
+			case statusBarColour : return _settings.getStatusBarColour();
+			case statusBarHighlightColour : return _settings.getStatusBarHighlightColour();
+			case statusBarTextColour : return _settings.getStatusBarTextColour();
+			case statusBarIconColour : return _settings.getStatusBarIconColour();
+			case databaseConnections : return _settings.getDatabaseConnections();
+			case parameters : return _settings.getParameters();
+			default : return value;
+			}
+
+		} else {
+
+			return value;
+
+		}
+
+	}
+
+	private void setSettings(SettingsProperty property, Object value) {
+
+		if (_useSettings && _settings != null) {
+
+			switch(property) {
+			case themeType : _settings.setThemeType((String) value); break;
+			case styles : _settings.setStyles((String) value); break;
+			case statusBarColour : _settings.setStatusBarColour((String) value); break;
+			case statusBarHighlightColour : _settings.setStatusBarHighlightColour((String) value); break;
+			case statusBarTextColour : _settings.setStatusBarTextColour((String) value); break;
+			case statusBarIconColour :  _settings.setStatusBarIconColour((String) value); break;
+			case databaseConnections : _settings.setDatabaseConnections((List<DatabaseConnection>) value); break;
+			case parameters : _settings.setParameters((List<Parameter>) value); break;
+			}
+
+		} else {
+
+			switch(property) {
+			case themeType : _themeType = (String) value; break;
+			case styles : _styles = (String) value; break;
+			case statusBarColour : _statusBarColour = (String) value; break;
+			case statusBarHighlightColour : _statusBarHighlightColour = (String) value; break;
+			case statusBarTextColour : _statusBarTextColour = (String) value; break;
+			case statusBarIconColour :  _statusBarIconColour = (String) value; break;
+			case databaseConnections : _databaseConnections = (List<DatabaseConnection>) value; break;
+			case parameters : _parameters = (List<Parameter>) value; break;
+			}
+
+		}
+
+	}
 
 	// this is where the application configuration will be stored
 	public String getConfigFolder(ServletContext servletContext) {
@@ -2538,8 +2611,11 @@ public class Application {
 
 	public long save(RapidHttpServlet rapidServlet, RapidRequest rapidRequest, boolean backup) throws JAXBException, IOException, IllegalArgumentException, SecurityException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, NoSuchAlgorithmException {
 
+		// get the servlet context
+		ServletContext servletContext = rapidServlet.getServletContext();
+
 		// create folders to save the app
-		String folderPath = getConfigFolder(rapidServlet.getServletContext());
+		String folderPath = getConfigFolder(servletContext);
 		File folder = new File(folderPath);
 		if (!folder.exists()) folder.mkdirs();
 
@@ -2557,8 +2633,18 @@ public class Application {
 
 		// marshal the application object to the temp file
 		FileOutputStream fos = new FileOutputStream(tempFile.getAbsolutePath());
+
+		// turn the use of properties off so the real ones go in the application.xml file
+		_useSettings = false;
+
+		// marshall this application object into its .application.xml file
 		RapidHttpServlet.getMarshaller().marshal(this, fos);
-	    fos.close();
+
+		// turn the use of properties back on
+		_useSettings = true;
+
+		// close the file output stream
+		fos.close();
 
 	    // copy / overwrite the app file with the temp file
 	    Files.copyFile(tempFile, appFile);
@@ -2569,11 +2655,17 @@ public class Application {
 	    // delete the temp file
 	    tempFile.delete();
 
+	    // if settings are in use
+	    if (_settingsId != null && _settings != null) {
+	    	// save the settings
+	    	_settings.save(servletContext, this);
+	    }
+
 	    // put this application in the collection
 	    rapidServlet.getApplications().put(this);
 
 	    // initialise the application, rebuilding the resources
-	    initialise(rapidServlet.getServletContext(), true);
+	    initialise(servletContext, true);
 
 	    return fileSize;
 	}
@@ -2992,11 +3084,6 @@ public class Application {
 		}
 	}
 
-	// this is a simple overload for default loading of applications where the resources are all regenerated
-	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException, NoSuchAlgorithmException {
-		return load(servletContext, file, true);
-	}
-
 	// this method loads the application by ummarshelling the xml, and then doing the same for all page .xmls, before calling the initialise method
 	public static Application load(ServletContext servletContext, File file, boolean initialise) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException, NoSuchAlgorithmException {
 
@@ -3081,6 +3168,11 @@ public class Application {
 
 		}
 
+	}
+
+	// this is a simple overload for default loading of applications where the resources are all regenerated
+	public static Application load(ServletContext servletContext, File file) throws JAXBException, JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchMethodException, IOException, ParserConfigurationException, SAXException, TransformerFactoryConfigurationError, TransformerException, RapidLoadingException, XPathExpressionException, NoSuchAlgorithmException {
+		return load(servletContext, file, true);
 	}
 
 	public static String[] jsReservedWords = {"catch", "finally", "continue", "delete", "class", "function", "get", "set"};

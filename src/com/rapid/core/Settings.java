@@ -40,9 +40,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.rapid.core.Application.Parameter;
+import com.rapid.data.DatabaseConnection;
 import com.rapid.security.RapidSecurityAdapter;
 import com.rapid.server.RapidHttpServlet;
-import com.rapid.utils.Files;
 
 // a class of useful application settings that will be stored in a separate file and can be easily switched between in Rapid Admin
 @XmlRootElement
@@ -51,7 +52,9 @@ public class Settings {
 	// private instance variables
 
 	private static Logger _logger = LogManager.getLogger(RapidSecurityAdapter.class);
-	private String _id, _name;
+	private String _id, _name, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour;
+	private List<DatabaseConnection> _databaseConnections;
+	private List<Parameter> _parameters;
 
 	// properties - getters and settings required for full JAXB marshaling
 
@@ -61,15 +64,43 @@ public class Settings {
 	public String getName() { return _name;	}
 	public void setName(String name) { _name = name; }
 
-	// parameterless constructor for JAXB
-	public Settings() {}
+	// the CSS theme type which we'll look up and add to the rapid.css file
+	public String getThemeType() { return _themeType; }
+	public void setThemeType(String themeType) { _themeType = themeType; }
 
-	// helper constructor for use from Rapid action
-	public Settings(Application application, String name) {
-		// get the id by simplifying the name
-		_id = Files.safeName(name).toLowerCase();
-		// retain the name
-		_name = name;
+	// the CSS styles added to the generated application rapid.css file
+	public String getStyles() { return _styles; }
+	public void setStyles(String styles) { _styles = styles; }
+
+	// colour of the status bar in Rapid Mobile
+	public String getStatusBarColour() { return _statusBarColour; }
+	public void setStatusBarColour(String statusBarColour) { _statusBarColour =  statusBarColour; }
+
+	// colour of the status bar highlight in Rapid Mobile
+	public String getStatusBarHighlightColour() { return _statusBarHighlightColour; }
+	public void setStatusBarHighlightColour(String statusBarHighlightColour) { _statusBarHighlightColour =  statusBarHighlightColour; }
+
+	// colour of the status bar text in Rapid Mobile
+	public String getStatusBarTextColour() { return _statusBarTextColour; }
+	public void setStatusBarTextColour(String statusBarTextColour) { _statusBarTextColour =  statusBarTextColour; }
+
+	// colour of icons in Rapid Mobile
+	public String getStatusBarIconColour() { return _statusBarIconColour; }
+	public void setStatusBarIconColour(String statusBarIconColour) { _statusBarIconColour =  statusBarIconColour; }
+
+	// a collection of database connections used via the connection adapter class to produce database connections
+	public List<DatabaseConnection> getDatabaseConnections() { return _databaseConnections; }
+	public void setDatabaseConnections(List<DatabaseConnection> databaseConnections) { _databaseConnections = databaseConnections; }
+
+	// a collection of parameters for this application
+	public List<Parameter> getParameters() { return _parameters; }
+	public void setParameters(List<Parameter> parameters) { _parameters = parameters; }
+
+	// default constructor
+	public Settings() {
+		// set default values to avoid nulls later
+		_databaseConnections = new ArrayList<>();
+		_parameters = new ArrayList<>();
 	}
 
 
@@ -136,23 +167,35 @@ public class Settings {
 
 	}
 
-	public static Settings get(ServletContext servletContext, Application application, String id) {
+	// load a settings with an id for an application
+	public static Settings load(ServletContext servletContext, Application application, String id) {
 
-		// get all settings for the app
-		List<Settings> settingsList = list(servletContext, application);
+		// if there was an id
+		if (id != null && id.length() > 0) {
 
-		// if we got some
-		if (settingsList != null) {
-			// loop them
-			for (Settings settings : settingsList) {
-				// if this is the one, return it!
-				if (settings.getId().equals(id)) return settings;
+			// get all settings for the app
+			List<Settings> settingsList = list(servletContext, application);
+
+			// if we got some
+			if (settingsList != null) {
+				// loop them
+				for (Settings settings : settingsList) {
+					// if this is the one, return it!
+					if (settings.getId().equals(id)) return settings;
+				}
 			}
+
 		}
 
 		return null;
 	}
 
+	// overload to the above to load and return the current application settings
+	public static Settings load(ServletContext servletContext, Application application) {
+		return load(servletContext, application, application.getSettingsId());
+	}
+
+	// load a settings from a file
 	public static Settings load(File file) {
 
 		// the settings we want to return - we'll check for any nulls from error when using it
@@ -168,6 +211,12 @@ public class Settings {
 
 			// unmarshal the xml into an object
 			settings = (Settings) unmarshaller.unmarshal(file);
+
+			// get the id from the file name
+			String id = file.getName().replace(".settings.xml", "");
+
+			// update the settings id to match the file if different, to allow for renamed files
+			if (!settings.getId().equals(id)) settings.setId(id);
 
 		} catch (JAXBException ex) {
 			_logger.error(ex);
