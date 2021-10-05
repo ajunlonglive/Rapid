@@ -1044,25 +1044,58 @@ public class Application {
 
 	// loop the collection of database connections looking for a named one
 	public DatabaseConnection getDatabaseConnection(String name) {
-		if (_databaseConnections != null) {
-			for (DatabaseConnection databaseConnection : _databaseConnections) if (name.equals(databaseConnection.getName())) return databaseConnection;
+		// get all database connections taking into account any settings
+		List<DatabaseConnection> databaseConnections = (List<DatabaseConnection>) getSettings(SettingsProperty.databaseConnections, _databaseConnections);
+		// if there where any
+		if (databaseConnections != null) {
+			// loop them and if the name matches return
+			for (DatabaseConnection databaseConnection : databaseConnections) if (name.equals(databaseConnection.getName())) return databaseConnection;
 		}
 		return null;
 	}
 	// add a single database connection
-	public void addDatabaseConnection(DatabaseConnection databaseConnection) { _databaseConnections.add(databaseConnection); }
+	public void addDatabaseConnection(DatabaseConnection databaseConnection) {
+		// get all database connections taking into account any settings
+		List<DatabaseConnection> databaseConnections = (List<DatabaseConnection>) this.getSettings(SettingsProperty.databaseConnections, _databaseConnections);
+		// make if we need to
+		if (databaseConnections == null) databaseConnections = new ArrayList<>();
+		// add this connection
+		databaseConnections.add(databaseConnection);
+		// put it back for good measure
+		setSettings(SettingsProperty.databaseConnections, databaseConnections);
+	}
 	// remove a single database connection
 	public void removeDatabaseConnection(String name) {
-		DatabaseConnection databaseConnection = getDatabaseConnection(name);
-		if (databaseConnection != null) _databaseConnections.remove(databaseConnection);
+		// get all database connections taking into account any settings
+		List<DatabaseConnection> databaseConnections = (List<DatabaseConnection>) this.getSettings(SettingsProperty.databaseConnections, _databaseConnections);
+		// make if we need to
+		if (databaseConnections == null) databaseConnections = new ArrayList<>();
+		// connection we might remove
+		DatabaseConnection removeConnection = null;
+		// loop them and if the name matches remove
+		for (DatabaseConnection databaseConnection : databaseConnections) if (name.equals(databaseConnection.getName())) {
+			// remember this one
+			removeConnection = databaseConnection;
+			// we're done
+			break;
+		}
+		// if we have one to remove
+		if (removeConnection != null) {
+			// remove it
+			databaseConnections.remove(removeConnection);
+			// put it back for good measure
+			setSettings(SettingsProperty.databaseConnections, databaseConnections);
+		}
 	}
 
 	// get a parameter value by name
 	public String getParameterValue(String parameterName) {
+		// get parameters taking into account any settings
+		List<Parameter> parameters = (List<Parameter>) getSettings(SettingsProperty.parameters, _parameters);
 		// if there are parameters
-		if (_parameters != null) {
+		if (parameters != null) {
 			// loop them
-			for (Parameter parameter : _parameters) {
+			for (Parameter parameter : parameters) {
 				// check the name and return if match
 				if (parameterName.equals(parameter.getName())) return parameter.getValue();
 			}
