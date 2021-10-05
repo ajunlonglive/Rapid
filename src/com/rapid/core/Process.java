@@ -10,6 +10,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +29,9 @@ import com.rapid.utils.XML.XMLValue;
 import com.rapid.utils.XML.XMLGroup;
 
 public abstract class Process extends Thread {
+	
+	// singleton
+	private static final Map<String, Process> _processes = new HashMap<String, Process>();
 
 	// protected instance variables
 	protected ServletContext _servletContext;
@@ -63,6 +68,11 @@ public abstract class Process extends Thread {
 
 		// get a logger for this class
 		_logger = LogManager.getLogger(this.getClass());
+		
+		// interrupt any process by the same name as the new process
+		Process existingProcess = _processes.get(_name);
+		if (existingProcess != null) existingProcess.interrupt();
+		_processes.put(_name, this);
 	}
 
 	// abstract methods
@@ -390,6 +400,8 @@ public abstract class Process extends Thread {
 	public void interrupt() {
 		_stopped = true;
 		super.interrupt();
+		// remove from map of running classes, if exists
+		_processes.remove(_name);
 	}
 
 }
