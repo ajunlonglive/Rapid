@@ -44,10 +44,19 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <setConstructValueFunction>return "replace";</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
-// for backwards compatibility	                
+	            	<![CDATA[
+// for backwards compatibility - at one time there was only the replace copyType so if it can't be found set it to false
 if (!this.copyType || this.copyType == "false") this.copyType = "replace";
+// for backwards compatibility - row merge was given the match rows facility but re-using childMerge, if the type is now row merge but there is a child field and childmerge in the past we must set the childMerge to false but only once
+if (this.copyType == "row" && this.mergeChildren && (this.upgradeFix === undefined || this.upgradeFix < 1)) {
+	// set mergeChildren to false as this feature was previously not available and old apps won't want it
+	this.mergeChildren = false;
+	// set the merge fix to 1 so we don't come in here again
+	this.upgradeFix = 1;
+}
 // return the values
 return [["replace","replace"],["bulk","bulk"],["row","row merge"],["child","child insert"],["append","append"],["search","search"],["trans","transpose"]];
+					]]>
 				</getValuesFunction>
 	            <refreshProperties>true</refreshProperties>
 	            <helpHtml>
@@ -227,6 +236,15 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.dataS
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <getValuesFunction>return true;</getValuesFunction>
 	            <helpHtml>Don't perform any validation action triggered by the change event.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>upgradeFix</key>
+	            <name>Used to mark versions of required upgrade fixes</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <getValuesFunction>return 1;</getValuesFunction>	            
+	            <helpHtml>1 - Used to turn off any unmeant merge matching on row merges where it wasn't before.</helpHtml>
 	        </property>
 	        	        	        	 	        	        	          
 	    </properties>

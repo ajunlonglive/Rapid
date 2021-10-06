@@ -1963,26 +1963,32 @@ if (gridData && gridData.selectedRowNumber && gridData.selectedRowNumber > 0) {
 			
 			// make a row
 			var row = [];
-			// add the cells
-			while (row.length < gridData.fields.length) row.push(null);
-			// loop the data fields and use the map to get the correct position
-			for (var i in data.fields) {
-				// get the field
-				var field = data.fields[i];
-				// get the position
-				var pos = fieldMap[field];
-				// add it to the correct place in the row
-				row[pos] = data.rows[0][i];
+			// if there is data for the row
+			if (data.rows && data.rows.length > 0) {
+				// add the cells
+				while (row.length < gridData.fields.length) row.push(null);
+				// loop the data fields and use the map to get the correct position
+				for (var i in data.fields) {
+					// get the field
+					var field = data.fields[i];
+					// get the position
+					var pos = fieldMap[field];
+					// add it to the correct place in the row
+					row[pos] = data.rows[0][i];
+				}
+				// add the row to the gridData
+				gridData.rows.push(row);
 			}
-			// add the row to the gridData
-			gridData.rows.push(row);
 		
 		} else {
 			
 			// assume the incoming fields		
 			gridData.fields = data.fields;
-			// add the top row of what we were given
-			gridData.rows.push(data.rows[0]);
+			// if there is data for the row
+			if (data.rows && data.rows.length > 0) {
+				// add the top row of what we were given
+				gridData.rows.push(data.rows[0]);
+			}			
 		
 		}
 		
