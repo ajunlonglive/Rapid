@@ -3929,7 +3929,7 @@ function sizeControlsList(width) {
 	if (controlCount > controlsWide) {
 		// set the fixed height and margin (to allow animation and center controls)
 		controlsList.css({
-			"padding-left" : Math.floor((width - controlsWide * controlWidth) / 2) - controlPanelPadding
+			"padding-left" : Math.floor((width - controlsWide * controlWidth) / 2)
 		});
 	} else {
 		//
