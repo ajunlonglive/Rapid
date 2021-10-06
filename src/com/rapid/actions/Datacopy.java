@@ -26,6 +26,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.actions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -92,13 +93,13 @@ public class Datacopy extends Action {
 	public boolean getMergeChildren() { return _mergeChildren; }
 	public void setMergeChildren(boolean mergeChildren) { _mergeChildren = mergeChildren; }
 
-	// constructors
+	// constructors - upgrade fixes are in the setProperties override near the bottom
 
 	// used by jaxb
 	public Datacopy() {
 		// set the xml version, etc
 		super();
-		// default merge children to true for older applications - new ones will have it set to false by default by the designer
+		// default child type merge children to true for older applications - new ones will have it set to false by default by the designer - also getJavaScript for other upgrade fixes
 		_mergeChildren = true;
 	}
 	// used by designer
@@ -109,8 +110,8 @@ public class Datacopy extends Action {
 		for (String key : JSONObject.getNames(jsonAction)) {
 			// add all json properties to our properties, except for dataCopies
 			if (!"dataCopies".equals(key)) addProperty(key, jsonAction.get(key).toString());
-			// if this is mergeChildren we need to update our property variable too, to deal with legacy values
-			if ("mergeChildren".equals(key)) _mergeChildren = jsonAction.optBoolean(key);
+			// if this is a child copy with mergeChildren we need to update our property variable too, to deal with legacy values
+			if ("child".equals(_properties.get("copyType")) && "mergeChildren".equals(key)) _mergeChildren = jsonAction.optBoolean(key);
 		}
 		// look for a dataCopies array
 		JSONArray jsonDataCopies = jsonAction.optJSONArray("dataCopies");
@@ -192,7 +193,7 @@ public class Datacopy extends Action {
 
 		// set to replace if null (for backwards compatibility)
 		if (copyType == null) copyType = "replace";
-		
+
 		String changeEvents = "false";
 		if (Boolean.parseBoolean(getProperty("changeEvents"))) {
 			changeEvents = "true";
@@ -366,7 +367,7 @@ public class Datacopy extends Action {
 											destinationField = "'" + destinationField + "'";
 
 										} // this and next are row merge check
-										
+
 										// do the data copy
 										js += "Action_datacopy(ev, data, [{id:'" + destinationId + "', type:'" + destinationControl.getType() + "', field:" + destinationField + ", details:" + details + "}], " + changeEvents + type + ");\n";
 
@@ -529,8 +530,8 @@ public class Datacopy extends Action {
 
 						// add the copy type to the js
 						js += ", '" + copyType + "'";
-						
-						
+
+
 
 						// check the copy type
 						if ("row".equals(copyType)) {
@@ -632,6 +633,24 @@ public class Datacopy extends Action {
 		String formatter = "current date and time".startsWith(type) ? "formatDatetime" : "formatTime";
 		// make the js!
 		return formatter + "('" + format + "', new Date())";
+	}
+
+	// used for upgrade conversions when JAXB sets the properties
+	@Override
+	public void setProperties(HashMap<String,String> properties) {
+		// do the super first
+		super.setProperties(properties);
+
+		// upgrade fix - turn off mergeChildren for row copy types
+		if ("row".equals(_properties.get("copyType")) && "true".equals(_properties.get("mergeChildren")) && _properties.get("upgradeFix") == null) {
+			// turn off merge children as its not what users expect
+			_mergeChildren = false;
+			// set the mergeChildren to false
+			_properties.put("mergeChildren", "false");
+			// set upgrade fix
+			_properties.put("upgradeFix", "1");
+		}
+
 	}
 
 }

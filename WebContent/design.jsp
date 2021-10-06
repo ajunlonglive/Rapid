@@ -143,7 +143,7 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 			
 		<div id="controlPanelShow" style="z-index:10010"></div>
 		
-		<div id="controlPanel" style="z-index:10011; width: 205px; min-width: 110px; border: none;">
+		<div id="controlPanel" style="z-index:10011; width: 210px; min-width: 210px; border: none;">
 			
 			<div id="controlPanelTitlebar">
 				
