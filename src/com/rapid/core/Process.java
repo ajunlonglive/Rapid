@@ -25,12 +25,12 @@ import org.json.JSONObject;
 
 import com.rapid.utils.JSON;
 import com.rapid.utils.XML.XMLAttribute;
-import com.rapid.utils.XML.XMLValue;
 import com.rapid.utils.XML.XMLGroup;
+import com.rapid.utils.XML.XMLValue;
 
 public abstract class Process extends Thread {
-	
-	// singleton
+
+	// singleton to ensure only one process object with the same process name exists
 	private static final Map<String, Process> _processes = new HashMap<String, Process>();
 
 	// protected instance variables
@@ -68,10 +68,13 @@ public abstract class Process extends Thread {
 
 		// get a logger for this class
 		_logger = LogManager.getLogger(this.getClass());
-		
-		// interrupt any process by the same name as the new process
+
+		// retrieve any process with the same name from our singleton
 		Process existingProcess = _processes.get(_name);
+		// if there was one in the collection stop it
 		if (existingProcess != null) existingProcess.interrupt();
+
+		// retain this object in our singleton collection
 		_processes.put(_name, this);
 	}
 
@@ -118,19 +121,19 @@ public abstract class Process extends Thread {
 	protected Applications getApplications() {
 		return (Applications) _servletContext.getAttribute("applications");
 	}
-	
+
 	public void save(JSONObject details, File xmlFile) throws JSONException, IOException {
-		
+
 		XMLGroup processXML = new XMLGroup("process")
 		.add(new XMLAttribute("xmlVersion", "1"))
 		.add(new XMLAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance"))
 		.add(new XMLAttribute("xsi:noNamespaceSchemaLocation", "../schemas/process.xsd"))
 		.add(new XMLValue("name", getProcessName()))
 		.add(new XMLValue("class", details.optString("className")));
-		
+
 		XMLGroup parametersXML = new XMLGroup("parameters");
 		JSONArray parametersJSON = details.optJSONArray("parameters");
-		
+
 		for (int parameterIndex = 0; parameterIndex < parametersJSON.length(); parameterIndex++) {
 			JSONObject parameter = parametersJSON.getJSONObject(parameterIndex);
 			String name = parameter.optString("name");
@@ -141,38 +144,38 @@ public abstract class Process extends Thread {
 				.add(new XMLValue("value", value))
 			);
 		}
-		
+
 		if (parametersJSON.length() > 0) processXML.add(parametersXML);
-		
+
 		processXML.add(new XMLValue("interval", details.optString("interval")));
-		
+
 		JSONObject durationJSON = details.optJSONObject("duration");
 		String start = durationJSON.optString("start");
 		String stop = durationJSON.optString("stop");
-		
+
 		if (!(start.isEmpty() || stop.isEmpty())) {
-			
+
 			processXML.add(
 				new XMLGroup("duration")
 				.add(new XMLValue("start", start))
 				.add(new XMLValue("stop", stop))
 			);
 		}
-		
+
 		JSONObject daysJSON = details.optJSONObject("days");
-		
+
 		XMLGroup daysXML = new XMLGroup("days");
-		
+
 		boolean anyDays = false;
-		
+
 		for (String day : new String[] {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"}) {
 			String value = daysJSON.optString(day);
 			daysXML.add(new XMLValue(day, value));
 			if ("true".equals(value)) anyDays = true;
 		}
-		
+
 		if (anyDays) processXML.add(daysXML);
-		
+
 		String newDocumentBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			+ processXML;
 
@@ -192,7 +195,7 @@ public abstract class Process extends Thread {
 			Files.copy(savingPath, path, StandardCopyOption.REPLACE_EXISTING);
 			savingFile.delete();
 		}
-		
+
 	}
 
 	// override methods
