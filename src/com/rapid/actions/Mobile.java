@@ -522,7 +522,7 @@ public class Mobile extends Action {
 					js += "var url = " + Control.getDataJavaScript(servletContext, application, page, urlControlId, urlField) + ";\n";
 					// start the alernative mobile check
 					js += getMobileCheckAlternative();
-					// start the check for the addBarcode function
+					// start the check for the openurl function
 					js += "  if (_rapidmobile.openURL) {\n";
 					// send the message
 					js += "    _rapidmobile.openURL(url);\n";
@@ -1047,18 +1047,18 @@ public class Mobile extends Action {
 
 				} // online actions check non-null check
 
-			} else if ("addBarcode".equals(type)) {
+			} else if ("addBarcode".equals(type) || "addRFID".equals(type)) {
 
 				try {
 
 					// get the barcodeDestinations
 					String barcodeDestinations = getProperty("barcodeDestinations");
 
-					// start the check for the addBarcode function
-					String jsBarcode = "if (typeof _rapidmobile != 'undefined' && _rapidmobile.addBarcode) {\n";
+					// start the check for the add function
+					String jsBarcode = "if (typeof _rapidmobile != 'undefined' && _rapidmobile." + type + ") {\n";
 
-					// start the add barcode call
-					jsBarcode += "  _rapidmobile.addBarcode(\"[";
+					// start the add barcode or add RFID call
+					jsBarcode += "  _rapidmobile." + type + "(\"[";
 
 					jsBarcode += getMobileOutputs(rapidServlet, application, page, barcodeDestinations);
 
@@ -1067,11 +1067,19 @@ public class Mobile extends Action {
 
 					jsBarcode += "} else {\n";
 
-					//jsBarcode += "    alert('Barcode reading is not available in this version of Rapid Mobile');\n";
+					if ("addBarcode".equals(type)) {
 
-					jsBarcode += "  scanQrCodeAction(function(data) {\n";
-					jsBarcode += "    " + getOutputs(rapidServlet, application, page, barcodeDestinations, "data") + "\n";
-					jsBarcode +=  " });\n";
+						// since no Rapid mobile do scanning using the client JavaScript
+						jsBarcode += "  scanQrCodeAction(function(data) {\n";
+						jsBarcode += "    " + getOutputs(rapidServlet, application, page, barcodeDestinations, "data") + "\n";
+						jsBarcode +=  " });\n";
+
+					} else {
+
+						// tell the user - but we will add JavaScript RFID scanning at some point!
+						jsBarcode += "    alert('RFID scanning is not available in this version of Rapid Mobile');\n";
+
+					}
 
 					// close if (_rapidmobile.addBarcode)
 					jsBarcode += "}\n";

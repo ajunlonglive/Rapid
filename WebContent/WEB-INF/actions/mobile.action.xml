@@ -267,10 +267,10 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	        
 	         <property>
 	            <key>barcodeDestinations</key>
-	            <name>Destinations</name>
+	            <name>Outputs</name>
 	            <visible>false</visible>
 	            <changeValueJavaScript>datacopyDestinations</changeValueJavaScript>
-	            <helpHtml>Sets the destination for where to place the barcode data on the page.</helpHtml>
+	            <helpHtml>Sets the destination for where to place the data from the scan.</helpHtml>
 	        </property>
 	        
 	        <property>

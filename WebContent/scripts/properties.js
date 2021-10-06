@@ -5664,7 +5664,7 @@ function Property_scrollbars(cell, propertyObject, property, details) {
 }
 
 // possible mobileActionType values used by the mobileActionType property
-var _mobileActionTypes = [["dial","Dial number"],["sms","Send text/sms message"],["email","Send email"],["url","Open url"],["addImage","Get image"],["addVideo","Get video"],["addImageVideo","Get image/video"],["selectImage","Select image/video"],["uploadImages","Upload images/videos"],/*["downloadImages","Download images"],*/["addBarcode","Scan barcode"],["navigate","Navigate to"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["swipe","Swipe"],["online","Online actions"]];
+var _mobileActionTypes = [["dial","Dial number"],["sms","Send text/sms message"],["email","Send email"],["url","Open url"],["addImage","Get image"],["addVideo","Get video"],["addImageVideo","Get image/video"],["selectImage","Select image/video"],["uploadImages","Upload images/videos"],/*["downloadImages","Download images"],*/["addBarcode","Scan barcode"],["addRFID","Scan RFID"],["navigate","Navigate to"],["sendGPS","Send GPS position"],["stopGPS","Stop GPS updates"],["message","Status bar message"],["disableBackButton","Disable back button"],["swipe","Swipe"],["online","Online actions"]];
 
 // this property changes the visibility of other properties according to the chosen type
 function Property_mobileActionType(cell, mobileAction, property, details) {
@@ -5793,6 +5793,8 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 		break;
 		*/
 		case "addBarcode" :
+			setPropertyVisibilty(mobileAction, "barcodeDestinations", true);
+		case "addRFID" :
 			setPropertyVisibilty(mobileAction, "barcodeDestinations", true);
 		break;
 		case "navigate" :
