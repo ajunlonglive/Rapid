@@ -85,13 +85,20 @@ public class Datacopy extends Action {
 	// private instance variables
 	private List<DataCopy> _dataCopies;
 	private boolean _mergeChildren;
+	private boolean _upgradeFixInProgress = false;
 
 	// properties
 	public List<DataCopy> getDataCopies() { return _dataCopies; }
 	public void setDataCopies(List<DataCopy> dataCopies) { _dataCopies = dataCopies; }
 
 	public boolean getMergeChildren() { return _mergeChildren; }
-	public void setMergeChildren(boolean mergeChildren) { _mergeChildren = mergeChildren; }
+	public void setMergeChildren(boolean mergeChildren) {
+		// avoid overwriting _mergeChildren if JAXB has already called setProperties and set it false
+		if (!_upgradeFixInProgress) {
+			_mergeChildren = mergeChildren;
+		}
+		_upgradeFixInProgress = false;
+	}
 
 	// constructors - upgrade fixes are in the setProperties override near the bottom
 
@@ -649,6 +656,8 @@ public class Datacopy extends Action {
 			_properties.put("mergeChildren", "false");
 			// set upgrade fix
 			_properties.put("upgradeFix", "1");
+			// override setMergeChildren because JAXB will call it with the original value after setProperties
+			_upgradeFixInProgress = true;
 		}
 
 	}
