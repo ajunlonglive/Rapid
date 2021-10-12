@@ -272,6 +272,17 @@ return [{value:"", text:"Please select..."}, {value:"lg-1", text:"1/12"}, {value
 				</contents>
 			</resource>
 			
+			<resource>
+				<type>javascript</type>
+				<contents>
+// this is a proxy method because the value property only has a set, and datacopy merge needs a get
+function getProperty_responsivedropdown_value(ev, id, field, details) {
+	// use the standard get (which is why we never had a value property get in the first place)
+	return getData_responsivedropdown(ev, id, field, details);
+}
+				</contents>
+			</resource>
+			
 		</resources>
 	    
 	    <getHtmlFunction>

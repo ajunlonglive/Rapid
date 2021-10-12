@@ -274,12 +274,20 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 						// set noFieldMatch to true
 						output.details.noFieldMatch = true;
 						// get the merge data with the property in the second part of the id
-						mergeData = window["getProperty_" + output.type + "_" + idParts[1]](ev, outputId, null, output.details);
+						if (window["getProperty_" + output.type + "_" + idParts[1]]) {
+							mergeData = window["getProperty_" + output.type + "_" + idParts[1]](ev, outputId, null, output.details);
+						} else {
+							alert("Function to set " + output.type + " " + idParts[1] + " can't be found");
+						}
 					} else {
 						// set noFieldMatch to false, just in case default behavour is required to the default get data at some point after using a property
 						output.details.noFieldMatch = false;						
 						// get the merge data with the main get data method
-						mergeData = window["getData_" + output.type](ev, outputId, null, output.details);
+						if (window["getData_" + output.type]) {
+							mergeData = window["getData_" + output.type](ev, outputId, null, output.details);
+						} else {
+							alert("Function to set data for " + output.type + " can't be found");
+						}
 					}
 					// use the new mergeChildren property to override noFieldMatch if it's set - used in child and row merges
 					if (details && details.mergeChildren !== undefined) output.details.noFieldMatch = !details.mergeChildren;
@@ -452,10 +460,18 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 				if (output.id === "System.clipboard") {
 					clipboardWriteText(data);
 				} else {
-					window["setProperty_" + output.type + "_" + idParts[1]](ev, outputId, output.field, output.details, outputData, changeEvents);
+					if (window["setProperty_" + output.type + "_" + idParts[1]]) {
+						window["setProperty_" + output.type + "_" + idParts[1]](ev, outputId, output.field, output.details, outputData, changeEvents);
+					} else {
+						alert("Function to set " + output.type + " " + idParts[1] + " can't be found");
+					}
 				}
 			} else {
-				window["setData_" + output.type](ev, outputId, output.field, output.details, outputData, changeEvents);
+				if (window["setData_" + output.type]) {
+					window["setData_" + output.type](ev, outputId, output.field, output.details, outputData, changeEvents);
+				} else {
+					alert("Function to set data for " + output.type + " can't be found");
+				}
 			}
 		}
 		window["_noValidation"] = undefined;

@@ -95,6 +95,21 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	         	        
 	    </properties>
 	    
+	    <resources>
+	    
+	    	<resource>
+				<type>javascript</type>
+				<contents>
+// this is a proxy method because the value property only has a set, and datacopy merge needs a get
+function getProperty_dropdown_value(ev, id, field, details) {
+	// use the standard get (which is why we never had a value property get in the first place)
+	return getData_dropdown(ev, id, field, details);
+}
+				</contents>
+			</resource>
+	    
+	    </resources>
+	    
 	    <getHtmlFunction>
 	        <![CDATA[
 // return our html for adding to our parent object	
