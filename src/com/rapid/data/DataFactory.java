@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -180,13 +180,19 @@ public class DataFactory {
 		@Override
 		public String toString() {
 			String parametersString = "";
+			// loop the parameters
 			for (int i = 0; i < this.size(); i++) {
+				// get this parameter
 				Parameter parameter = this.get(i);
-				if (parameter.getString() == null) {
-					parametersString += parameter.toString();
-				} else {
+				// if not null and either a string or date - the database action adds all parameters as strings...
+				if (parameter.getString() != null && (parameter.getType() == Parameter.STRING || parameter.getType() == Parameter.DATE)) {
+					// put it in quotes
 					parametersString += "'" + parameter.toString() + "'";
+				} else {
+					// put as-is
+					parametersString += parameter.toString();
 				}
+				// add a comma if not the last one
 				if (i < this.size() - 1) parametersString += ", ";
 			}
 			return parametersString;
@@ -450,9 +456,9 @@ public class DataFactory {
 					break;
 				}
 
-			}
+			} // loop parameters
 
-		}
+		} // parameters null check
 
 	}
 
