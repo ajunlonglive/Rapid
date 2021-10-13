@@ -594,7 +594,7 @@ public class Database extends Action {
 			// get any json inputs
 			JSONObject jsonInputData = jsonAction.optJSONObject("data");
 
-			// initialise the parameters list
+			// initialise the parameters list - there is a parameters object in the list for each row, allowing for multi-row queries
 			ArrayList<Parameters> parametersList = new ArrayList<>();
 
 			// populate the parameters from the inputs collection (we do this first as we use them as the cache key due to getting values from the session)
@@ -607,6 +607,24 @@ public class Database extends Action {
 
 				// if there is input data
 				if (jsonInputData != null) {
+
+					// retain the original inputs
+					List<Parameter> originalInputs = _query.getInputs();
+					// if null make an empty list
+					if (originalInputs == null) originalInputs = new ArrayList<>();
+					// a list of inputs which will include the field
+					List<String> inputs = new ArrayList<>();
+					// loop the original inputs
+					for (int i = 0; i < originalInputs.size(); i++) {
+						// get this input
+						Parameter input = originalInputs.get(i);
+						// make its name its id
+						String inputName = input.getItemId();
+						// if it has a field add that on
+						if (!input.getField().isEmpty()) inputName += "." + input.getField();
+						// add this to our input names list
+						inputs.add(inputName);
+					}
 
 					// get any input fields
 					JSONArray jsonFields = jsonInputData.optJSONArray("fields");
@@ -671,6 +689,9 @@ public class Database extends Action {
 								parameters.add(value);
 							}
 
+							// if there were parameters in the list unmap and reset them
+							parameters = unmappedParameters(sql, parameters, inputs, application, context);
+
 							// add the parameters to the list
 							parametersList.add(parameters);
 
@@ -696,20 +717,7 @@ public class Database extends Action {
 
 			}
 
-			// unmap numbered numbered parameters
-			List<Parameter> originalInputs = _query.getInputs();
-			if (originalInputs == null) originalInputs = new ArrayList<>();
-			List<String> inputs = new ArrayList<>();
-			// populate it with nulls
-			for (int i = 0; i < originalInputs.size(); i++) {
-				Parameter input = originalInputs.get(i);
-				String inputName = input.getItemId();
-				if (!input.getField().isEmpty()) inputName += "." + input.getField();
-				inputs.add(inputName);
-			}
-
-			// if there were parameters in the list unmap and reset them
-			if (parametersList.size() > 0) parametersList.set(0, unmappedParameters(sql, parametersList.get(0), inputs, application, context));
+			// now remove any numbers/names after ?'s in the sql so it makes sense to jdbc
 			sql = unspecifySqlSlots(sql);
 
 			// if there isn't a cache or no data was retrieved
@@ -1115,27 +1123,37 @@ public class Database extends Action {
 		if (Pattern.compile(_namedParameterSlotRegex).matcher(sql).find()) {
 			// loop the inputs to see which are in the sql and populate the map
 			for (int inputIndex = 0; inputIndex < inputIds.size(); inputIndex++) {
+
 				// the id of the control for this input
 				String id = inputIds.get(inputIndex);
 
-				if (id.startsWith("System.")) {
+				// find any parts by splitting
+				String[] parts = id.split("\\.");
+
+				// if this is a system value
+				if ("System".equals(parts[0])) {
+					// put the name in quotes
 					String name = "\"" + id + "\"";
+					// add as name to the map
 					parameterIndexesByControlName.put(name, inputIndex);
 				} else {
-
-					String[] parts = id.split("\\.");
+					// get the control id
 					String controlId = parts[0];
-
+					// find the control
 					Control control = application.getControl(context, controlId);
+					// if we found a control
 					if (control != null) {
-
+						// get is name
 						String name = control.getName();
+						// update the id by cleaning its name
 						id = id.replaceAll(".+\\.", name + ".");
 						if (parts.length > 1) name += "." + parts[1].toLowerCase().replace(" ", "");
 						for (int idIndex = 2; idIndex < parts.length; idIndex++) name += "." + parts[idIndex];
-
+						// quote the name and put in the map
 						parameterIndexesByControlName.put("\"" + name + "\"", inputIndex);
+						// if there are no spaces put in map without quotes too
 						if (!name.contains(" ")) parameterIndexesByControlName.put(name, inputIndex);
+
 					}
 				}
 			}
