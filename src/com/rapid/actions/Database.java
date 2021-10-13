@@ -1102,6 +1102,8 @@ public class Database extends Action {
 	private static String _namedParameterSlotRegex = "(\\?\"[^\"]+\")|(\\?(?=[a-zA-Z])\\w*)";
 	// finds ? followed by a name in quotes, or ? followed by 0 or more numbers, or ? on their own
 	private static String _parameterSlotRegex = "(\\?\"[^\"]+\")|(\\?\\w\\S*)|\\?";
+	// finds ? followed by a number
+	private static String _unspecifySlotsRegex = "(\\?\\d*)";
 
 	// returns all parameters for the sql by finding any ?'s followed by numbers/names and creating a longer parameter list populated with those mapped
 	public static Parameters unmappedParameters(String sql, Parameters oldParameters, List<String> inputIds, Application application, ServletContext context) throws SQLException {
@@ -1228,15 +1230,22 @@ public class Database extends Action {
 		}
 	}
 
-	// returns sql with the numbers/names after the ? removed
+	// returns sql with any numbers after the ? removed (used after the name number replacement above)
 	public static String unspecifySqlSlots(String sql) {
+		// add an extra space to the end - something to do with ensuring there are an even number of parts when we split on the ' below
 		sql = sql + " ";
+		// split on the single quote - we only want to replace parameters outside of them
 		String[] stringParts = sql.split("'");
-		sql = stringParts[0].replaceAll(_parameterSlotRegex, "\\?");
+		// replace the first part of the sql which goes up to the first single quote
+		sql = stringParts[0].replaceAll(_unspecifySlotsRegex, "\\?");
+		// loop the remaining parts from index 1 onwards
 		for (int partIndex = 1; partIndex < stringParts.length; partIndex++) {
+			// if this is an even numbered part
 			if (partIndex % 2 == 0) {
-				sql += "'" + stringParts[partIndex].replaceAll(_parameterSlotRegex, "\\?");
+				// its outside of a quoted string so replace the ? numbers
+				sql += "'" + stringParts[partIndex].replaceAll(_unspecifySlotsRegex, "\\?");
 			} else {
+				// its within quotes so add back as it was
 				sql += "'" + stringParts[partIndex];
 			}
 		}
