@@ -1725,17 +1725,17 @@ public class Designer extends RapidHttpServlet {
 							out.flush();
 
 						} else if ("getStyleClasses".equals(actionName)) {
-							
+
 							String a = request.getParameter("a");
 							String v = request.getParameter("v");
-							
+
 							Application application = getApplications().get(a, v);
 							List<String> classNames = application.getStyleClasses();
-							
+
 							JSONArray json = new JSONArray(classNames);
 							output = json.toString();
 							sendJsonOutput(response, output);
-							
+
 						} // action name check
 
 					} else {
@@ -2768,7 +2768,7 @@ public class Designer extends RapidHttpServlet {
 			} // got rapid application
 
 			// if monitor is alive then log the event
-			if(_monitor!=null && _monitor.isAlive(rapidRequest.getRapidServlet().getServletContext()) && _monitor.isLoggingAll()) {
+			if (_monitor != null && _monitor.isAlive(rapidRequest.getRapidServlet().getServletContext()) && _monitor.isLoggingAll()) {
 				_monitor.setDetails(monitorEntryDetails);
 				_monitor.commitEntry(rapidRequest, response, responseLength);
 			}
@@ -2776,7 +2776,7 @@ public class Designer extends RapidHttpServlet {
 		} catch (Exception ex) {
 
 			// if monitor is alive then log the event
-			if(_monitor!=null && _monitor.isAlive(rapidRequest.getRapidServlet().getServletContext()) && _monitor.isLoggingExceptions()) {
+			if (_monitor != null && _monitor.isAlive(rapidRequest.getRapidServlet().getServletContext()) && _monitor.isLoggingExceptions()) {
 				_monitor.setDetails(monitorEntryDetails);
 				_monitor.commitEntry(rapidRequest, response, responseLength, ex.getMessage());
 			}

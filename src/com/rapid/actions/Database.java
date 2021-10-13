@@ -699,7 +699,7 @@ public class Database extends Action {
 			// unmap numbered numbered parameters
 			List<Parameter> originalInputs = _query.getInputs();
 			if (originalInputs == null) originalInputs = new ArrayList<>();
-			List<String> inputs = new ArrayList<String>();
+			List<String> inputs = new ArrayList<>();
 			// populate it with nulls
 			for (int i = 0; i < originalInputs.size(); i++) {
 				Parameter input = originalInputs.get(i);
@@ -1098,16 +1098,24 @@ public class Database extends Action {
 
 	}
 
-	private static String parameterSlotRegex = "(\\?\"[^\"]+\")|(\\?\\w\\S*)|\\?";
-	private static String namedParameterSlotRegex = "(\\?\"[^\"]+\")|(\\?(?=[a-z])\\w*)";
+	// finds ? followed by a name optionally in quotes, or ? followed by a name of lower and/or upper case letters - we'll find any of these first and convert them to numbers, only limitation is names outside of quotes can't start with numbers
+	private static String _namedParameterSlotRegex = "(\\?\"[^\"]+\")|(\\?(?=[a-zA-Z])\\w*)";
+	// finds ? followed by a name in quotes, or ? followed by 0 or more numbers, or ? on their own
+	private static String _parameterSlotRegex = "(\\?\"[^\"]+\")|(\\?\\w\\S*)|\\?";
 
+	// returns all parameters for the sql by finding any ?'s followed by numbers/names and creating a longer parameter list populated with those mapped
 	public static Parameters unmappedParameters(String sql, Parameters oldParameters, List<String> inputIds, Application application, ServletContext context) throws SQLException {
 
-		Map<String, Integer> parameterIndexesByControlName = new HashMap<String, Integer>();
+		// we first use this to find parameters with names and convert them into numbers
+		Map<String, Integer> parameterIndexesByControlName = new HashMap<>();
 
-		if (Pattern.compile(namedParameterSlotRegex).matcher(sql).find()) {
+		// if there were any ?'s followed by names in the sql
+		if (Pattern.compile(_namedParameterSlotRegex).matcher(sql).find()) {
+			// loop the inputs to see which are in the sql and populate the map
 			for (int inputIndex = 0; inputIndex < inputIds.size(); inputIndex++) {
+				// the id of the control for this input
 				String id = inputIds.get(inputIndex);
+
 				if (id.startsWith("System.")) {
 					String name = "\"" + id + "\"";
 					parameterIndexesByControlName.put(name, inputIndex);
@@ -1145,65 +1153,89 @@ public class Database extends Action {
 			sql += stringParts[partIndex];
 		}
 
-		Matcher matcher = Pattern.compile(parameterSlotRegex).matcher(sql);
+		// named variables should have been replaced so use the number finding pattern
+		Matcher matcher = Pattern.compile(_parameterSlotRegex).matcher(sql);
 
+		// a probably longer list of parameters we'll be making using the numbers or names after the ?'s
 		Parameters newParameters = new Parameters();
 
+		// the old parameters we want to map out to the new ones, we use a set to remove the ones we've done until they all are
 		Set<Integer> oldParametersNumbers = new HashSet<>();
+		// loop the original inputs to populate the set
 		for (int number = 1; number <= oldParameters.size(); number++) {
 			oldParametersNumbers.add(number);
 		}
 
+		// a running count of ?'s without a number/name
 		int unspecifiedSlots = 0;
+
+		// loop the ?'s and their number/name
 		while (matcher.find()) {
+
+			// get what the regex found: the ? followed by either numbers or letters
 			String slot = matcher.group();
 
+			// replace any following commas or closing brackets which would have been included by the regex when we were looking for names
+			slot = slot.replace(",", "").replace(")", "");
+
 			int parameterIndex = unspecifiedSlots;
+			// if there is only a ? this slot is unspecified
 			if (slot.length() == 1) {
 				unspecifiedSlots++;
 			} else {
+				// get the number/name after the ?
 				String specifier = slot.substring(1);
 
+				// check if all numbers
 				if (specifier.matches("\\d+")) {
+					// use the number after the ? as the index to find the parameter
 					parameterIndex = Integer.parseInt(specifier) - 1;
 				} else {
-
+					//
 					String[] parts = specifier.split("\\.");
 					String name = parts[0];
 					if (parts.length > 1) name += "." + parts[1].toLowerCase().replace(" ", "");
 					for (int idIndex = 2; idIndex < parts.length; idIndex++) name += "." + parts[idIndex];
-
+					// use the letters after the ? as the key to find the parameter
 					parameterIndex = parameterIndexesByControlName.get(name);
 				}
 			}
 
+			// if we have an input at this index in the original inputs
 			if (parameterIndex < oldParameters.size()) {
+				//
 				newParameters.add(oldParameters.get(parameterIndex));
 				oldParametersNumbers.remove(parameterIndex + 1);
 			} else {
 				throw new SQLException("Parameter " + (parameterIndex + 1) + " not provided in inputs list");
 			}
-		}
 
+		} // slot loop
+
+		// if there are any parameters left that weren't used by the query
 		if (oldParametersNumbers.size() > 0) {
 			int firstUnusedInputNumber = oldParametersNumbers.iterator().next();
 			throw new SQLException("Input " + firstUnusedInputNumber + " not used");
 		}
 
+		// if not all parameters got mapped
 		if (oldParameters.size() > newParameters.size()) {
+			// send back the originals
 			return oldParameters;
 		} else {
+			// send the new ones!
 			return newParameters;
 		}
 	}
 
+	// returns sql with the numbers/names after the ? removed
 	public static String unspecifySqlSlots(String sql) {
 		sql = sql + " ";
 		String[] stringParts = sql.split("'");
-		sql = stringParts[0].replaceAll(parameterSlotRegex, "\\?");
+		sql = stringParts[0].replaceAll(_parameterSlotRegex, "\\?");
 		for (int partIndex = 1; partIndex < stringParts.length; partIndex++) {
 			if (partIndex % 2 == 0) {
-				sql += "'" + stringParts[partIndex].replaceAll(parameterSlotRegex, "\\?");
+				sql += "'" + stringParts[partIndex].replaceAll(_parameterSlotRegex, "\\?");
 			} else {
 				sql += "'" + stringParts[partIndex];
 			}
