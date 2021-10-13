@@ -2113,21 +2113,30 @@ public class Designer extends RapidHttpServlet {
 										// if the query has inputs
 										if (jsonInputs != null) {
 
+											// make a list of inputs
+											List<String> inputs = new ArrayList<>();
 											// make a parameters object to send
 											parameters = new Parameters();
-											List<String> inputs = new ArrayList<>();
 											// populate it with nulls
 											for (int i = 0; i < jsonInputs.length(); i++) {
-												parameters.addNull();
+												// get this input
 												JSONObject input = jsonInputs.getJSONObject(i);
 												String inputId = input.getString("itemId");
 												String field = input.getString("field");
 												if (!field.isEmpty()) inputId += "." + input.getString("field");
+												// add this input
 												inputs.add(inputId);
-
+												// add a null parameter for it
+												parameters.addNull();
 											}
 
-											parameters = Database.unmappedParameters(sql, parameters, inputs, application, context);
+											// get a parameter map which is where we have ?'s followed by number/name
+											List<Integer> parameterMap = Database.getParameterMap(sql, inputs, application, context);
+
+											// get the right-sized parameters (if we need them) using the map
+											parameters = Database.mapParameters(parameterMap, parameters);
+
+											// remove all ? numbers/names from the sql
 											sql = Database.unspecifySqlSlots(sql);
 										}
 

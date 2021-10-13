@@ -571,6 +571,13 @@ public class Database extends Action {
 		return null;
 	}
 
+	// finds ? followed by a name optionally in quotes, or ? followed by a name of lower and/or upper case letters - we'll find any of these first and convert them to numbers, only limitation is names outside of quotes can't start with numbers
+	private static String _namedParameterSlotRegex = "(\\?\"[^\"]+\")|(\\?(?=[a-zA-Z])\\w*)";
+	// finds ? followed by a name in quotes, or ? followed by 0 or more numbers, or ? on their own
+	private static String _parameterSlotRegex = "(\\?\"[^\"]+\")|(\\?\\w\\S*)|\\?";
+	// finds ? followed by a number
+	private static String _unspecifySlotsRegex = "(\\?\\d*)";
+
 
 	public JSONObject doQuery(RapidRequest rapidRequest, JSONObject jsonAction, Application application, DataFactory df) throws Exception {
 
@@ -608,24 +615,6 @@ public class Database extends Action {
 				// if there is input data
 				if (jsonInputData != null) {
 
-					// retain the original inputs
-					List<Parameter> originalInputs = _query.getInputs();
-					// if null make an empty list
-					if (originalInputs == null) originalInputs = new ArrayList<>();
-					// a list of inputs which will include the field
-					List<String> inputs = new ArrayList<>();
-					// loop the original inputs
-					for (int i = 0; i < originalInputs.size(); i++) {
-						// get this input
-						Parameter input = originalInputs.get(i);
-						// make its name its id
-						String inputName = input.getItemId();
-						// if it has a field add that on
-						if (!input.getField().isEmpty()) inputName += "." + input.getField();
-						// add this to our input names list
-						inputs.add(inputName);
-					}
-
 					// get any input fields
 					JSONArray jsonFields = jsonInputData.optJSONArray("fields");
 					// get any input rows
@@ -633,6 +622,27 @@ public class Database extends Action {
 
 					// if we have fields and rows
 					if (jsonFields != null && jsonRows != null) {
+
+						// retain the original inputs
+						List<Parameter> originalInputs = _query.getInputs();
+						// if null make an empty list
+						if (originalInputs == null) originalInputs = new ArrayList<>();
+						// a list of input names which will include the field
+						List<String> inputNames = new ArrayList<>();
+						// loop the original inputs
+						for (int i = 0; i < originalInputs.size(); i++) {
+							// get this input
+							Parameter input = originalInputs.get(i);
+							// make its name its id
+							String inputName = input.getItemId();
+							// if it has a field add that on
+							if (!input.getField().isEmpty()) inputName += "." + input.getField();
+							// add this to our input names list
+							inputNames.add(inputName);
+						}
+
+						// the parameter map we are making - it'll be size of the mapped parameters but hold the index back to the original ones
+						List<Integer> parameterMap = getParameterMap(sql, inputNames, application, context);
 
 						// loop the input rows (only the top row if not multirow)
 						for (int i = 0; i < jsonRows.length() && (_query.getMultiRow() || i == 0); i ++) {
@@ -689,8 +699,8 @@ public class Database extends Action {
 								parameters.add(value);
 							}
 
-							// if there were parameters in the list unmap and reset them
-							parameters = unmappedParameters(sql, parameters, inputs, application, context);
+							// map any parameters (also checks if we need to)
+							parameters = mapParameters(parameterMap, parameters);
 
 							// add the parameters to the list
 							parametersList.add(parameters);
@@ -1106,170 +1116,6 @@ public class Database extends Action {
 
 	}
 
-	// finds ? followed by a name optionally in quotes, or ? followed by a name of lower and/or upper case letters - we'll find any of these first and convert them to numbers, only limitation is names outside of quotes can't start with numbers
-	private static String _namedParameterSlotRegex = "(\\?\"[^\"]+\")|(\\?(?=[a-zA-Z])\\w*)";
-	// finds ? followed by a name in quotes, or ? followed by 0 or more numbers, or ? on their own
-	private static String _parameterSlotRegex = "(\\?\"[^\"]+\")|(\\?\\w\\S*)|\\?";
-	// finds ? followed by a number
-	private static String _unspecifySlotsRegex = "(\\?\\d*)";
-
-	// returns all parameters for the sql by finding any ?'s followed by numbers/names and creating a longer parameter list populated with those mapped
-	public static Parameters unmappedParameters(String sql, Parameters oldParameters, List<String> inputIds, Application application, ServletContext context) throws SQLException {
-
-		// we first use this to find parameters with names and convert them into numbers
-		Map<String, Integer> parameterIndexesByControlName = new HashMap<>();
-
-		// if there were any ?'s followed by names in the sql
-		if (Pattern.compile(_namedParameterSlotRegex).matcher(sql).find()) {
-			// loop the inputs to see which are in the sql and populate the map
-			for (int inputIndex = 0; inputIndex < inputIds.size(); inputIndex++) {
-
-				// the id of the control for this input
-				String id = inputIds.get(inputIndex);
-
-				// find any parts by splitting
-				String[] parts = id.split("\\.");
-
-				// if this is a system value
-				if ("System".equals(parts[0])) {
-					// put the name in quotes
-					String name = "\"" + id + "\"";
-					// add as name to the map
-					parameterIndexesByControlName.put(name, inputIndex);
-				} else {
-					// get the control id
-					String controlId = parts[0];
-					// find the control
-					Control control = application.getControl(context, controlId);
-					// if we found a control
-					if (control != null) {
-						// get is name
-						String name = control.getName();
-						// update the id by cleaning its name
-						id = id.replaceAll(".+\\.", name + ".");
-						if (parts.length > 1) name += "." + parts[1].toLowerCase().replace(" ", "");
-						for (int idIndex = 2; idIndex < parts.length; idIndex++) name += "." + parts[idIndex];
-						// quote the name and put in the map
-						parameterIndexesByControlName.put("\"" + name + "\"", inputIndex);
-						// if there are no spaces put in map without quotes too
-						if (!name.contains(" ")) parameterIndexesByControlName.put(name, inputIndex);
-
-					}
-				}
-			}
-		}
-
-		// remove comment blocks
-		String[] stringParts = sql.split("\\/\\*|\\*\\/");
-		sql = "";
-		for (int partIndex = 0; partIndex < stringParts.length; partIndex += 2) {
-			sql += stringParts[partIndex];
-		}
-
-		// remove quote blocks
-		stringParts = sql.split("'");
-		sql = "";
-		for (int partIndex = 0; partIndex < stringParts.length; partIndex += 2) {
-			sql += stringParts[partIndex];
-		}
-
-		// named variables should have been replaced so use the number finding pattern
-		Matcher matcher = Pattern.compile(_parameterSlotRegex).matcher(sql);
-
-		// a probably longer list of parameters we'll be making using the numbers or names after the ?'s
-		Parameters newParameters = new Parameters();
-
-		// the old parameters we want to map out to the new ones, we use a set to remove the ones we've done until they all are
-		Set<Integer> oldParametersNumbers = new HashSet<>();
-		// loop the original inputs to populate the set
-		for (int number = 1; number <= oldParameters.size(); number++) {
-			oldParametersNumbers.add(number);
-		}
-
-		// a running count of ?'s without a number/name
-		int unspecifiedSlots = 0;
-
-		// loop the ?'s and their number/name
-		while (matcher.find()) {
-
-			// get what the regex found: the ? followed by either numbers or letters
-			String slot = matcher.group();
-
-			// replace any following commas or closing brackets which would have been included by the regex when we were looking for names
-			slot = slot.replace(",", "").replace(")", "");
-
-			int parameterIndex = unspecifiedSlots;
-			// if there is only a ? this slot is unspecified
-			if (slot.length() == 1) {
-				unspecifiedSlots++;
-			} else {
-				// get the number/name after the ?
-				String specifier = slot.substring(1);
-
-				// check if all numbers
-				if (specifier.matches("\\d+")) {
-					// use the number after the ? as the index to find the parameter
-					parameterIndex = Integer.parseInt(specifier) - 1;
-				} else {
-					//
-					String[] parts = specifier.split("\\.");
-					String name = parts[0];
-					if (parts.length > 1) name += "." + parts[1].toLowerCase().replace(" ", "");
-					for (int idIndex = 2; idIndex < parts.length; idIndex++) name += "." + parts[idIndex];
-					// use the letters after the ? as the key to find the parameter
-					parameterIndex = parameterIndexesByControlName.get(name);
-				}
-			}
-
-			// if we have an input at this index in the original inputs
-			if (parameterIndex < oldParameters.size()) {
-				//
-				newParameters.add(oldParameters.get(parameterIndex));
-				oldParametersNumbers.remove(parameterIndex + 1);
-			} else {
-				throw new SQLException("Parameter " + (parameterIndex + 1) + " not provided in inputs list");
-			}
-
-		} // slot loop
-
-		// if there are any parameters left that weren't used by the query
-		if (oldParametersNumbers.size() > 0) {
-			int firstUnusedInputNumber = oldParametersNumbers.iterator().next();
-			throw new SQLException("Input " + firstUnusedInputNumber + " not used");
-		}
-
-		// if not all parameters got mapped
-		if (oldParameters.size() > newParameters.size()) {
-			// send back the originals
-			return oldParameters;
-		} else {
-			// send the new ones!
-			return newParameters;
-		}
-	}
-
-	// returns sql with any numbers after the ? removed (used after the name number replacement above)
-	public static String unspecifySqlSlots(String sql) {
-		// add an extra space to the end - something to do with ensuring there are an even number of parts when we split on the ' below
-		sql = sql + " ";
-		// split on the single quote - we only want to replace parameters outside of them
-		String[] stringParts = sql.split("'");
-		// replace the first part of the sql which goes up to the first single quote
-		sql = stringParts[0].replaceAll(_unspecifySlotsRegex, "\\?");
-		// loop the remaining parts from index 1 onwards
-		for (int partIndex = 1; partIndex < stringParts.length; partIndex++) {
-			// if this is an even numbered part
-			if (partIndex % 2 == 0) {
-				// its outside of a quoted string so replace the ? numbers
-				sql += "'" + stringParts[partIndex].replaceAll(_unspecifySlotsRegex, "\\?");
-			} else {
-				// its within quotes so add back as it was
-				sql += "'" + stringParts[partIndex];
-			}
-		}
-		return sql;
-	}
-
 	@Override
 	public JSONObject doAction(RapidRequest rapidRequest, JSONObject jsonAction) throws Exception {
 
@@ -1332,6 +1178,191 @@ public class Database extends Action {
 	@Override
 	public boolean isWebService() {
 		return true;
+	}
+
+	// returns all parameters for the sql by finding any ?'s followed by numbers/names and creating a longer parameter list populated with those mapped
+	public static List<Integer> getParameterMap(String sql, List<String> inputNames, Application application, ServletContext context) throws SQLException {
+
+		// the parameter map we are making - it'll be size of the mapped parameters but hold the index back to the original ones
+		List<Integer> parameterMap = new ArrayList<>();
+
+		// use a copy of the sql to find the parameter mappings as we remove quotes and other things that break it for jdbc
+		String sqlToMap = "";
+		// split on comment open or closers
+		String[] stringParts = sql.split("\\/\\*|\\*\\/");
+		// loop 2 at a time so skipping the comments (between the closers)
+		for (int partIndex = 0; partIndex < stringParts.length; partIndex += 2) {
+			// append the non-comment parts
+			sqlToMap += stringParts[partIndex];
+		}
+
+		// split the sql to map from above on quotes
+		stringParts = sqlToMap.split("'");
+		// reset the sql to map
+		sqlToMap = "";
+		// loop 2 at a time so skipping the quoted parts (between the quotes)
+		for (int partIndex = 0; partIndex < stringParts.length; partIndex += 2) {
+			// append the non-quoted part
+			sqlToMap += stringParts[partIndex];
+		}
+
+		// we first use this to find parameters with names and convert them into numbers
+		Map<String, Integer> parameterIndexesByControlName = new HashMap<>();
+
+		// if there were any ?'s followed by names in the sql
+		if (Pattern.compile(_namedParameterSlotRegex).matcher(sqlToMap).find()) {
+			// loop the input to see which are in the sql and populate the map
+			for (int inputIndex = 0; inputIndex < inputNames.size(); inputIndex++) {
+
+				// the id of the control for this input
+				String id = inputNames.get(inputIndex);
+
+				// find any parts by splitting
+				String[] parts = id.split("\\.");
+
+				// if this is a system value
+				if ("System".equals(parts[0])) {
+					// put the name in quotes
+					String name = "\"" + id + "\"";
+					// add as name to the map
+					parameterIndexesByControlName.put(name, inputIndex);
+				} else {
+					// get the control id
+					String controlId = parts[0];
+					// find the control
+					Control control = application.getControl(context, controlId);
+					// if we found a control
+					if (control != null) {
+						// get is name
+						String name = control.getName();
+						// update the id by cleaning its name
+						id = id.replaceAll(".+\\.", name + ".");
+						if (parts.length > 1) name += "." + parts[1].toLowerCase().replace(" ", "");
+						for (int idIndex = 2; idIndex < parts.length; idIndex++) name += "." + parts[idIndex];
+						// quote the name and put in the map
+						parameterIndexesByControlName.put("\"" + name + "\"", inputIndex);
+						// if there are no spaces put in map without quotes too
+						if (!name.contains(" ")) parameterIndexesByControlName.put(name, inputIndex);
+
+					}
+				}
+			}
+		}
+
+		// named variables should have been replaced so now use the number finding pattern
+		Matcher matcher = Pattern.compile(_parameterSlotRegex).matcher(sqlToMap);
+
+		// the parameters we want to map out to the new ones, we use a set to remove the ones we've done until they all are
+		Set<Integer> parametersNumbers = new HashSet<>();
+		// loop the original inputs to populate the set
+		for (int number = 1; number <= inputNames.size(); number++) {
+			parametersNumbers.add(number);
+		}
+
+		// a running count of ?'s without a number/name to tell if got them all
+		int unspecifiedSlots = 0;
+
+		// loop the ?'s and their number/name
+		while (matcher.find()) {
+
+			// get what the regex found: the ? followed by either numbers or letters
+			String slot = matcher.group();
+
+			// replace any following commas or closing brackets which would have been included by the regex when we were looking for names
+			slot = slot.replace(",", "").replace(")", "");
+
+			int parameterIndex = unspecifiedSlots;
+			// if there is only a ? this slot is unspecified
+			if (slot.length() == 1) {
+				unspecifiedSlots++;
+			} else {
+				// get the number/name after the ?
+				String specifier = slot.substring(1);
+
+				// check if all numbers
+				if (specifier.matches("\\d+")) {
+					// use the number after the ? as the index to find the parameter
+					parameterIndex = Integer.parseInt(specifier) - 1;
+				} else {
+					//
+					String[] parts = specifier.split("\\.");
+					String name = parts[0];
+					if (parts.length > 1) name += "." + parts[1].toLowerCase().replace(" ", "");
+					for (int idIndex = 2; idIndex < parts.length; idIndex++) name += "." + parts[idIndex];
+					// use the letters after the ? as the key to find the parameter
+					parameterIndex = parameterIndexesByControlName.get(name);
+				}
+			}
+
+			// if we have an input at this index in the original inputs
+			if (parameterIndex < inputNames.size()) {
+				// add this parameter to our list of mapped indexes
+				parameterMap.add(parameterIndex);
+				// remove it from the set to track that we've done it
+				parametersNumbers.remove(parameterIndex + 1);
+			} else {
+				throw new SQLException("Parameter " + (parameterIndex + 1) + " not provided in inputs list");
+			}
+
+		} // slot loop
+
+		// if there are any parameters left that weren't used by the query
+		if (parametersNumbers.size() > 0) {
+			int firstUnusedInputNumber = parametersNumbers.iterator().next();
+			throw new SQLException("Input " + firstUnusedInputNumber + " not used");
+		}
+
+		// we're done!
+		return parameterMap;
+
+	}
+
+	public static Parameters mapParameters(List<Integer> parameterMap, Parameters parameters) {
+
+		// only if we have what we need and parameters got mapped (the map is bigger)
+		if (parameterMap != null && parameters != null && parameterMap.size() > parameters.size()) {
+
+			// the longer list of parameters we'll be making using the numbers or names after the ?'s to map to the original inputs/parameters
+			Parameters mappedParameters = new Parameters();
+
+			// loop the map
+			for (int parameterIndex : parameterMap) {
+				// add the parameter at that position
+				mappedParameters.add(parameters.get(parameterIndex));
+			}
+
+			// use the mapped parameters
+			return mappedParameters;
+
+		} else {
+
+			// just return the parameters
+			return parameters;
+
+		}
+
+	}
+
+	// returns sql with any numbers after the ? removed (used after the name number replacement above)
+	public static String unspecifySqlSlots(String sql) {
+		// add an extra space to the end - something to do with ensuring there are an even number of parts when we split on the ' below
+		sql = sql + " ";
+		// split on the single quote - we only want to replace parameters outside of them
+		String[] stringParts = sql.split("'");
+		// replace the first part of the sql which goes up to the first single quote
+		sql = stringParts[0].replaceAll(_unspecifySlotsRegex, "\\?");
+		// loop the remaining parts from index 1 onwards
+		for (int partIndex = 1; partIndex < stringParts.length; partIndex++) {
+			// if this is an even numbered part
+			if (partIndex % 2 == 0) {
+				// its outside of a quoted string so replace the ? numbers
+				sql += "'" + stringParts[partIndex].replaceAll(_unspecifySlotsRegex, "\\?");
+			} else {
+				// its within quotes so add back as it was
+				sql += "'" + stringParts[partIndex];
+			}
+		}
+		return sql;
 	}
 
 }
