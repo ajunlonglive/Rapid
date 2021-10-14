@@ -110,6 +110,7 @@ public class Database extends Action {
 	private boolean _showLoading, _mergeChildren;
 	private List<Database> _childDatabaseActions;
 	private List<Action> _successActions, _errorActions, _childActions;
+	private List<Integer> _parameterMap;
 
 	// properties
 
@@ -207,7 +208,7 @@ public class Database extends Action {
 			parameters = new ArrayList<>();
 			// loop
 			for (int i = 0; i < jsonParameters.length(); i++) {
-				// instaniate member
+				// instantiate member
 				Parameter parameter = new Parameter(
 					jsonParameters.getJSONObject(i).optString("itemId"),
 					jsonParameters.getJSONObject(i).optString("field")
@@ -623,26 +624,31 @@ public class Database extends Action {
 					// if we have fields and rows
 					if (jsonFields != null && jsonRows != null) {
 
-						// retain the original inputs
-						List<Parameter> originalInputs = _query.getInputs();
-						// if null make an empty list
-						if (originalInputs == null) originalInputs = new ArrayList<>();
-						// a list of input names which will include the field
-						List<String> inputNames = new ArrayList<>();
-						// loop the original inputs
-						for (int i = 0; i < originalInputs.size(); i++) {
-							// get this input
-							Parameter input = originalInputs.get(i);
-							// make its name its id
-							String inputName = input.getItemId();
-							// if it has a field add that on
-							if (!input.getField().isEmpty()) inputName += "." + input.getField();
-							// add this to our input names list
-							inputNames.add(inputName);
-						}
+						// if we haven't mapped the parameters yet to deal with ? followed by a number or name, this is expensive, so we'll do it once and cache it
+						if (_parameterMap == null) {
 
-						// the parameter map we are making - it'll be size of the mapped parameters but hold the index back to the original ones
-						List<Integer> parameterMap = getParameterMap(sql, inputNames, application, context);
+							// retain the original inputs
+							List<Parameter> originalInputs = _query.getInputs();
+							// if null make an empty list
+							if (originalInputs == null) originalInputs = new ArrayList<>();
+							// a list of input names which will include the field
+							List<String> inputNames = new ArrayList<>();
+							// loop the original inputs
+							for (int i = 0; i < originalInputs.size(); i++) {
+								// get this input
+								Parameter input = originalInputs.get(i);
+								// make its name its id
+								String inputName = input.getItemId();
+								// if it has a field add that on
+								if (!input.getField().isEmpty()) inputName += "." + input.getField();
+								// add this to our input names list
+								inputNames.add(inputName);
+							}
+
+							// the parameter map we are making - it'll be size of the mapped parameters but hold the index back to the original ones - we'll use it below to populate each data row for the parameters list
+							_parameterMap = getParameterMap(sql, inputNames, application, context);
+
+						}
 
 						// loop the input rows (only the top row if not multirow)
 						for (int i = 0; i < jsonRows.length() && (_query.getMultiRow() || i == 0); i ++) {
@@ -700,7 +706,7 @@ public class Database extends Action {
 							}
 
 							// map any parameters (also checks if we need to)
-							parameters = mapParameters(parameterMap, parameters);
+							parameters = mapParameters(_parameterMap, parameters);
 
 							// add the parameters to the list
 							parametersList.add(parameters);
@@ -727,9 +733,6 @@ public class Database extends Action {
 
 			}
 
-			// now remove any numbers/names after ?'s in the sql so it makes sense to jdbc
-			sql = unspecifySqlSlots(sql);
-
 			// if there isn't a cache or no data was retrieved
 			if (jsonData == null) {
 
@@ -741,6 +744,9 @@ public class Database extends Action {
 					JSONArray jsonFields = new JSONArray();
 					// rows collection can start initialised
 					JSONArray jsonRows = new JSONArray();
+
+					// remove any numbers/names after ?'s in the sql so it makes sense to jdbc
+					sql = unspecifySqlSlots(sql);
 
 					// trim the sql
 					sql = sql.trim();
@@ -1180,7 +1186,7 @@ public class Database extends Action {
 		return true;
 	}
 
-	// returns all parameters for the sql by finding any ?'s followed by numbers/names and creating a longer parameter list populated with those mapped
+	// returns a list of all parameters for the sql by finding any ?'s followed by numbers/names and creating a longer parameter list populated with those mapped by index to the inputs - also used by designer sql check where the input names come from json
 	public static List<Integer> getParameterMap(String sql, List<String> inputNames, Application application, ServletContext context) throws SQLException {
 
 		// the parameter map we are making - it'll be size of the mapped parameters but hold the index back to the original ones
@@ -1317,10 +1323,11 @@ public class Database extends Action {
 
 	}
 
+	// returns a set of parameters the same size as the map, populated using the indexes in the map on the original parameters - also used by designer sql check
 	public static Parameters mapParameters(List<Integer> parameterMap, Parameters parameters) {
 
-		// only if we have what we need and parameters got mapped (the map is bigger)
-		if (parameterMap != null && parameters != null && parameterMap.size() > parameters.size()) {
+		// only if we have what we need and map is the same size or bigger
+		if (parameterMap != null && parameters != null && parameterMap.size() >= parameters.size()) {
 
 			// the longer list of parameters we'll be making using the numbers or names after the ?'s to map to the original inputs/parameters
 			Parameters mappedParameters = new Parameters();
