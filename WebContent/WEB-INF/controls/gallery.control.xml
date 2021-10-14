@@ -180,8 +180,6 @@ div.gallery .galleryItem {
 	opacity: 1;
 }
 
-
-
 #tools button:hover, #pallet button:hover {
 	background: #444;
 }
@@ -410,11 +408,11 @@ function addToImageControl(ev, control, filename, url, type) {
 		// only if we don't have the image alreay in there
 		if (addImage) {
 		
-			// assume no crossOrigin (which allows editing on Rapid Mobile)
+			// assume no crossOrigin (which allows editing on Rapid Mobile 2.5.1+)
 			var crossOrigin = "";
 			
-			// if we're in Rapid Mobile
-			if (typeof _rapidmobile != "undefined") {
+			// if we're in Rapid Mobile 2.5.1+
+			if (typeof _rapidmobile != "undefined" && _rapidmobile.getVersion() >= 2) {
 			
 				// if it starts with http
 				if (filename.indexOf("http") == 0) {
@@ -430,11 +428,10 @@ function addToImageControl(ev, control, filename, url, type) {
 				}
 			
 			}
+				
+			// add the correct type of element (img or video) with the url
+			control.append("<" + type + " class='galleryItem' src='" + (url || filename) + "' data-filename='" + filename + "'" + crossOrigin + "/>");
 			
-			
-			// add an image element with the url
-			control.append("<" + type + " class='galleryItem' src='" + (url || filename) + "' data-filename='" + filename + "'" + crossOrigin + ">");
-
 			// remember we set an image in the gallery
 			imageSet = true;
 			
