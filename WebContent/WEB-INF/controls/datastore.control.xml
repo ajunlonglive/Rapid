@@ -109,7 +109,7 @@ function getDataStoreData(id, details, field) {
 	return data;
 }	                
 
-function saveDataStoreData(id, details, data) {
+function saveDataStoreData(id, details, data, changeEvents) {
 	switch (details.storageType) {
 		case "L":
 			// use localStorage
@@ -124,8 +124,10 @@ function saveDataStoreData(id, details, data) {
 			window[id + "datastore"] = data;
 		break;
 	}
-	var f = window["Event_change_" + id];
-	if (f) f($.Event("change"));
+	if (changeEvents) {
+		var f = window["Event_change_" + id];
+		if (f) f($.Event("change"));
+	}
 }
 
 
@@ -214,9 +216,9 @@ return data;
 if (details.id) id = details.id;
 if (data != null && data !== undefined) {
 	data = makeDataObject(data, field);
-	saveDataStoreData(id, details, data);
+	saveDataStoreData(id, details, data, changeEvents);
 } else {
-	saveDataStoreData(id, details, null);
+	saveDataStoreData(id, details, null, changeEvents);
 }
 			]]>
 	    </setDataJavaScript>
