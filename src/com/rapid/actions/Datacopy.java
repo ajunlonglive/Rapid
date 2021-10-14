@@ -375,8 +375,12 @@ public class Datacopy extends Action {
 
 										} // this and next are row merge check
 
+										// get the details into variable
+										js += "var details = " + details + ";\n";
+										// retain that this is bulk so we can turn on the noFieldMatch
+										js += "details.copyType = 'bulk';\n";
 										// do the data copy
-										js += "Action_datacopy(ev, data, [{id:'" + destinationId + "', type:'" + destinationControl.getType() + "', field:" + destinationField + ", details:" + details + "}], " + changeEvents + type + ");\n";
+										js += "Action_datacopy(ev, data, [{id:'" + destinationId + "', type:'" + destinationControl.getType() + "', field:" + destinationField + ", details:details}], " + changeEvents + type + ");\n";
 
 									}
 
@@ -537,8 +541,6 @@ public class Datacopy extends Action {
 
 						// add the copy type to the js
 						js += ", '" + copyType + "'";
-
-
 
 						// check the copy type
 						if ("row".equals(copyType)) {

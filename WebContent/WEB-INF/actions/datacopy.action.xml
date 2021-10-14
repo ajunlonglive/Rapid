@@ -280,8 +280,14 @@ function Action_datacopy(ev, data, outputs, changeEvents, copyType, copyData, fi
 							alert("Function to set " + output.type + " " + idParts[1] + " can't be found");
 						}
 					} else {
-						// set noFieldMatch to false, just in case default behavour is required to the default get data at some point after using a property
-						output.details.noFieldMatch = false;						
+						// if this is from a bulk copy
+						if (output.details.copyType == "bulk") {
+							// set noFieldMatch to true as it is not available to select with bulk
+							output.details.noFieldMatch = true;
+						} else {
+							// set noFieldMatch to false, just in case default behavour is required to the default get data at some point after using a property
+							output.details.noFieldMatch = false;
+						}						
 						// get the merge data with the main get data method
 						if (window["getData_" + output.type]) {
 							mergeData = window["getData_" + output.type](ev, outputId, null, output.details);
