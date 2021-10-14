@@ -378,7 +378,7 @@ public class Datacopy extends Action {
 										// get the details into variable
 										js += "var details = " + details + ";\n";
 										// retain that this is bulk so we can turn on the noFieldMatch
-										js += "if (details) details.copyType = 'bulk' else details = {copyType:'bulk'};\n";
+										js += "details ? details.copyType = 'bulk' : details = {copyType:'bulk'};\n";
 										// do the data copy
 										js += "Action_datacopy(ev, data, [{id:'" + destinationId + "', type:'" + destinationControl.getType() + "', field:" + destinationField + ", details:details}], " + changeEvents + type + ");\n";
 
