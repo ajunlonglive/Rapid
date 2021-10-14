@@ -447,7 +447,7 @@ function setMapCentre(map, pos) {
 }
 
 // add a map marker, used by both the addMapMarkers function (from the properties), and the getPosition callback
-function addMapMarker(map, pos, details, data, rowIndex, zoomMarkers) {
+function addMapMarker(map, pos, details, data, rowIndex, zoomMarkers, markersAddedCallback) {
 	// skip if no lat and lng - but we might be coming back if we then searched
 	if (map && pos && pos.lat && pos.lng) {
 
@@ -550,18 +550,23 @@ function addMapMarker(map, pos, details, data, rowIndex, zoomMarkers) {
 				map.fitBounds(bounds);
 			}
 			
+			markersAddedCallback();
+			
 		} // finished markers check
 		
 	}
-	
 }
 
 // adds markers to a map, used by add markers and replace markers
-function addMapMarkers(map, data, details, zoomMarkers) {
+function addMapMarkers(map, data, details, zoomMarkers, markersAddedCallback) {
 	if (data && data.rows) {
+		// only call markersAddedCallback once after all markers have been added
 		for (var i in data.rows) {
-			var pos = getMapPosition(data, i, addMapMarker, map, details, zoomMarkers);
-			addMapMarker(map, pos, details, data, i, zoomMarkers);
+			var pos = getMapPosition(data, i,
+				function(map, pos, details, data, rowIndex, zoomMarkers) { addMapMarker(map, pos, details, data, rowIndex, zoomMarkers, markersAddedCallback) },
+				map, details, zoomMarkers
+			);
+			addMapMarker(map, pos, details, data, i, zoomMarkers, markersAddedCallback);
 		}
 	}
 }            
