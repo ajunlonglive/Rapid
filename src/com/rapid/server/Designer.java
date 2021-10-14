@@ -87,7 +87,6 @@ import com.rapid.core.Pages.PageHeaders;
 import com.rapid.core.Theme;
 import com.rapid.core.Workflow;
 import com.rapid.core.Workflows;
-import com.rapid.data.ConnectionAdapter;
 import com.rapid.data.DataFactory;
 import com.rapid.data.DataFactory.Parameters;
 import com.rapid.data.DatabaseConnection;
@@ -368,11 +367,14 @@ public class Designer extends RapidHttpServlet {
 		// get request as Rapid request
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 
+		// retain the servlet context
+		ServletContext context = rapidRequest.getServletContext();
+
 		// get a reference to our logger
 		Logger logger = getLogger();
 
 		// if monitor is alive then log the event
-		if(_monitor!=null && _monitor.isAlive(rapidRequest.getRapidServlet().getServletContext()) && _monitor.isLoggingAll())
+		if(_monitor != null && _monitor.isAlive(context) && _monitor.isLoggingAll())
 			_monitor.openEntry();
 
 		// we will store the length of the item we are adding
@@ -408,7 +410,7 @@ public class Designer extends RapidHttpServlet {
 					if (rapidSecurity.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) {
 
 						// whether we're trying to avoid caching
-				    	boolean noCaching = Boolean.parseBoolean(getServletContext().getInitParameter("noCaching"));
+				    	boolean noCaching = Boolean.parseBoolean(context.getInitParameter("noCaching"));
 
 				    	if (noCaching) {
 
@@ -444,7 +446,7 @@ public class Designer extends RapidHttpServlet {
 							jsonSystemData.put("localDateFormat", getLocalDateFormat());
 
 							// look for a controlAndActionSuffix
-							String controlAndActionSuffix = request.getServletContext().getInitParameter("controlAndActionSuffix");
+							String controlAndActionSuffix = context.getInitParameter("controlAndActionSuffix");
 							// update to empty string if not present - this is the default and expected for older versions of the web.xml
 							if (controlAndActionSuffix == null) controlAndActionSuffix = "";
 							// add the controlAndActionPrefix
@@ -676,7 +678,7 @@ public class Designer extends RapidHttpServlet {
 											// create a json object for the images
 											JSONArray jsonImages = new JSONArray();
 											// get the directory in which the control xml files are stored
-											File dir = new File (application.getWebFolder(getServletContext()));
+											File dir = new File (application.getWebFolder(context));
 											// if it exists (might not if deleted from the file system and apps not refreshed)
 											if (dir.exists()) {
 
@@ -772,13 +774,13 @@ public class Designer extends RapidHttpServlet {
 								JSONArray jsonPages = new JSONArray();
 
 								String startPageId = "";
-								Page startPage = application.getStartPage(getServletContext());
+								Page startPage = application.getStartPage(context);
 								if (startPage != null) startPageId = startPage.getId();
 
 								// loop the page headers
 								for (PageHeader pageHeader : application.getPages().getSortedPages()) {
 									// get the page - yip this means that apps loaded in the designer load all of their pages
-									Page page = application.getPages().getPage(getServletContext(), pageHeader.getId());
+									Page page = application.getPages().getPage(context, pageHeader.getId());
 									// create a simple json object for the page
 									JSONObject jsonPage = new JSONObject();
 									// add simple properties
@@ -868,7 +870,7 @@ public class Designer extends RapidHttpServlet {
 								if (user != null) if (user.getDescription() != null) userDescription = user.getDescription();
 
 								// remove any existing page locks for this user
-								application.removeUserPageLocks(getServletContext(), userName);
+								application.removeUserPageLocks(context, userName);
 
 								// check the page lock (which removes it if it has expired)
 								page.checkLock();
@@ -902,7 +904,7 @@ public class Designer extends RapidHttpServlet {
 								}
 
 								// add the css
-								jsonPage.put("css", page.getAllCSS(getServletContext(), application));
+								jsonPage.put("css", page.getAllCSS(context, application));
 
 								// add the device as page properties (even though we store this in the app)
 								jsonPage.put("device", 1);
@@ -913,7 +915,7 @@ public class Designer extends RapidHttpServlet {
 								jsonPage.put("formPageType", page.getFormPageType());
 
 								// get any theme
-								Theme theme = application.getTheme(getServletContext());
+								Theme theme = application.getTheme(context);
 								// if there was one
 								if (theme != null) {
 									// check for headerHtmlDesigner
@@ -943,7 +945,7 @@ public class Designer extends RapidHttpServlet {
 									// if we are loading a specific page and need to know any other components for it and this is not the destination page itself
 									if (!pageId.equals(pageHeader.getId())) {
 										// get the other page
-										Page otherPage = application.getPages().getPage(getServletContext(), pageHeader.getId());
+										Page otherPage = application.getPages().getPage(context, pageHeader.getId());
 										// get the list of pages we can open a dialogue to on this page
 										List<String> dialoguePageIds = otherPage.getDialoguePageIds();
 										// if designerPageId is provided and this page is different from the one we're loading in the designer
@@ -1155,7 +1157,7 @@ public class Designer extends RapidHttpServlet {
 							PageHeaders pageHeaders = application.getPages().getSortedPages();
 
 							// get the root path
-							String rootPath = getServletContext().getRealPath("/");
+							String rootPath = context.getRealPath("/");
 
 							// get the root file
 							File root = new File(rootPath);
@@ -1213,7 +1215,7 @@ public class Designer extends RapidHttpServlet {
 							for (PageHeader pageHeader : pageHeaders) {
 
 								// get the page
-								Page page = application.getPages().getPage(getServletContext(), pageHeader.getId());
+								Page page = application.getPages().getPage(context, pageHeader.getId());
 
 								// if a specific page has been asked for continue until it comes up
 								if (pageId != null && !page.getId().equals(pageId)) continue;
@@ -1240,7 +1242,7 @@ public class Designer extends RapidHttpServlet {
 											// get the condition
 											Logic.Condition condition = visibilityConditions.get(i);
 											// get value 1
-											Control control1 = application.getControl(getServletContext(), condition.getValue1().getId());
+											Control control1 = application.getControl(context, condition.getValue1().getId());
 											// if we got one print it's name
 											if (control1 == null) {
 												out.print(condition.getValue1().toString().replace("System.field/", ""));
@@ -1250,7 +1252,7 @@ public class Designer extends RapidHttpServlet {
 											// print operation
 											out.print(" " + condition.getOperation() + " ");
 											// get control 2
-											Control control2 = application.getControl(getServletContext(), condition.getValue2().getId());
+											Control control2 = application.getControl(context, condition.getValue2().getId());
 											// if we got one print it's name
 											if (control2 == null) {
 												out.print(condition.getValue2().toString().replace("System.field/", ""));
@@ -1576,9 +1578,6 @@ public class Designer extends RapidHttpServlet {
 							// check we have admin too
 							if (rapidSecurity.checkUserRole(rapidRequest, Rapid.ADMIN_ROLE)) {
 
-								// retain the ServletContext
-								ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
-
 								// get the suffix
 								String suffix = rapidRequest.getRapidServlet().getControlAndActionSuffix();
 
@@ -1595,7 +1594,7 @@ public class Designer extends RapidHttpServlet {
 								PageHeaders pageHeaders = application.getPages().getSortedPages();
 
 								// get the pages config folder
-								File appPagesFolder = new File(application.getConfigFolder(servletContext) + "/pages");
+								File appPagesFolder = new File(application.getConfigFolder(context) + "/pages");
 
 								// check it exists
 								if (appPagesFolder.exists()) {
@@ -1604,7 +1603,7 @@ public class Designer extends RapidHttpServlet {
 									for (PageHeader pageHeader : pageHeaders) {
 
 										// get the page
-										Page page = application.getPages().getPage(getServletContext(), pageHeader.getId());
+										Page page = application.getPages().getPage(context, pageHeader.getId());
 
 										// print the page name and id
 										out.print("\nPage : " + page.getName() + "/" + page.getId() + "\n\n");
@@ -1692,13 +1691,13 @@ public class Designer extends RapidHttpServlet {
 									} //page loop
 
 									// get the application file
-									File applicationFile = new File(application.getConfigFolder(servletContext) + "/application.xml");
+									File applicationFile = new File(application.getConfigFolder(context) + "/application.xml");
 
 									// if it exists
 									if (applicationFile.exists()) {
 
 										// reload the application from file
-										Application reloadedApplication = Application.load(servletContext, applicationFile, true);
+										Application reloadedApplication = Application.load(context, applicationFile, true);
 
 										// replace it into the applications collection
 										getApplications().put(reloadedApplication);
@@ -1760,13 +1759,13 @@ public class Designer extends RapidHttpServlet {
 			responseLength += output.length();
 
 			// if monitor is alive then log the event
-			if(_monitor!=null && _monitor.isAlive(rapidRequest.getRapidServlet().getServletContext()) && _monitor.isLoggingAll())
+			if(_monitor != null && _monitor.isAlive(context) && _monitor.isLoggingAll())
 				_monitor.commitEntry(rapidRequest, response, responseLength);
 
 		} catch (Exception ex) {
 
 			// if monitor is alive then log the event
-			if(_monitor!=null && _monitor.isAlive(rapidRequest.getRapidServlet().getServletContext()) && _monitor.isLoggingExceptions())
+			if(_monitor != null && _monitor.isAlive(context) && _monitor.isLoggingExceptions())
 				_monitor.commitEntry(rapidRequest, response, responseLength, ex.getMessage());
 
 			logger.debug("Designer GET error : " + ex.getMessage(), ex);
@@ -1816,17 +1815,14 @@ public class Designer extends RapidHttpServlet {
 		// get the rapid request
 		RapidRequest rapidRequest = new RapidRequest(this, request);
 
-		// get the rapidServlet
-		RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
-
 		// retain the servlet context
-		ServletContext context = rapidServlet.getServletContext();
+		ServletContext context = rapidRequest.getServletContext();
 
 		// get a reference to our logger
 		Logger logger = getLogger();
 
 		// if monitor is alive then log the event
-		if(_monitor!=null && _monitor.isAlive(rapidRequest.getRapidServlet().getServletContext()) && _monitor.isLoggingAll())
+		if (_monitor != null && _monitor.isAlive(context) && _monitor.isLoggingAll())
 			_monitor.openEntry();
 
 		// we will store the length of the item we are adding
@@ -1994,7 +1990,7 @@ public class Designer extends RapidHttpServlet {
 								if (jsonRoleControlHtml != null) newPage.setRoleControlHtml(new RoleControlHtml(jsonRoleControlHtml));
 
 								// fetch a copy of the old page (if there is one)
-								Page oldPage = application.getPages().getPage(getServletContext(), newPage.getId());
+								Page oldPage = application.getPages().getPage(context, newPage.getId());
 								// if the page's name changed we need to remove it
 								if (oldPage != null) {
 									if (!oldPage.getName().equals(newPage.getName())) {
@@ -2049,9 +2045,9 @@ public class Designer extends RapidHttpServlet {
 
 								boolean childQuery = jsonQuery.optBoolean("childQuery");
 
-								int index = jsonQuery.optInt("databaseConnectionIndex",0);
+								int databaseConnectionIndex = jsonQuery.optInt("databaseConnectionIndex",0);
 
-								if (application.getDatabaseConnections() == null || index > application.getDatabaseConnections().size() - 1) {
+								if (application.getDatabaseConnections() == null || databaseConnectionIndex > application.getDatabaseConnections().size() - 1) {
 
 									throw new Exception("Database connection cannot be found.");
 
@@ -2066,12 +2062,10 @@ public class Designer extends RapidHttpServlet {
 
 									} else {
 
-										DatabaseConnection databaseConnection = application.getDatabaseConnections().get(index);
+										// make a data factory for the connection with that index with auto-commit false
+										DataFactory df = new DataFactory(context, application, databaseConnectionIndex, false);
 
-										ConnectionAdapter ca = databaseConnection.getConnectionAdapter(getServletContext(), application);
-
-										DataFactory df = new DataFactory(ca);
-
+										// assume no outputs
 										int outputs = 0;
 
 										// if got some outputs reduce the check count for any duplicates
@@ -2102,7 +2096,7 @@ public class Designer extends RapidHttpServlet {
 										sql = sql.trim();
 
 										// merge in any parameters
-										sql = application.insertParameters(getServletContext(), sql);
+										sql = application.insertParameters(context, sql);
 
 										// some jdbc drivers need the line breaks removing before they'll work properly - here's looking at you MS SQL Server!
 										sql = sql.replace("\n", " ");
@@ -2161,7 +2155,7 @@ public class Designer extends RapidHttpServlet {
 												PreparedStatement ps = df.getPreparedStatement(rapidRequest, sql, parameters);
 
 												// get the jdbc connection string
-												String connString = databaseConnection.getConnectionString();
+												String connString = df.getConnectionString();
 
 												// execute the statement - required by Oracle, but not MS SQL, causes "JDBC: inconsistent internal state" for SQLite
 												if (!connString.toLowerCase().contains("jdbc:sqlite:")) ps.execute();
@@ -2222,6 +2216,8 @@ public class Designer extends RapidHttpServlet {
 
 												// close the recordset
 												ps.close();
+												// rollback anything
+												df.rollback();
 												// close the data factory
 												df.close();
 
@@ -2306,7 +2302,7 @@ public class Designer extends RapidHttpServlet {
 									if (!fileType.equals("image/jpeg") && !fileType.equals("image/gif") && !fileType.equals("image/png") && !fileType.equals("image/svg+xml") && !fileType.equals("application/pdf")) throw new Exception("Unsupported file type");
 
 									// get the web folder from the application
-									String path = rapidRequest.getApplication().getWebFolder(getServletContext());
+									String path = rapidRequest.getApplication().getWebFolder(context);
 									// create a file output stream to save the data to
 									FileOutputStream fos = new FileOutputStream (path + "/" +  filename);
 									// write the file data to the stream
@@ -2347,9 +2343,9 @@ public class Designer extends RapidHttpServlet {
 									appVersion = Files.safeName(appVersion);
 
 									// get application destination folder
-									File appFolderDest = new File(Application.getConfigFolder(getServletContext(), appId, appVersion));
+									File appFolderDest = new File(Application.getConfigFolder(context, appId, appVersion));
 									// get web contents destination folder
-									File webFolderDest = new File(Application.getWebFolder(getServletContext(), appId, appVersion));
+									File webFolderDest = new File(Application.getWebFolder(context, appId, appVersion));
 
 									// look for an existing application of this name and version
 									Application existingApplication = getApplications().get(appId, appVersion);
@@ -2360,12 +2356,12 @@ public class Designer extends RapidHttpServlet {
 									}
 
 									// get a file for the temp directory
-									File tempDir = new File(getServletContext().getRealPath("/") + "WEB-INF/temp");
+									File tempDir = new File(context.getRealPath("/") + "WEB-INF/temp");
 									// create it if not there
 									if (!tempDir.exists()) tempDir.mkdir();
 
 									// the path we're saving to is the temp folder
-									String path = getServletContext().getRealPath("/") + "/WEB-INF/temp/" + appId + ".zip";
+									String path = context.getRealPath("/") + "/WEB-INF/temp/" + appId + ".zip";
 									// create a file output stream to save the data to
 									FileOutputStream fos = new FileOutputStream (path);
 									// write the file data to the stream
@@ -2386,11 +2382,11 @@ public class Designer extends RapidHttpServlet {
 									zipFile.delete();
 
 									// unzip folder (for deletion)
-									File unZipFolder = new File(getServletContext().getRealPath("/") + "/WEB-INF/temp/" + appId);
+									File unZipFolder = new File(context.getRealPath("/") + "/WEB-INF/temp/" + appId);
 									// get application folders
-									File appFolderSource = new File(getServletContext().getRealPath("/") + "/WEB-INF/temp/" + appId + "/WEB-INF");
+									File appFolderSource = new File(context.getRealPath("/") + "/WEB-INF/temp/" + appId + "/WEB-INF");
 									// get web content folders
-									File webFolderSource = new File(getServletContext().getRealPath("/") + "/WEB-INF/temp/" + appId + "/WebContent");
+									File webFolderSource = new File(context.getRealPath("/") + "/WEB-INF/temp/" + appId + "/WebContent");
 
 									// check we have the right source folders
 									if (webFolderSource.exists() && appFolderSource.exists()) {
@@ -2414,7 +2410,7 @@ public class Designer extends RapidHttpServlet {
 											try {
 
 												// load the new application (but don't initialise, nor load pages)
-												Application appNew = Application.load(getServletContext(), new File (appFolderDest + "/application.xml"), false);
+												Application appNew = Application.load(context, new File (appFolderDest + "/application.xml"), false);
 
 												// update application name
 												appNew.setName(appName);
@@ -2640,7 +2636,7 @@ public class Designer extends RapidHttpServlet {
 												}
 
 												// now initialise with the new id but don't make the resource files (this reloads the pages and sets up the security adapter)
-												appNew.initialise(getServletContext(), false);
+												appNew.initialise(context, false);
 
 												// get the security for this application
 												SecurityAdapter security = appNew.getSecurityAdapter();
@@ -2699,7 +2695,7 @@ public class Designer extends RapidHttpServlet {
 													security.addUserRole(importRapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 
 												// reload the pages (actually clears down the pages collection and reloads the headers)
-												appNew.getPages().loadpages(getServletContext());
+												appNew.getPages().loadpages(context);
 
 												// save application (this will also initialise and rebuild the resources)
 												long fileSize = appNew.save(this, rapidRequest, false);
@@ -2777,7 +2773,7 @@ public class Designer extends RapidHttpServlet {
 			} // got rapid application
 
 			// if monitor is alive then log the event
-			if (_monitor != null && _monitor.isAlive(rapidRequest.getRapidServlet().getServletContext()) && _monitor.isLoggingAll()) {
+			if (_monitor != null && _monitor.isAlive(context) && _monitor.isLoggingAll()) {
 				_monitor.setDetails(monitorEntryDetails);
 				_monitor.commitEntry(rapidRequest, response, responseLength);
 			}
@@ -2785,7 +2781,7 @@ public class Designer extends RapidHttpServlet {
 		} catch (Exception ex) {
 
 			// if monitor is alive then log the event
-			if (_monitor != null && _monitor.isAlive(rapidRequest.getRapidServlet().getServletContext()) && _monitor.isLoggingExceptions()) {
+			if (_monitor != null && _monitor.isAlive(context) && _monitor.isLoggingExceptions()) {
 				_monitor.setDetails(monitorEntryDetails);
 				_monitor.commitEntry(rapidRequest, response, responseLength, ex.getMessage());
 			}
