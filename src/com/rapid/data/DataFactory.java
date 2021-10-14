@@ -27,6 +27,7 @@ package com.rapid.data;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
@@ -39,6 +40,9 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
+import com.rapid.core.Application;
 import com.rapid.data.ConnectionAdapter.ConnectionAdapterException;
 import com.rapid.server.RapidRequest;
 
@@ -318,20 +322,60 @@ public class DataFactory {
 
 	// constructors
 
-	public DataFactory(ConnectionAdapter connectionAdapter) {
-		_connectionAdapter = connectionAdapter;
-		_autoCommit = true;
-	}
-
+	// standard "old" constructor with connection adapter and auto commit
 	public DataFactory(ConnectionAdapter connectionAdapter, boolean autoCommit) {
 		_connectionAdapter = connectionAdapter;
 		_autoCommit = autoCommit;
+	}
+
+	// overload for the above with autoCommit set to true
+	public DataFactory(ConnectionAdapter connectionAdapter) {
+		this(connectionAdapter, true);
+	}
+
+	// "new" constructor with database connection
+	public DataFactory(ServletContext servletContext, Application application, DatabaseConnection databaseConnection, boolean autoCommit) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		// get it's connection adapter
+		ConnectionAdapter connectionAdapter = databaseConnection.getConnectionAdapter(servletContext, application);
+		// retain what we need
+		_connectionAdapter = connectionAdapter;
+		_autoCommit = autoCommit;
+	}
+
+	// overload for the above with autoCommit set to true
+	public DataFactory(ServletContext servletContext, Application application, DatabaseConnection databaseConnection) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		this(servletContext, application, databaseConnection, true);
+	}
+
+	// "new" constructor with database connection index
+	public DataFactory(ServletContext servletContext, Application application, int databaseConnectionIndex, boolean autoCommit) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		// get the database connection
+		DatabaseConnection databaseConnection = application.getDatabaseConnections().get(databaseConnectionIndex);
+		// get it's connection adapter
+		ConnectionAdapter connectionAdapter = databaseConnection.getConnectionAdapter(servletContext, application);
+		// retain what we need
+		_connectionAdapter = connectionAdapter;
+		_autoCommit = autoCommit;
+	}
+
+	// overload for the above with autoCommit set to true
+	public DataFactory(ServletContext servletContext, Application application, int databaseConnectionIndex) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		this(servletContext, application, databaseConnectionIndex, true);
+	}
+
+	// overload for the above with first database and autoCommit set to true
+	public DataFactory(ServletContext servletContext, Application application) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		this(servletContext, application, 0, true);
 	}
 
 	// public methods
 
 	public ConnectionAdapter getConnectionAdapter() {
 		return _connectionAdapter;
+	}
+
+	public String getConnectionString() {
+		return _connectionAdapter.getConnectionString();
 	}
 
 	public Connection getConnection(RapidRequest rapidRequest) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
