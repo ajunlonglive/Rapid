@@ -254,6 +254,12 @@ public class Application {
 			_value = value;
 		}
 
+		// override
+		@Override
+		public String toString() {
+			return _name + " = " + _value + (_description == null ? "" : " (" + _description + ")");
+		}
+
 	}
 
 	// application and page backups
@@ -966,10 +972,12 @@ public class Application {
 					if (string.contains("[[configfolder]]")) string = string.replace("[[configfolder]]", getConfigFolder(servletContext, _id, _version));
 					// root folder is WEB-INF
 					if (string.contains("[[rootfolder]]")) string = string.replace("[[rootfolder]]", servletContext.getRealPath("/") + "/WEB-INF/");
+					// get the parameters according any settings
+					List<Parameter> parameters = this.getParameters();
 					// if we have parameters
-					if (_parameters != null) {
+					if (parameters != null) {
 						// loop them
-						for (Parameter parameter : _parameters) {
+						for (Parameter parameter : parameters) {
 							// define the match string
 							String matchString = "[[" + parameter.getName() + "]]";
 							// if the match string is present replace it with the value
