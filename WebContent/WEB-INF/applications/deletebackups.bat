@@ -1,2 +1,2 @@
-rem find all directories called _backups and delete them and their contents
+rem find all directories called _backups and delete them and their contents, the %% is required to escape in this batch file, use just one on the command line
 FOR /d /r . %%d IN (_backups) DO @IF EXIST "%%d" rd /s /q "%%d"
