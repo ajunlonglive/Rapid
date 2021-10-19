@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2016 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -36,24 +36,26 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import org.apache.commons.codec.binary.Hex;
+
 public class Strings {
 
 	// reads a string from a buffered reader
 	public static String getString(BufferedReader reader) throws IOException {
 
-        String line = null;
-        StringBuilder stringBuilder = new StringBuilder();
-        String ls = System.getProperty("line.separator");
+		String line = null;
+		StringBuilder stringBuilder = new StringBuilder();
+		String ls = System.getProperty("line.separator");
 
-        try {
-	        while( ( line = reader.readLine() ) != null ) {
-	            stringBuilder.append( line );
-	            stringBuilder.append( ls );
-	        }
-	        return stringBuilder.toString();
-	    } finally {
-	        reader.close();
-	    }
+		try {
+			while( ( line = reader.readLine() ) != null ) {
+				stringBuilder.append( line );
+				stringBuilder.append( ls );
+			}
+			return stringBuilder.toString();
+		} finally {
+			reader.close();
+		}
 
 	}
 
@@ -61,7 +63,7 @@ public class Strings {
 	public static String getString(InputStream is) throws IOException {
 
 		BufferedReader reader = new BufferedReader( new InputStreamReader( is, "UTF-8"));
-        return getString(reader);
+		return getString(reader);
 
 	}
 
@@ -77,9 +79,9 @@ public class Strings {
 
 		Writer out = new BufferedWriter(new OutputStreamWriter(	new FileOutputStream(file), "UTF-8"));
 		try {
-		    out.write(text);
+			out.write(text);
 		} finally {
-		    out.close();
+			out.close();
 		}
 
 	}
@@ -104,6 +106,124 @@ public class Strings {
 		}
 		// return
 		return count;
+	}
+	
+	public static String toRGB(int number) {
+		int hash = hash32(number);
+		// int to string
+		String c = Integer.toString(hash & 0x00FFFFFF, 16).toUpperCase();
+		return c.length() < 6 ?
+			toRGB(hash) :
+			"#" + c.substring(c.length() - 6, c.length());
+	}
+	
+	public static String toSaturatedRGB(int number) {
+		
+		int hashR = hash32(number);
+		int hashG = hash32(hashR);
+		int hashB = hash32(hashG);
+		
+		// clamp values to range 0 to MAX_VALUE
+		hashR = Math.abs(hashR);
+		hashG = Math.abs(hashG);
+		hashB = Math.abs(hashB);
+		
+		int min = Math.min(Math.min(hashR, hashG), hashB);
+		int max = Math.max(Math.max(hashR, hashG), hashB);
+		int range = max - min;
+		double scale = new Double(Integer.MAX_VALUE / 2) / new Double(range);
+		
+		// translate so min is 0
+		hashR = hashR - min;
+		hashG = hashG - min;
+		hashB = hashB - min;
+		
+		// scale so max is MAX_VALUE
+		double DhashR = new Double(hashR) * scale;
+		double DhashG = new Double(hashG) * scale;
+		double DhashB = new Double(hashB) * scale;
+		
+		byte BhashR = (byte) DhashR;
+		byte BhashG = (byte) DhashG;
+		byte BhashB = (byte) DhashB;
+		
+		String hexString = Hex.encodeHexString(new byte[] {BhashR, BhashG, BhashB});
+		return "#" + hexString;
+	}
+	
+	public static String toRGB(String string) {
+		return toRGB(string.hashCode());
+	}
+	
+	
+	// murmurhash-java
+	// Credit to Viliam Holub
+	// https://github.com/tnm/murmurhash-java
+	
+	public static int hash32(final byte[] data, int length, int seed) {
+		// 'm' and 'r' are mixing constants generated offline.
+		// They're not really 'magic', they just happen to work well.
+		final int m = 0x5bd1e995;
+		final int r = 24;
+
+		// Initialize the hash to a random value
+		int h = seed^length;
+		int length4 = length/4;
+
+		for (int i=0; i<length4; i++) {
+			final int i4 = i*4;
+			int k = (data[i4+0]&0xff) +((data[i4+1]&0xff)<<8)
+					+((data[i4+2]&0xff)<<16) +((data[i4+3]&0xff)<<24);
+			k *= m;
+			k ^= k >>> r;
+			k *= m;
+			h *= m;
+			h ^= k;
+		}
+		
+		// Handle the last few bytes of the input array
+		switch (length%4) {
+		case 3: h ^= (data[(length&~3) +2]&0xff) << 16;
+		case 2: h ^= (data[(length&~3) +1]&0xff) << 8;
+		case 1: h ^= (data[length&~3]&0xff);
+				h *= m;
+		}
+
+		h ^= h >>> 13;
+		h *= m;
+		h ^= h >>> 15;
+
+		return h;
+	}
+	
+	/** 
+	 * Generates 32 bit hash from byte array with default seed value.
+	 * 
+	 * @param data byte array to hash
+	 * @param length length of the array to hash
+	 * @return 32 bit hash of the given array
+	 */
+	public static int hash32(final byte[] data, int length) {
+		return hash32(data, length, 0x9747b28c); 
+	}
+
+	/** 
+	 * Generates 32 bit hash from a string.
+	 * 
+	 * @param text string to hash
+	 * @return 32 bit hash of the given string
+	 */
+	public static int hash32(final String text) {
+		final byte[] bytes = text.getBytes(); 
+		return hash32(bytes, bytes.length);
+	}
+	
+	// end of murmurhash-java
+	
+	public static int hash32(final Number number) {
+		String text = number.toString();
+		final byte[] bytes = text.getBytes(); 
+		return hash32(bytes, bytes.length);
 	}
 
 }
