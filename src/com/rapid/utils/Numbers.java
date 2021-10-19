@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2015 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -73,6 +73,16 @@ public class Numbers {
 	        }
 	    }
 	    return true;
+	}
+	
+	public static final String pad(int length, Object number, String padder) {
+		return number.toString().length() >= length ?
+			number.toString() :
+			pad(length, padder + number, padder);
+	}
+	
+	public static final String pad(int length, Object number) {
+		return pad(length, number, "0");
 	}
 
 }
