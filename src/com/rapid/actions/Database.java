@@ -751,11 +751,14 @@ public class Database extends Action {
 					// trim the sql
 					sql = sql.trim();
 
+					// clean the sql for checking - it has been trimmed already (declare is the longest we're looking for so far)
+					String sqlCheck = sql.toLowerCase().replace(" ", "").substring(0, 7);
+
 					// check the verb
-					if (sql.toLowerCase().startsWith("select") || sql.toLowerCase().startsWith("with") || sql.toLowerCase().startsWith("exec")) {
+					if (sqlCheck.startsWith("select") || sqlCheck.startsWith("with") || sqlCheck.startsWith("exec")) {
 
 						// if select set readonly to true (makes for faster querying) - but not for SQLite as it throws an exception if done after the connection is established
-						if (sql.toLowerCase().startsWith("select") && !df.getConnectionAdapter().getConnectionString().toLowerCase().contains("sqlite")) df.setReadOnly(true);
+						if (sqlCheck.startsWith("select") && !df.getConnectionAdapter().getConnectionString().toLowerCase().contains("sqlite")) df.setReadOnly(true);
 
 						// got fields indicator
 						boolean gotFields = false;
@@ -877,6 +880,32 @@ public class Database extends Action {
 							} // check rs
 
 						} // parameters list loop - not sure whether this ever called
+
+					} else if (sqlCheck.startsWith("call") || sqlCheck.startsWith("{call")) {
+
+						// loop the parameterList getting a result set for each parameters (input row)
+						for (Parameters parameters : parametersList) {
+
+							// initialise the row
+							JSONArray jsonRow = new JSONArray();
+
+							// get the output parameters
+							Parameters outputParameters = df.executeCallableStatement(rapidRequest, sql, parameters);
+
+							// loop the output parameters
+							for (int i = 0; i < outputParameters.size(); i ++) {
+								// if the top row add a field for this, out1, out2, etc
+								if (jsonRows.length() == 0) jsonFields.put("out" + (i + 1));
+								// get the string value!
+								String value = outputParameters.get(i).getString();
+								// add it to the jsonRow
+								jsonRow.put(value);
+							}
+
+							// add the row to the result
+							jsonRows.put(jsonRow);
+
+						}
 
 					} else {
 
@@ -1307,15 +1336,20 @@ public class Database extends Action {
 				// remove it from the set to track that we've done it
 				parametersNumbers.remove(parameterIndex + 1);
 			} else {
-				throw new SQLException("Parameter " + (parameterIndex + 1) + " not provided in inputs list");
+				//throw new SQLException("Parameter " + (parameterIndex + 1) + " not provided in inputs list");
 			}
 
 		} // slot loop
 
 		// if there are any parameters left that weren't used by the query
 		if (parametersNumbers.size() > 0) {
-			int firstUnusedInputNumber = parametersNumbers.iterator().next();
-			throw new SQLException("Input " + firstUnusedInputNumber + " not used");
+			// except for call queries where the un-used parameters are assumed to be outputs
+			if (sql.trim().toLowerCase().replace(" ", "").startsWith("{call")) {
+				// get the position of the un-used parameter
+				int firstUnusedInputNumber = parametersNumbers.iterator().next();
+				// tell the designer
+				throw new SQLException("Input " + firstUnusedInputNumber + " not used");
+			}
 		}
 
 		// we're done!

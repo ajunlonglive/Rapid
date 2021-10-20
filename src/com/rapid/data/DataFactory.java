@@ -397,7 +397,23 @@ public class DataFactory {
 
 	// protected methods
 
-	protected void populateStatement(RapidRequest rapidRequest, PreparedStatement statement, List<Parameter> parameters, int startColumn, boolean checkParameters) throws SQLException {
+	protected ResultSet getFirstResultSet(PreparedStatement preparedStatement) throws SQLException {
+
+		preparedStatement.execute();
+
+		_resultset = preparedStatement.getResultSet();
+
+		while (_resultset == null && (preparedStatement.getMoreResults() || preparedStatement.getUpdateCount() > -1)) {
+			_resultset = preparedStatement.getResultSet();
+		}
+
+		return _resultset;
+
+	}
+
+	// public methods
+
+	public void populateStatement(RapidRequest rapidRequest, PreparedStatement statement, List<Parameter> parameters, int startColumn, boolean checkParameters) throws SQLException {
 
 		// get the parameter metadata - some jdbc drivers will return null, especially for more complex things like insert/update, or stored procedures
 		ParameterMetaData parameterMetaData = null;
@@ -506,22 +522,6 @@ public class DataFactory {
 
 	}
 
-	protected ResultSet getFirstResultSet(PreparedStatement preparedStatement) throws SQLException {
-
-		preparedStatement.execute();
-
-		_resultset = preparedStatement.getResultSet();
-
-		while (_resultset == null && (preparedStatement.getMoreResults() || preparedStatement.getUpdateCount() > -1)) {
-			_resultset = preparedStatement.getResultSet();
-		}
-
-		return _resultset;
-
-	}
-
-	// public methods
-
 	public PreparedStatement getPreparedStatement(RapidRequest rapidRequest, String sql, List<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException  {
 
 		// some jdbc drivers need various modifications to the sql
@@ -541,8 +541,10 @@ public class DataFactory {
 
 			_preparedStatement = _connection.prepareStatement(_sql);
 
-			// don't check parameter numbers for exec queries
-			populateStatement(rapidRequest, _preparedStatement, parameters, 0, !_sql.startsWith("exec"));
+			String sqlCheck = _sql.trim().toLowerCase().replace(" ", "");
+
+			// don't check parameter numbers for exec queries or call
+			populateStatement(rapidRequest, _preparedStatement, parameters, 0, !sqlCheck.startsWith("exec") && !sqlCheck.startsWith("begin") && !sqlCheck.startsWith("execute") && !sqlCheck.startsWith("{call"));
 
 		} catch (SQLException ex) {
 
@@ -647,14 +649,16 @@ public class DataFactory {
 
 	}
 
-	public int getPreparedUpdate(RapidRequest rapidRequest, String SQL, Object... parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+	// overload to the above with listable parameters
+	public int getPreparedUpdate(RapidRequest rapidRequest, String sql, Object... parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 
 		Parameters params = new Parameters(parameters);
 
-		return getPreparedUpdate(rapidRequest, SQL, params);
+		return getPreparedUpdate(rapidRequest, sql, params);
 
 	}
 
+	// the first column value of the first row
 	public String getPreparedScalar(RapidRequest rapidRequest, String sql, List<Parameter> parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 
 		String result = null;
@@ -719,11 +723,96 @@ public class DataFactory {
 
 	}
 
-	public String getPreparedScalar(RapidRequest rapidRequest, String SQL, Object... parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+	// overload to the above with listable parameters
+	public String getPreparedScalar(RapidRequest rapidRequest, String sql, Object... parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
 
 		Parameters params = new Parameters(parameters);
 
-		return getPreparedScalar(rapidRequest, SQL, params);
+		return getPreparedScalar(rapidRequest, sql, params);
+
+	}
+
+	// for use with Oracle "{ call ..." statments
+	public Parameters executeCallableStatement(RapidRequest rapidRequest, String sql, Parameters parameters) throws ClassNotFoundException, SQLException, ConnectionAdapterException {
+
+		// get the connection if we need to
+		if (_connection == null) _connection = getConnection(rapidRequest);
+
+		// Parameters we are about to return
+		Parameters outParameters = new Parameters();
+
+		// trim and retain the sql for good measure
+		sql = sql.trim();
+
+		// if the call does not have {}
+		if (!sql.startsWith("{")) sql = "{" + sql;
+		if (!sql.endsWith("}")) sql += "}";
+
+		// retain the sql
+		_sql = sql;
+
+		// get a callable statement for the call sql
+		CallableStatement cs = _connection.prepareCall(sql);
+
+		// retain it too
+		_preparedStatement = cs;
+
+		// get this statement's parameter meta data for the inputs and outputs - unfortunately all methods here seem to return "Unsupported feature" so we'll guess that inputs are first and outputs follow
+		ParameterMetaData pmd = cs.getParameterMetaData();
+
+		// loop our input parameters
+		for (int i = 0; i < parameters.size(); i ++) {
+			// set the in which we know is an in - at least setting it as a string (even though it's a number) works!
+			cs.setString(i + 1, parameters.get(i).toString());
+		}
+
+		// loop the remaining parameters (note the 1-based index)
+		for (int i = parameters.size() + 1; i <= pmd.getParameterCount(); i ++) {
+			// set the out
+			cs.registerOutParameter(i, java.sql.Types.VARCHAR);
+		}
+
+		try {
+
+			// execute
+			cs.executeUpdate();
+
+			// loop the remaining parameters  (note the 1-based index)
+			for (int i = parameters.size() + 1; i <= pmd.getParameterCount(); i ++) {
+				// get the string value!
+				String value = cs.getString(i);
+				// add it to the outParameters
+				outParameters.add(value);
+			}
+
+			// close the statement
+			cs.close();
+
+		} catch (Exception ex) {
+
+			// close the statement
+			cs.close();
+
+			// Oracle does not honour the auto commit = false in its own driver on error so manually roll back
+			if (_connection != null && !_autoCommit) _connection.rollback();
+
+			// close the connection
+			close();
+
+			throw new RethrownSQLException(ex);
+
+		}
+
+		return outParameters;
+
+	}
+
+	// overload to the above with listable parameters
+	public Parameters executeCallableStatement(RapidRequest rapidRequest, String sql, Object... parameters) throws SQLException, ClassNotFoundException, ConnectionAdapterException {
+
+		Parameters params = new Parameters(parameters);
+
+		return executeCallableStatement(rapidRequest, sql, params);
 
 	}
 
