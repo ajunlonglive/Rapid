@@ -36,7 +36,7 @@ var _rapidpwa = {
 
 // A version number is useful when updating the worker logic, allowing you to remove outdated cache entries during the update.
 
-var _swVersion = 'v1.10';
+var _swVersion = 'v1.11';
 
 // These resources will be downloaded and cached by the service worker during the installation process. If any resource fails to be downloaded, then the service worker won't be installed either.
 // We do not expect them to change much, so will request them when the service worker installs but not refresh the cache with the latest online fetch
@@ -61,12 +61,12 @@ var _rapidResources = [
 	"images/wand.svg",
 	"scripts/designlinks.js",
 	"scripts/extras.js",
-	"scripts/jquery-3.3.1.js",
+	"scripts/jquery-3.6.0.js",
 	"scripts/jquery-ui-1.12.1.js",
 	"scripts/json2.js",
 	"scripts_min/bootstrap.min.js",
 	"scripts_min/extras.min.js",
-	"scripts_min/jquery-3.3.1.min.js",
+	"scripts_min/jquery-3.6.0.min.js",
 	"scripts_min/jquery-touchSwipe-1.6.18.min.js",
 	"scripts_min/jquery-ui-1.12.1.min.js",
 	"styles/bootstrap.css",

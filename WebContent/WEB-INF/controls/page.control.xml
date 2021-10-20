@@ -206,7 +206,7 @@ return [[0,"Normal"],[1,"Submission confirmation"],[2,"Submission error"],[3,"Sa
 	    <resources>
 	        <resource>
 	            <type>javascriptFile</type>
-	            <contents>scripts/jquery-3.3.1.js</contents>
+	            <contents>scripts/jquery-3.6.0.js</contents>
 	        </resource>
 	        <resource>
 	            <type>javascriptFile</type>
