@@ -583,7 +583,14 @@ function fetchOrReject(url, options) {
 	return new Promise((resolve, reject) => {
 		fetch(url, options).then(freshResponse => {
 			if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect" || freshResponse.type === "basic")) {
-				resolve(freshResponse);
+				// if requesting a dialogue and receiving a login page
+				if (url.includes("action=dialogue") && options.redirect === "manual" && options.type === undefined && freshResponse.type === "opaqueredirect") {
+					fetchOrReject(url, { redirect: "follow", type: "opaqueredirect" })
+					.then(resolve)
+					.catch(reject);
+				} else {
+					resolve(freshResponse);
+				}
 			} else {
 				reject("Fetch failed for: " + url);
 			}
