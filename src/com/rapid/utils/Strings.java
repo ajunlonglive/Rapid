@@ -116,36 +116,25 @@ public class Strings {
 	}
 
 	public static String toSaturatedRGB(int number) {
-
-		int hashR = hash32(number);
-		int hashG = hash32(hashR);
-		int hashB = hash32(hashG);
-
+		
+		final int hashR = hash32(number + 1);
+		final int hashG = hash32(hashR);
+		final int hashB = hash32(hashG);
+		
 		// clamp values to range 0 to MAX_VALUE
-		hashR = Math.abs(hashR);
-		hashG = Math.abs(hashG);
-		hashB = Math.abs(hashB);
-
-		int min = Math.min(Math.min(hashR, hashG), hashB);
-		int max = Math.max(Math.max(hashR, hashG), hashB);
-		int range = max - min;
-		double scale = new Double(Integer.MAX_VALUE / 2) / new Double(range);
-
-		// translate so min is 0
-		hashR = hashR - min;
-		hashG = hashG - min;
-		hashB = hashB - min;
-
-		// scale so max is MAX_VALUE
-		double DhashR = new Double(hashR) * scale;
-		double DhashG = new Double(hashG) * scale;
-		double DhashB = new Double(hashB) * scale;
-
-		byte BhashR = (byte) DhashR;
-		byte BhashG = (byte) DhashG;
-		byte BhashB = (byte) DhashB;
-
-		String hexString = encodeHexString(new byte[] {BhashR, BhashG, BhashB});
+		final int r = Math.abs(hashR);
+		final int g = Math.abs(hashG);
+		final int b = Math.abs(hashB);
+		
+		final int min = Math.min(Math.min(r, g), b);
+		final int max = Math.max(Math.max(r, g), b);
+		final int range = max - min;
+		
+		final byte red = (byte) (r == min ? 0 : r == max ? -16 : (new Double(Byte.MAX_VALUE - 16) / (new Double(r) / range)));
+		final byte green = (byte) (g == min ? 0 : g == max ? -16 : (new Double(Byte.MAX_VALUE - 16) / (new Double(g) / range)));
+		final byte blue = (byte) (b == min ? 0 : b == max ? -16 : (new Double(Byte.MAX_VALUE - 16) / (new Double(b) / range)));
+		
+		final String hexString = encodeHexString(new byte[] {red, green, blue});
 		return "#" + hexString;
 	}
 
