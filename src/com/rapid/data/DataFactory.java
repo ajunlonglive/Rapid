@@ -583,7 +583,11 @@ public class DataFactory {
 
 		int rows = -1;
 
-		if (sql.trim().toLowerCase().startsWith("begin")) {
+		// do the trim and lower just once
+		String sqlCheck = sql.trim().toLowerCase();
+
+		// use of oracle blocks
+		if (sqlCheck.startsWith("begin") || sqlCheck.startsWith("declare")) {
 
 			_sql = sql;
 
