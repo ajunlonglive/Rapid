@@ -57,7 +57,7 @@ function showDialogue(url, onShow) {
        		// if access denied
        		if (error && error.status == 403) {
        			// go to login to authenticate		       		
-       			window.location = "login.jsp?requestPath=" + window.location;
+       			window.location = "login.jsp?request=" + window.location;
        		} else { 
        			alert("Error loading dialogue : " + error.responseText||message);
        		} 
@@ -107,7 +107,7 @@ function showDialogue(url, onShow) {
             		// stop the save changes onunload prompt
             		_dirty = false;
             		// go to the login page
-            		window.location = "login.jsp?requestPath=" + window.location; 
+            		window.location = "login.jsp?request=" + window.location; 
             		
             	} else {
             	

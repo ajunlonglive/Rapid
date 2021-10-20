@@ -301,8 +301,8 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue, closeAct
 		       error: function(error, status, message) {
 		       		// if access denied
 		       		if (error && error.status == 403) {
-		       			// go to login to authenticate		       		
-		       			window.location = "login.jsp?requestPath=" + window.location; 
+		       			// go to login to authenticate but request to come back to this page
+		       			window.location = "login.jsp?request=" + window.location; 
 		       		} else {
 		       			// inform the user with the error loading the dialogue
 		       			alert("Error loading dialogue : " + error.responseText||message);
@@ -385,7 +385,7 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue, closeAct
 		           	}
 
 		           	// if this is the login page go to the real thing, requesting to come back to this location
-            		if (bodyHtml.indexOf("<form name=\"login\" id=\"RapidLogin\" method=\"post\">") > 0) window.location = "login.jsp?requestPath=" + window.location; 
+            		if (bodyHtml.indexOf("<form name=\"login\" id=\"RapidLogin\" method=\"post\">") > 0) window.location = "login.jsp?request=" + window.location; 
             	
             		// get a reference to the document for the entire height and width     	
 		           	var doc = $(document);
