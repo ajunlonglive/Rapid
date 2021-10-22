@@ -3643,8 +3643,8 @@ function logicConditionText(condition) {
 		case "SYS" : case "SES" :
 			// the second part of the id
 			text = condition.id.split(".")[1];
-			// if this is the field use the field property instead
-			if (text == "field") text = condition.field;
+			// if this is the field or parameter show the field value instead
+			if (text == "field" || text == "parameter") text = condition.field;
 		break;		
 	}
 	// clean up any old style refences from session to page variables

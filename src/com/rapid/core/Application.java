@@ -82,6 +82,7 @@ import com.rapid.security.SecurityAdapter.User;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
+import com.rapid.server.filter.RapidFilter;
 import com.rapid.soa.Webservice;
 import com.rapid.utils.Files;
 import com.rapid.utils.JSON;
@@ -3196,6 +3197,23 @@ public class Application {
 
 				// initialise the application and create the resources
 				application.initialise(servletContext, true);
+
+				// special thing for the Rapid app the hasLogon parameter depends on whether the RapidFilter has logon - the default is true
+				if ("rapid".equals(application.getId()) && RapidFilter.hasLogon()) {
+					// get any parameters
+					List<Parameter> parameters = application.getParameters();
+					// if null or no parameters
+					if (parameters == null || parameters.size() == 0) {
+						// add a login false
+						parameters.add(new Parameter("hasLogon","false"));
+					} else {
+						// loop the parameters
+						for (Parameter parameter : parameters) {
+							// set hasLogon to false
+							if ("hasLogon".equals(parameter.getName())) parameter.setValue("false");
+						}
+					}
+				}
 
 			}
 

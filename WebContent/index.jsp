@@ -152,8 +152,11 @@ $(window).on("online", function() {
 			<span style="">Rapid</span>
 		</div>
 		<div class="subBar">
-			<span class="link requiresOnline"><a href="logout.jsp">LOG OUT</a></span>
-<%			// public users should not be able to change the password 		
+<%			// public users should not be able to change the password 
+			if (RapidFilter.hasLogon()) {
+%>				<span class="link requiresOnline"><a href="logout.jsp">LOG OUT</a></span>
+<%			} 
+			// public users should not be able to change the password 		
 			if (!"public".equalsIgnoreCase(userName) && com.rapid.security.SecurityAdapter.hasPasswordUpdate(getServletContext())) {
 %>			<span class="link requiresOnline"><a href="update.jsp">CHANGE PASSWORD</a></span>
 <%			} 

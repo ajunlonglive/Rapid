@@ -1,4 +1,4 @@
-<!DOCTYPE html><%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%><%@page import="com.rapid.server.RapidRequest"%><%
+<!DOCTYPE html><%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%><%@page import="com.rapid.server.RapidRequest"%><%@page import="com.rapid.server.filter.RapidFilter"%><%
 
 /*
 
@@ -25,7 +25,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+// retieve any message from the session - usually that user/password has failed
 String message = (String) session.getAttribute("message");
+
+// if the main filter supports logon
+if (RapidFilter.hasLogon()) {
 
 %>
 <html>
@@ -76,13 +80,13 @@ String message = (String) session.getAttribute("message");
 		</form>
 				
 <% 
-if (message != null) {
+	if (message != null) {
 %>
 	<p class="message"><%=message %></p>
 <%	
 	// empty the message
-	session.setAttribute("message", null);
-}
+		session.setAttribute("message", null);
+	}
 %>
 	</div>	
 	
@@ -90,3 +94,11 @@ if (message != null) {
 
 </body>
 </html>
+<% 
+} else {
+
+	// redirect the user to the index page
+	response.sendRedirect(".");
+	
+}
+%>

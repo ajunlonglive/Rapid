@@ -64,6 +64,7 @@ public class RapidFilter implements Filter {
 	public static final String SESSION_VARIABLE_USER_RESOURCE = "resource";
 
 	private static Logger _logger = LogManager.getLogger(RapidFilter.class);
+	private static boolean _hasLogon = true;
 
 	private RapidAuthenticationAdapter _authenticationAdapter;
 	private boolean _noCaching;
@@ -111,6 +112,9 @@ public class RapidFilter implements Filter {
 				_authenticationAdapter = (RapidAuthenticationAdapter) classClass.getConstructor(FilterConfig.class).newInstance(filterConfig);
 
 			}
+
+			// set the static variable here from the class method (which can be overridden)
+			_hasLogon = _authenticationAdapter.hasLogon();
 
 			// set the value from stopCaching from the init parameter in web.xml
 			_noCaching = Boolean.parseBoolean(filterConfig.getServletContext().getInitParameter("noCaching"));
@@ -600,6 +604,10 @@ public class RapidFilter implements Filter {
 
 		return authorised;
 
+	}
+
+	public static boolean hasLogon() {
+		return _hasLogon;
 	}
 
 }

@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -37,18 +37,29 @@ import javax.servlet.ServletResponse;
 
 public abstract class RapidAuthenticationAdapter {
 
+	// public static variables
+
 	public static final String INIT_PARAM_IP_CHECK = "ipcheck";
 	public static final String INIT_PARAM_PUBLIC_ACCESS = "public";
 	public static final String INIT_PARAM_PUBLIC_ACCESS_RESOURCES = "publicResources";
 	public static final String INIT_PARAM_PUBLIC_UPLOADS = "publicUploads";
 	public static final String PUBLIC_ACCESS_USER = "public";
 
+	// instance variables
+
 	protected ServletContext _servletContext;
 	protected boolean _publicAccess = false;
 	protected List<String> _publicResources;
 	protected boolean _publicUploads = false;
 
+	// properties
+
+	// return the servelet context as given to us in the constructor
 	public ServletContext getServletContext() { return _servletContext; }
+	// an overrideable default property (most authentication adaptors require logons, if not we take the buttons and links out of the screens)
+	public boolean hasLogon() { return true; }
+
+	// constructor
 
 	public RapidAuthenticationAdapter(FilterConfig filterConfig) {
 		_servletContext = filterConfig.getServletContext();
@@ -78,6 +89,7 @@ public abstract class RapidAuthenticationAdapter {
 		filterConfig.getServletContext().setAttribute(INIT_PARAM_PUBLIC_UPLOADS, _publicUploads);
 	}
 
+	// the abstract process method called from the main Rapid filter
 	public abstract ServletRequest process(ServletRequest request, ServletResponse response) throws IOException, ServletException;
 
 }
