@@ -3198,8 +3198,8 @@ public class Application {
 				// initialise the application and create the resources
 				application.initialise(servletContext, true);
 
-				// special thing for the Rapid app the hasLogon parameter depends on whether the RapidFilter has logon - the default is true
-				if ("rapid".equals(application.getId()) && RapidFilter.hasLogon()) {
+				// special thing for the Rapid app the hasLogon parameter is set from the RapidFilter hasLogon - the default is true
+				if ("rapid".equals(application.getId()) && !RapidFilter.hasLogon()) {
 					// get any parameters
 					List<Parameter> parameters = application.getParameters();
 					// if null or no parameters
