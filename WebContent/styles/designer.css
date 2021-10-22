@@ -562,8 +562,8 @@ table.propertiesPanelTable {
 }
 
 table.propertiesPanelTable td.conflict, table.propertiesPanelTable td.formConflict{
-	max-width:50px;
-	width:100%;	
+	max-width: 50px;
+	width: 100%;	
 	font-weight: bold;
 	background-color: #e00;
 	color: white;
@@ -1019,7 +1019,7 @@ Hint style
 */
 
 .hint {
-	position:absolute;
+	position: absolute;
 	max-width: 300px;
 	background-color: white;
 	border: 1px solid #888;
@@ -1027,7 +1027,7 @@ Hint style
 	padding: 10px;
 	opacity: 0.9;
 	box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
-	z-index:10100;
+	z-index: 10100;
 	pointer-events: none;
 }
 

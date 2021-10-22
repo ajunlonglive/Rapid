@@ -40,7 +40,7 @@ div#designLinks {
 	background-color: white;
 	font-family: arial;
 	font-size: 12px;
-	max-width: 500px;
+	max-width: calc(100% - 300px);
 	max-height: 600px;
 	overflow-x: auto;
 	overflow-y: auto;	
