@@ -142,6 +142,24 @@ public class Strings {
 		return toRGB(string.hashCode());
 	}
 
+	public static String ordinalIndicator(int n) {
+		int units = n % 10;
+		if (10 <= n && n <= 19)
+			return "th";
+		else if(units == 1)
+			return "st";
+		else if(units == 2)
+			return "nd";
+		else if(units == 3)
+			return "rd";
+		else
+			return "th";
+	}
+
+	public static String toOrdinal(int n) {
+		return Integer.toString(n) + ordinalIndicator(n);
+	}
+
 	// Apache commons
 	// https://github.com/apache/commons-codec/blob/master/src/main/java/org/apache/commons/codec/binary/Hex.java
 
