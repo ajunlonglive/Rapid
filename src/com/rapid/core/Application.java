@@ -1461,16 +1461,18 @@ public class Application {
 	public List<Resource> getResources() { return _resources; }
 
 	public Theme getTheme(ServletContext servletContext) {
+		// use settings to get the theme type
+		String themeType = getThemeType();
 		// check the theme type
-    	if (_themeType != null) {
-    		// get the themes
+    	if (themeType != null) {
+    		// get the available themes
     		List<Theme> themes =  (List<Theme>) servletContext.getAttribute("themes");
     		// check we got some
     		if (themes != null) {
     			// loop them
     			for (Theme theme : themes) {
-    				// check type
-    				if (_themeType.equals(theme.getType())) return theme;
+    				// check type and return if match
+    				if (themeType.equals(theme.getType())) return theme;
     			}
     		}
     	}
@@ -2049,7 +2051,7 @@ public class Application {
 			// get the rapid CSS into a string and insert parameters
 			String resourceCSSWithParams = insertParameters(servletContext, resourceCSS.toString());
 			String appThemeCSSWithParams = insertParameters(servletContext, themeCSS);
-			String appCSSWithParams = insertParameters(servletContext, _styles);
+			String appCSSWithParams = insertParameters(servletContext, getStyles()); // use settings
 
 			// write the rapid.css file
 			fos = new FileOutputStream (applicationPath + "/rapid.css");
