@@ -894,8 +894,13 @@ public class RapidServletContextListener implements ServletContextListener {
 							loadAppVersion = loadApp.substring(loadApp.indexOf("[") + 1, loadApp.indexOf("]"));
 							// remove from loadApp
 							loadApp = loadApp.substring(0, loadApp.indexOf("["));
-							// if this is the cleaned loadApp we should load it
-							if (appFolderName.equals(loadApp)) shouldLoadApp = true;
+							// if this is the cleaned loadApp
+							if (appFolderName.equals(loadApp)) {
+								// we should load it
+								shouldLoadApp = true;
+								// break here to preserve loadAppVersion
+								break;
+							}
 						} else {
 							// set load app version back to null to not affect further entries
 							loadAppVersion = null;
@@ -986,7 +991,7 @@ public class RapidServletContextListener implements ServletContextListener {
 										version = applicationFile.getParentFile().getName();
 
 										// if we had a version to check, this must be it
-										if (loadAppVersion == null || loadAppVersion.equals(version)) {
+										if (loadAppVersion == null || version.equals(loadAppVersion)) {
 
 											// placeholder for the application we're going to version up or just load
 											Application application = null;
