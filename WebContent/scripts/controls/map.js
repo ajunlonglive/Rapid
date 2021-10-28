@@ -357,6 +357,8 @@ function getMapPosition(data, rowIndex, callBack, map, details, zoomMarkers) {
 				if (f == "info") pos.info = data.rows[rowIndex][i];
 				// do the icon checks
 				if (f == "icon") pos.icon = data.rows[rowIndex][i];
+				// do the label checks
+				if (f == "label") pos.label = data.rows[rowIndex][i];
 			}
 		}
 		// if not lat and lng 
@@ -495,6 +497,7 @@ function addMapMarker(map, pos, details, data, rowIndex, zoomMarkers, markersAdd
 			if (pos.title) markerOptions.title = pos.title;
 			if (pos.icon) markerOptions.icon = pos.icon;
 			if (details.markerImage) markerOptions.icon = "applications/" + _appId + "/" + _appVersion + "/" + details.markerImage;
+			if (pos.label) markerOptions.label = { text: pos.label, color: "#FFF" };
 			
 			var marker = new google.maps.Marker(markerOptions);	
 			marker.index = map.markers.length;
