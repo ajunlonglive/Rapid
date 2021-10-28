@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -26,6 +26,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 package com.rapid.utils;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -110,7 +111,7 @@ public class JSON {
 
 	}
 
-	public static class JSONData {
+	public static class JSONData implements Iterable<JSONData.Row> {
 
 		private JSONArray _fields;
 		private Map<String, Integer> _fieldIndexes = new HashMap<>();
@@ -216,6 +217,10 @@ public class JSON {
 						+ "\n    ]"
 						+ "\n}";
 			}
+
+			public JSONArray toJSONArray() {
+				return _row;
+			}
 		}
 
 		public JSONData(JSONArray jsonFields, JSONArray jsonRows) throws Exception {
@@ -274,6 +279,32 @@ public class JSON {
 					+ rowsString
 					+ "\n    ]"
 					+ "\n}";
+		}
+		
+		@Override
+		public Iterator<JSONData.Row> iterator() {
+			
+			JSONData data = this;
+			
+			return new Iterator<JSONData.Row>() {
+				
+				int rowIndex = 0;
+				
+				@Override
+				public boolean hasNext() {
+					return rowIndex < data.rowCount();
+				}
+
+				@Override
+				public JSONData.Row next() {
+					try {
+						return data.getRow(rowIndex++);
+					} catch (Exception e) {
+						e.printStackTrace();
+						return null;
+					}
+				}
+			};
 		}
 	}
 }
