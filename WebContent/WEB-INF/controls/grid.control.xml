@@ -2040,14 +2040,16 @@ var selectedRowNumber = null;
 var grid = $("#" + id);
 // make sure it's a table
 if (!grid.is("table")) grid = grid.find("table").last();
-if (grid) grid.find("tr.rowSelect").removeClass("rowSelect");
+if (grid) {
+	grid.find("tr.rowSelect").removeClass("rowSelect");
+	grid.find(".gridMultiSelect, .gridMultiSelectHeader").prop('checked', false);
+}
 if (data) {
 	data.rows.map(function(row) {
 		if (grid) grid.find("tr:eq(" + row[0] + ")").each(function(i, row) {
 			$(row).addClass("rowSelect");
 			$(row).find(".gridMultiSelect").prop('checked', true);
 		});
-		
 	});
 }
 gridData.selectedRowNumber = selectedRowNumber;	
