@@ -359,6 +359,8 @@ function getMapPosition(data, rowIndex, callBack, map, details, zoomMarkers) {
 				if (f == "icon") pos.icon = data.rows[rowIndex][i];
 				// do the label checks
 				if (f == "label") pos.label = data.rows[rowIndex][i];
+				// do the label checks
+				if (f == "backgroundcolour") pos.backgroundColour = data.rows[rowIndex][i];
 			}
 		}
 		// if not lat and lng 
@@ -497,7 +499,19 @@ function addMapMarker(map, pos, details, data, rowIndex, zoomMarkers, markersAdd
 			if (pos.title) markerOptions.title = pos.title;
 			if (pos.icon) markerOptions.icon = pos.icon;
 			if (details.markerImage) markerOptions.icon = "applications/" + _appId + "/" + _appVersion + "/" + details.markerImage;
-			if (pos.label) markerOptions.label = { text: pos.label, color: "#FFF" };
+			if (pos.label) markerOptions.label = { text: pos.label, color: "#FFF", fontWeight: "bold", anchor: new google.maps.Point(12, 22) };
+			if (pos.backgroundColour) {
+				markerOptions.icon = {
+					path: "M 0 -7.1856 Q 2.6154 -7.1856 4.4505 -5.3505 T 6.2856 -0.9 Q 6.3 1.8 3.6 4.5 Q 1 7 0 11 Q -1 7 -3.6 4.5 Q -6.3 1.8 -6.2874 -0.9 Q -6.2874 -3.5154 -4.4523 -5.3505 T -0.0018 -7.1856 Z",
+					fillColor: pos.backgroundColour || "#666",
+					fillOpacity: 1,
+					strokeWeight: 1,
+					strokeColor: "#FFF",
+					rotation: 0,
+					scale: 2,
+					anchor: new google.maps.Point(0, 11)
+				};
+			}
 			
 			var marker = new google.maps.Marker(markerOptions);	
 			marker.index = map.markers.length;
