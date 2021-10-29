@@ -505,8 +505,8 @@ function addMapMarker(map, pos, details, data, rowIndex, zoomMarkers, markersAdd
 					path: "M 0 -7.1856 Q 2.6154 -7.1856 4.4505 -5.3505 T 6.2856 -0.9 Q 6.3 1.8 3.6 4.5 Q 1 7 0 11 Q -1 7 -3.6 4.5 Q -6.3 1.8 -6.2874 -0.9 Q -6.2874 -3.5154 -4.4523 -5.3505 T -0.0018 -7.1856 Z",
 					fillColor: pos.backgroundColour || "#666",
 					fillOpacity: 1,
-					strokeWeight: 1,
-					strokeColor: "#FFF",
+					strokeWeight: 2,
+					strokeColor: "#00000010",
 					rotation: 0,
 					scale: 2,
 					anchor: new google.maps.Point(0, 11)
