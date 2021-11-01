@@ -2136,8 +2136,11 @@ public class Designer extends RapidHttpServlet {
 												sql = Database.unspecifySqlSlots(sql);
 											}
 
-											// clean the sql for checking - it has been trimmed already (declare is the longest we're looking for so far)
-											String sqlCheck = sql.toLowerCase().replace(" ", "").substring(0, 7);
+											// clean the sql for checking - it has been trimmed already
+											String sqlCheck = sql.replace(" ", "").toLowerCase();
+
+											// if it is more than 7 characters just trim it as "declare" is the longest we check for next - some parent statements are empty!
+											if (sqlCheck.length() > 7) sqlCheck.substring(0, 7);
 
 											// check outputs (unless a child query)
 											if (outputs == 0 && !childQuery) {

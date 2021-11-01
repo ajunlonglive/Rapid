@@ -752,7 +752,10 @@ public class Database extends Action {
 					sql = sql.trim();
 
 					// clean the sql for checking - it has been trimmed already (declare is the longest we're looking for so far)
-					String sqlCheck = sql.toLowerCase().replace(" ", "").substring(0, 7);
+					String sqlCheck = sql.replace(" ", "").toLowerCase();
+
+					// if it is more than 7 characters just trim it as "declare" is the longest we check for next - some parent statements are empty!
+					if (sqlCheck.length() > 7) sqlCheck = sqlCheck.substring(0, 7);
 
 					// check the verb
 					if (sqlCheck.startsWith("select") || sqlCheck.startsWith("with") || sqlCheck.startsWith("exec")) {
