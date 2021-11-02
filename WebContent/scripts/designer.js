@@ -1892,26 +1892,6 @@ function getSavePageData() {
 	return pageData;	
 }
 
-function cleanControlForPaste(control) {
-	// create an empty clean control object
-	var cleanControl = {};	
-	// loop the properties, ignoring certain ones
-	for (var i in control) {
-		if (i.indexOf("_") != 0 && i != "object" && i != "childControls") {
-			cleanControl[i] = control[i];
-		}
-	}
-	// add a child control collection
-	cleanControl.childControls = [];
-	// loop the child controls
-	for (var i in control.childControls) {
-		// add a clean child control
-		cleanControl.childControls.push(cleanControlForPaste(control.childControls[i]));
-	}
-	// return the clean control
-	return cleanControl;
-}
-
 function applyStyleForPaste(control) {
 	// check has style
 	if (control.styles) {
@@ -1958,6 +1938,31 @@ function applyStyleForPaste(control) {
 	}
 }
 
+// a tree-walking function to both remove non-stringifyable properties and record all control ids in the paste
+function cleanControlForPaste(control) {
+	// retain this control
+	_pasteControls.push(control);
+	// create an empty clean control object
+	var cleanControl = {};	
+	// loop the properties
+	for (var i in control) {
+		// ignore certain ones: any meta-data ones that start with _ (like _parent that'll create a circular reference), the jQuery object, and any child control collection (we'll clean and add these next)
+		if (i.indexOf("_") != 0 && i != "object" && i != "childControls") {
+			// transfer the property from the original control object to the clean control object
+			cleanControl[i] = control[i];
+		}
+	}
+	// add a child control collection for the clean control
+	cleanControl.childControls = [];
+	// loop the child controls
+	for (var i in control.childControls) {
+		// add a clean child control
+		cleanControl.childControls.push(cleanControlForPaste(control.childControls[i]));
+	}
+	// return the clean control
+	return cleanControl;
+}
+
 // this function will paste an existing control into a specified parent - if no parent is specified we assume we are pasting a whole page
 function doPaste(control, _parent, avoidNameCheck) {
 	
@@ -1967,10 +1972,26 @@ function doPaste(control, _parent, avoidNameCheck) {
 	// remove any dialogues or components
 	$("#dialogues").children().remove();
 	
+	// reset the paste controls list - used to avoid conflicts in pasted in control ids and page control ids, and increment controls name numbers
+	_pasteControls = [];
+		
+	// clean the control for safe stringifying and populate the _pasteControls list in the same tree-walk
+	var cleanControl = cleanControlForPaste(control);
+	
+	// get a string from the cleaned controls
+	var pasteString = JSON.stringify(cleanControl);
+	
+	// loop the control ids in the paste string
+	for (var i = 0; i < _pasteControls.length; i++) {
+		// replace all occurances of the ids in the paste string with a prefix so they don't conflict with ids in the page
+		pasteString = pasteString.replaceAll(_pasteControls[i].id, "p_" + _pasteControls[i].id);
+	}
+	
+	// parse the updated paste string back into a control object
+	control = JSON.parse(pasteString);
+	
 	// reset the paste map
 	_pasteMap = {};
-	// reset the paste controls
-	_pasteControls = [];
 	
 	// assume no new control
 	var newControl = null;
@@ -2008,8 +2029,8 @@ function doPaste(control, _parent, avoidNameCheck) {
 		// remove any items that were placed in dialogues
 		$("#dialogues").children().remove();
 		
-		// clean the control for stringifying
-		var cleanControl = cleanControlForPaste(newControl);
+		// the new control also needs cleaning to avoid circular references
+		cleanControl = cleanControlForPaste(newControl);
 		
 		// stringify newControl
 		var newControlString = JSON.stringify(cleanControl);
@@ -3319,22 +3340,11 @@ $(document).ready( function() {
         }       
     });
 	
-	function descendentControls(control) {
-		if (control.childControls) {
-			return control.childControls.concat(
-				control.childControls.flatMap(descendentControls)
-			);
-		} else {
-			return [];
-		}
-	}
-	
 	// paste
 	$("#paste").click( function(ev) {
 		var copiedControl = _controlClipboard.get();
 		// see the enable/disable rules for the past button to see all the rules but basically we're working out whether we can insert into the selected control, into the parent, or not at all
 		if (copiedControl) {
-			_pasteControls = [copiedControl].concat(descendentControls(copiedControl));
 			// assume we're pasting into the selected control
 			var pasteControl = _selectedControl;
 			// if no selected control use the page
@@ -3432,9 +3442,7 @@ $(document).ready( function() {
 			buildPageMap();
 			
 			// check for duplicate control ids'
-			checkForDuplicateIds();
-			
-			_pasteControls = [];
+			checkForDuplicateIds();			
 
 		}		
 	});		
