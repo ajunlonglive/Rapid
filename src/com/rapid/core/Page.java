@@ -1134,14 +1134,20 @@ public class Page {
 		File pageFolder = new File(pagePath);
 		if (!pageFolder.exists()) pageFolder.mkdirs();
 
+		// derive a name for temp and final save files using the safeName of the page name - this is the old pre 2.5.2 way which could overwrite pages if their name was changed - we check for the old file and delete it once it's saved ok
+		String oldPagePathAndName = pagePath + "/" + Files.safeName(getName());
+
+		// the new naming method includes the id - this allows pages with the same name
+		String newPagePathAndName = oldPagePathAndName + "_" + _id;
+
 		// create a file object for the new file
-	 	File newFile = new File(pagePath + "/" + Files.safeName(getName() + ".page.xml"));
+	 	File newFile = new File(newPagePathAndName + ".page.xml");
 
 	 	// if we want a backup and the new file already exists it needs archiving
 	 	if (backup && newFile.exists()) backup(rapidServlet, rapidRequest, application, newFile, false);
 
 	 	// create a file for the temp file
-	    File tempFile = new File(pagePath + "/" + Files.safeName(getName() + "-saving.page.xml"));
+	    File tempFile = new File(newPagePathAndName + "-saving.page.xml");
 
 	    // update the modified by and date
 	    _modifiedBy = rapidRequest.getUserName();
@@ -1175,6 +1181,12 @@ public class Page {
 		// replace the old page with the new page
 		application.getPages().addPage(this, newFile, application.getIsForm());
 
+		// create a file object for any old file
+	 	File oldFile = new File(oldPagePathAndName + ".page.xml");
+
+	 	// if the old file exists, delete it
+	 	if (oldFile.exists()) oldFile.delete();
+
 		// empty the cached page html
 		_cachedHeadLinks = null;
 		_cachedHeadCSS = null;
@@ -1185,7 +1197,7 @@ public class Page {
 		// empty the cached control types
 		_controlTypes = null;
 
-		// empty the page ariables so they are rebuilt the next time
+		// empty the page variables so they are rebuilt the next time
 		application.emptyPageVariables();
 
 		// empty the resources JSON so it's rebuilt next time
