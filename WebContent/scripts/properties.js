@@ -5158,8 +5158,12 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 			if (!ev.data.datacopyAction.dataCopies) ev.data.datacopyAction.dataCopies = [];
 			// get the parameters (inputs or outputs)
 			var dataCopies = ev.data.datacopyAction.dataCopies;
+			// assume the type is replace (the default)
+			type = "false";
+			// if there is a row above and it's type is row use that
+			if (dataCopies.length > 0 && dataCopies[dataCopies.length - 1].type == "row") type = "row";
 			// add a new one
-			dataCopies.push({source:"",sourceField:"",destination:"",destinationField:""});
+			dataCopies.push({source:"",sourceField:"",destination:"",destinationField:"",type:type});
 			// rebuild the dialogue
 			Property_datacopyCopies(ev.data.cell, ev.data.datacopyAction, ev.data.property, ev.data.details);	
 		}));
