@@ -167,14 +167,17 @@ public class Email extends Action {
 	@Override
 	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
 
+		// start with empty JavaScript
+        String js = "";
+
 		// get the servlet context
 		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
 
 		// get any success check
 		String successCheck = getSuccesCheck(jsonDetails);
 
-		// start with empty JavaScript
-        String js = "";
+		// add any success check start
+		js += getSuccessCheckStart(successCheck);
 
 		// control can be null when the action is called from the page load
         String controlParam = "";

@@ -272,6 +272,9 @@ public class Webservice extends Action {
 			// get any success check
 			String successCheck = getSuccesCheck(jsonDetails);
 
+			// add any success check start
+			js += getSuccessCheckStart(successCheck);
+
 			// get the most recent sequence number for this action to stop slow-running early requests overwriting the results of fast later requests
 			js += "var sequence = getWebserviceActionSequence('" + getId() + "');\n";
 
