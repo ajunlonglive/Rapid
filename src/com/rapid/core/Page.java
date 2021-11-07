@@ -410,7 +410,7 @@ public class Page {
 	// instance methods
 
 	public String getFile(ServletContext servletContext, Application application) {
-		return application.getConfigFolder(servletContext) + "/" + "/pages/" + Files.safeName(_name + ".page.xml");
+		return application.getConfigFolder(servletContext) + "/" + "/pages/" + Files.safeName(_name + "_" + _id + ".page.xml");
 	}
 
 	public void addControl(Control control) {
@@ -1109,7 +1109,7 @@ public class Page {
 		String dateString = formatter.format(new Date());
 
 		 // create a file object for the archive file
-	 	File archiveFile = new File(archivePath + "/" + Files.safeName(_name + "_" + dateString + "_" + userName + ".page.xml"));
+	 	File archiveFile = new File(archivePath + "/" + Files.safeName(_name + "_" + _id + "_" + dateString + "_" + userName + ".page.xml"));
 
 	 	// copy the existing new file to the archive file
 	    Files.copyFile(pageFile, archiveFile);

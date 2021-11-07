@@ -170,6 +170,9 @@ public class Email extends Action {
 		// get the servlet context
 		ServletContext servletContext = rapidRequest.getRapidServlet().getServletContext();
 
+		// get any success check
+		String successCheck = getSuccesCheck(jsonDetails);
+
 		// start with empty JavaScript
         String js = "";
 
@@ -264,6 +267,9 @@ public class Email extends Action {
 	        js += "  data: JSON.stringify(data),\n";
 	        js += "  error: function(server, status, message) {\n";
 
+	        // if there is a successCheck, fail it, with the event to fire on error
+			js += getSuccessCheckError(successCheck, "    ");
+
 	        // add standard error actions with offline and working handling
 	     	js += getErrorActionsJavaScript(rapidRequest, application, page, control, jsonDetails, _errorActions);
 
@@ -280,7 +286,13 @@ public class Email extends Action {
 				}
 			}
 
+			// add any success check end
+			js += getSuccessCheckSuccess(successCheck, "    ");
+
+			// close success block
 	        js += "  }\n";
+
+	        // close ajax
 	        js += "});\n";
         }
 

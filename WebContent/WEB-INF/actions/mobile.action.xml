@@ -298,23 +298,7 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <refreshProperties>true</refreshProperties>
 	            <helpHtml>Field of the control to send upload progress to as a percentage.</helpHtml>
 	        </property>
-	        
-	        <property>
-	            <key>successActions</key>
-	            <name>Success actions</name>
-	            <visible>false</visible>
-	            <changeValueJavaScript>childActions</changeValueJavaScript>
-	            <helpHtml>Allows you to set a success action for when the image is successfully imported into the control specified.</helpHtml>
-	        </property>
-	        
-	        <property>
-	            <key>errorActions</key>
-	            <name>Error actions</name>
-	            <visible>false</visible>
-	            <changeValueJavaScript>childActions</changeValueJavaScript>
-	            <helpHtml>Allows you to set an error action for when the image is not successfully imported into the control specified.</helpHtml>
-	        </property>
-	        	        
+
 	        <property>
 	            <key>navigateControlId</key>
 	            <name>Navigate to source</name>
@@ -451,6 +435,22 @@ return "<option value=''>Please select...</option><option value ='html'" + (this
 	            <visible>false</visible>
 	            <changeValueJavaScript>childActions</changeValueJavaScript>
 	            <helpHtml>Allows you to define actions to be carried out applicable to the type. For example if the mobile device was swiped, or has an established internet connection.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>successActions</key>
+	            <name>Success actions</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>
+	            <helpHtml>Allows you to run success actions when all of the online actions have completed, or the image is successfully imported into the control specified.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>errorActions</key>
+	            <name>Error actions</name>
+	            <visible>false</visible>
+	            <changeValueJavaScript>childActions</changeValueJavaScript>
+	            <helpHtml>Allows you run error actions when the first online action has an error, or the image is not successfully imported into the control specified.</helpHtml>
 	        </property>
 	        
 	    </properties>

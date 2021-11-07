@@ -21,8 +21,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
-AFTER MAKING CHANGES TO THIS FILE DELETE /scripts_min/extras.min.js IN ORDER TO REGENERATE IT
-
 */
 
 // extend String to have a trim function for IE8
@@ -1391,3 +1389,38 @@ $(function() {
 	// start the observation
 	observer.observe(document.body, {subtree:true, childList:true});
 });
+
+// successCheck for grouped asychronous actions like in offline mobile, and possibly group
+function successCheck(groupId, actionId, success, ev) {
+	// find the group success checks
+	var g = window["_" + groupId + "successChecks"];
+	// if there is a g - we'll null it to turn further checks on after any error
+	if (g == null) {
+		// return false so we don't proceed any further
+		return false;
+	} else {
+		// check if there is an event, this is from on success or on error
+		if (ev) {
+			if (success) {
+				// we have successfully finished a call so remove the entry
+				delete g[actionId];
+				// assume size of remaining entries is zero
+				var size = 0;
+				// add all entries (if any)
+				for (k in g) size ++;
+				// if we have removed all entries, all calls have returned successfully! So call the success
+				if (size == 0 && window[groupId + "success"]) window[groupId + "success"](ev);
+			} else {
+				// a call has errored so null the v to prevent further checks
+				g == null;
+				// call any error
+				if (window[groupId + "error"]) window[groupId + "error"](ev);
+			}
+		} else {
+			// we are starting a call so set a key for the action
+			g[actionId] = true;
+		}
+	}
+	// signal all well
+	return true;
+}

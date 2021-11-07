@@ -269,6 +269,9 @@ public class Webservice extends Action {
 			// get the rapid servlet
 			RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
 
+			// get any success check
+			String successCheck = getSuccesCheck(jsonDetails);
+
 			// get the most recent sequence number for this action to stop slow-running early requests overwriting the results of fast later requests
 			js += "var sequence = getWebserviceActionSequence('" + getId() + "');\n";
 
@@ -321,6 +324,9 @@ public class Webservice extends Action {
 
 			// hide the loading javascript (if applicable)
 			if (_showLoading) js += "    " + getLoadingJS(page, outputs, false);
+
+			// if there is a successCheck, fail it, with the event to fire on error
+			js += getSuccessCheckError(successCheck, "    ");
 
 			// add standard error actions with offline and working handling
 			js += getErrorActionsJavaScript(rapidRequest, application, page, control, jsonDetails, _errorActions);
@@ -419,6 +425,9 @@ public class Webservice extends Action {
 					js += "    " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n    ") + "\n";
 				}
 			}
+
+			// add any success check end
+			js += getSuccessCheckSuccess(successCheck, "    ");
 
 			// close success function
 			js += "  }\n";

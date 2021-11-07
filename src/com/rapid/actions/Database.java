@@ -421,6 +421,12 @@ public class Database extends Action {
 			// get the rapid servlet
 			RapidHttpServlet rapidServlet = rapidRequest.getRapidServlet();
 
+			// get any success check
+			String successCheck = getSuccesCheck(jsonDetails);
+
+			// add any success check start
+			js += getSuccessCheckStart(successCheck);
+
 			// get the sequence for this action requests so long-running early ones don't overwrite fast later ones (defined in databaseaction.xml)
 			js += "var sequence = getDatabaseActionSequence('" + getId() + "');\n";
 
@@ -484,8 +490,11 @@ public class Database extends Action {
 			js += "  data: query,\n";
 			js += "  error: function(server, status, message) {\n";
 
-			// hide the loading javascript (if applicable)
+			// hide the loading animation (if applicable)
 			if (_showLoading) js += "    " + getLoadingJS(page, outputs, false);
+
+			// if there is a successCheck, fail it, with the event to fire on error
+			js += getSuccessCheckError(successCheck, "    ");
 
 			// add standard error actions with offline and working handling
 			js += getErrorActionsJavaScript(rapidRequest, application, page, control, jsonDetails, _errorActions);
@@ -494,7 +503,7 @@ public class Database extends Action {
 			js += "  success: function(data) {\n";
 
 			// hide the loading javascript (if applicable)
-			if (_showLoading) js += "  " + getLoadingJS(page, outputs, false);
+			if (_showLoading) js += "    " + getLoadingJS(page, outputs, false);
 
 			// open if data check
 			js += "    if (data) {\n";
@@ -547,6 +556,9 @@ public class Database extends Action {
 					js += "    " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n    ") + "\n";
 				}
 			}
+
+			// add any success check end
+			js += getSuccessCheckSuccess(successCheck, "    ");
 
 			// close success function
 			js += "  }\n";

@@ -5828,6 +5828,8 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "onlineActions", true);
 			setPropertyVisibilty(mobileAction, "onlineWorking", true);
 			setPropertyVisibilty(mobileAction, "onlineFail", true);
+			setPropertyVisibilty(mobileAction, "successActions", true);
+			setPropertyVisibilty(mobileAction, "errorActions", true);
 		break;
 	}
 	// listener for changing the type

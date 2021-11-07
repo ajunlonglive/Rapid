@@ -2405,32 +2405,32 @@ public class Application {
 
 				if (fileName.endsWith(".page.xml")) {
 
+					// split the name by _ to find the seperate bits
 					String[] nameParts = fileName.split("_");
 
+					// there must be at least 3 bits: name, id (newer), date, user
 					if (nameParts.length >= 3) {
 
-						String name = "";
 						Date date = new Date();
-						String size = Files.getSizeName(backup);
 						SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd HHmmss");
 						String user = "";
 
-						//loop through the parts
+						// loop through the parts
 						for (int i = 0; i < nameParts.length; i++) {
 
-							//if this part is a date
+							// if this part is a date
 							if (nameParts[i].matches("^\\d{8}$")) {
-								//remove the last underscore from the name
-								name = name.substring(0, name.length() - 1);
 
 								try {
-									//parse the date and time (adjacent index of date will always be time)
+
+									// parse the date and time (adjacent index of date will always be time)
 									date = df.parse(nameParts[i] + " " + nameParts[i+1]);
 									String datetime = nameParts[i] +"_"+nameParts[i+1]+"_";
-									//get the index of the datetime string
+									// get the index of the datetime string
 									int datetimeIndex = fileName.indexOf(datetime);
-									//the rest is the username part - until the beginning of .page.xml
+									// the rest is the username part - until the beginning of .page.xml
 									user = fileName.substring(datetimeIndex + datetime.length(), fileName.indexOf(".page.xml"));
+
 								} catch (ParseException ex) {
 									throw new JSONException(ex);
 								}
@@ -2438,9 +2438,10 @@ public class Application {
 								break;
 							}
 
-							//otherwise just concatenate the file names
-							name += nameParts[i] + "_";
 						}
+
+						String name = nameParts[0];
+						String size = Files.getSizeName(backup);
 
 						backups.add(new Backup(fileName, name, date, user, size));
 

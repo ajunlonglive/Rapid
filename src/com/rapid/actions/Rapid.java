@@ -3337,12 +3337,8 @@ public class Rapid extends Action {
 								// turn the id into parts
 								String[] idParts = backupId.split("_");
 
-								// start the page name
+								// get the page name (the first part)
 								String pageName = idParts[0];
-								// loop the remaining parts and build
-								for (int i = 1; i < idParts.length - 3; i++) {
-									pageName += "_" + idParts[i];
-								}
 
 								// get the page
 								Page page = app.getPages().getPageByName(servletContext, pageName);

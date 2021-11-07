@@ -184,6 +184,23 @@ public abstract class Action {
 		return errorSource;
 	}
 
+	// the JavaScript to actually hide the working page - used both in the method below from actions, and from the group success of ones like mobile online success
+	protected String getWorkingPageHideJavaScript(String workingPage, String padding) {
+
+		// check if there is a working page
+		if (workingPage == null || workingPage.trim().isEmpty()) {
+
+			// safely return empty string if not
+			return "";
+
+		} else {
+
+			// return js to hide working page
+			return padding + "$('#" + workingPage + "').hideDialogue(false, '" + workingPage + "');\n";
+
+		}
+	}
+
 	// this produces JavaScript with the error actions and a standardised way of dealing with and showing or hiding offline and working dialogues
 	protected String getWorkingPageHideJavaScript(JSONObject jsonDetails, boolean success, List<Action> successActions, String padding) throws Exception {
 
@@ -192,21 +209,32 @@ public abstract class Action {
 
 		// instantiate the jsonDetails if required
 		if (jsonDetails == null) jsonDetails = new JSONObject();
-		// look for a working page in the jsonDetails
-		String workingPage = jsonDetails.optString("workingPage", null);
 
-		// if there is a working page (from the details) and we have no further success children so we must have come to the end of a success branch / finished the action chain successfully
-		if (workingPage != null && (successActions == null || successActions.size() == 0)) {
-			// hide if we are doing an error branch, or we have not hidden the working yet
-			boolean hide = !success || !jsonDetails.optBoolean("workingHidden");
-			// if we've not yet hidden the working dialogue on success
-			if (hide) {
-				// hide any working page dialogue
-				js += padding + "$('#" + workingPage + "').hideDialogue(false, '" + workingPage + "');\n";
-				// mark that we have applied the working page hide at the end of a success branch
-				if (success) jsonDetails.put("workingHidden", true);
-			}
-		}
+		// look for a successCheck in the jsonDetail
+		String successCheck = jsonDetails.optString("successCheck", null);
+
+		// if there is a success check the working page dialigue hide will be done when they all complete successfully, not here
+		if (successCheck == null) {
+
+			// look for a working page in the jsonDetails
+			String workingPage = jsonDetails.optString("workingPage", null);
+
+			// if there is a working page (from the details) and we have no further success children so we must have come to the end of a success branch / finished the action chain successfully
+			if (workingPage != null && (successActions == null || successActions.size() == 0)) {
+
+				// hide if we are doing an error branch, or we have not hidden the working yet
+				boolean hide = !success || !jsonDetails.optBoolean("workingHidden");
+				// if we've not yet hidden the working dialogue on success
+				if (hide) {
+					// hide any working page dialogue
+					js += getWorkingPageHideJavaScript(workingPage, padding);
+					// mark that we have applied the working page hide at the end of a success branch
+					if (success) jsonDetails.put("workingHidden", true);
+				}
+
+			} // working page and success actions check
+
+		} // no successCheck
 
 		return js;
 
@@ -291,6 +319,55 @@ public abstract class Action {
 	protected String getErrorActionsJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails, String errorCallback) throws Exception {
 		// call the full method with null callback
 		return getErrorActionsJavaScript(rapidRequest, application, page, control, jsonDetails, null, errorCallback);
+	}
+
+	// safely check jsonDetails for a successCheck object and return it's contents if so, null otherwise
+	protected String getSuccesCheck(JSONObject jsonDetails) {
+
+		// assume no successCheck
+		String successCheck = null;
+		// if we have jsonDetails
+		if (jsonDetails != null) {
+			// check for it successCheck
+			successCheck = jsonDetails.optString("successCheck", null);
+		}
+
+		return successCheck;
+
+	}
+
+	// produce the js at the start of the success check
+	protected String getSuccessCheckStart(String successCheck) {
+
+		String js = "";
+
+		if (successCheck != null) js += "if (!successCheck('" + successCheck + "', '" + getId() + "')) return false;\n";
+
+		return js;
+
+	}
+
+	// produce the js for the asynchronous succeeding
+	protected String getSuccessCheckSuccess(String successCheck, String padding) {
+
+		String js = "";
+
+		// if there is a successCheck, check it, with the event to fire if all succeeded (further actions will have registered themselves above)
+		if (successCheck != null) js += padding + "successCheck('" + successCheck + "', '" + getId() + "', true, ev);\n";
+
+		return js;
+
+	}
+
+	// produce the js for the asynchronous failing
+	protected String getSuccessCheckError(String successCheck, String padding) {
+
+		String js = "";
+
+		if (successCheck != null) js += padding + "successCheck('" + successCheck + "', '" + getId() + "', false, ev);\n";
+
+		return js;
+
 	}
 
 	@Override
