@@ -118,6 +118,10 @@ public class Mobile extends Action {
 		if (_childActions == null) {
 			// our list of all child actions
 			_childActions = new ArrayList<>();
+			// add online actions
+			if (_onlineActions != null) {
+				for (Action action : _onlineActions) _childActions.add(action);
+			}
 			// add child success actions
 			if (_successActions != null) {
 				for (Action action : _successActions) _childActions.add(action);
@@ -125,10 +129,6 @@ public class Mobile extends Action {
 			// add child error actions
 			if (_errorActions != null) {
 				for (Action action : _errorActions) _childActions.add(action);
-			}
-			// add child online actions
-			if (_onlineActions != null) {
-				for (Action action : _onlineActions) _childActions.add(action);
 			}
 		}
 		return _childActions;
@@ -165,7 +165,7 @@ public class Mobile extends Action {
 			// get the control (the slow way)
 			Control control = page.getActionControl(id);
 			// check if we have any success actions
-			if (_successActions != null || ("uploadImages".equals(type) && _successActions == null)) {
+			if (_successActions != null || "uploadImages".equals(type)) {
 				// start the callback function
 				js += "function " + id + "success(ev) {\n";
 				// hide any working page
@@ -1001,8 +1001,8 @@ public class Mobile extends Action {
 
 			} else if ("online".equals(type)) {
 
-				// see if we have any success actions
-				boolean successActions = (_successActions != null && _successActions.size() > 0);
+				// see if we have any online success or error actions
+				boolean successActions = ((_successActions != null && _successActions.size() > 0) || (_errorActions != null && _errorActions.size() > 0));
 
 				// check we have online actions
 				if (_onlineActions != null && _onlineActions.size() > 0) {
