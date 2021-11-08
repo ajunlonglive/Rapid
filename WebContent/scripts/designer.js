@@ -3933,12 +3933,18 @@ function sizeControlsList(width) {
 		var controls = $(this).children().length;
 		if (controls > controlCount) controlCount = controls;
 	});
+
 	// if the controls are wrapping
 	if (controlCount > controlsWide) {
+		
+		// subtract the padding from the width
+		width -= 20;
+		
 		// set the fixed height and margin (to allow animation and center controls)
 		controlsList.css({
 			"padding-left" : Math.floor((width - controlsWide * controlWidth) / 2)
 		});
+
 	} else {
 		//
 		controlsList.css({
