@@ -1135,7 +1135,7 @@ public class Page {
 		if (!pageFolder.exists()) pageFolder.mkdirs();
 
 		// derive a name for temp and final save files using the safeName of the page name - this is the old pre 2.5.2 way which could overwrite pages if their name was changed - we check for the old file and delete it once it's saved ok
-		String oldPagePathAndName = pagePath + "/" + Files.safeName(getName());
+		String oldPagePathAndName = pagePath + "/" + Files.safeName(_name);
 
 		// the new naming method includes the id - this allows pages with the same name
 		String newPagePathAndName = oldPagePathAndName + "_" + _id;
@@ -1211,8 +1211,11 @@ public class Page {
 		// create folders to delete the page
 		String pagePath = application.getConfigFolder(rapidServlet.getServletContext()) + "/pages";
 
-		// create a file object for the delete file
-	 	File delFile = new File(pagePath + "/" + Files.safeName(getName() + ".page.xml"));
+		// create a file object for the delete file using the old naming
+	 	File delFile = new File(pagePath + "/" + Files.safeName(_name + ".page.xml"));
+
+	 	// if it does not exist, try the new naming (with the id)
+	 	if (!delFile.exists()) delFile = new File(pagePath + "/" + Files.safeName(_name + "_" + _id + ".page.xml"));
 
 	 	// if the new file already exists it needs archiving
 	 	if (delFile.exists()) {
