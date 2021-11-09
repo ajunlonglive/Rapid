@@ -3334,14 +3334,42 @@ public class Rapid extends Action {
 								// get the id
 								String backupId = jsonAction.getString("backupId");
 
-								// turn the id into parts
-								String[] idParts = backupId.split("_");
+								String[] nameParts = backupId.split("_");
 
-								// get the page name (the first part)
-								String pageName = idParts[0];
+								// we'll try and find the page id (before the date) in newer backup files
+								String pageId = "";
+								// we'l also build the full name and look for like, like we used to
+								String fullName = "";
 
-								// get the page
-								Page page = app.getPages().getPageByName(servletContext, pageName);
+								// there must be at least 3 bits: name, id (newer), date, user
+								if (nameParts.length >= 3) {
+
+									// retain i so we know where the date came in
+									int i;
+
+									// loop through the parts - we need them all, as we make the file name back
+									for (i = 0; i < nameParts.length; i++) {
+
+										// if this part is a date
+										if (nameParts[i].matches("^\\d{8}$")) break;
+
+										// add this part back to the name as we look for the date, allowing for skipping just one occurrence of the id
+										fullName += nameParts[i] + "_";
+
+									}
+
+									// get the id
+									pageId = nameParts[i - 1];
+									// remove the final _ from when we built it back
+									fullName = fullName.substring(0, fullName.length() - 1);
+
+								} // name parts > 3
+
+								// get the page with the id
+								Page page = app.getPages().getPage(pageId);
+
+								// if we couldn't find it with the id, use the fullName (for older pages)
+								if (page == null) page = app.getPages().getPageByName(servletContext, fullName);
 
 								// create a file object for the page
 							 	File pageFile = new File(page.getFile(servletContext, app));

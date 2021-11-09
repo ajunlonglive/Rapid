@@ -2329,20 +2329,19 @@ public class Application {
 						SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd HHmmss");
 						String user = "";
 
-						//loop through the parts
+						// loop through the parts
 						for (int i = 0; i < nameParts.length; i++) {
 
-							//if this part is a date
+							// if this part is a date
 							if (nameParts[i].matches("^\\d{8}$")) {
-								//remove the last underscore from the name
-								name = name.substring(0, name.length() - 1);
+
 								try {
-									//parse the date and time (adjacent index of date will always be time)
+									// parse the date and time (adjacent index of date will always be time)
 									date = df.parse(nameParts[i] + " " + nameParts[i+1]);
 									String datetime = nameParts[i] +"_"+nameParts[i+1]+"_";
-									//get the index of the datetime string
+									// get the index of the datetime string
 									int datetimeIndex = id.indexOf(datetime);
-									//the rest is the username part - until the beginning of .page.xml
+									// the rest is the username part - until the beginning of .page.xml
 									user = id.substring(datetimeIndex + datetime.length(), id.length());
 								} catch (ParseException ex) {
 									throw new JSONException(ex);
@@ -2351,9 +2350,12 @@ public class Application {
 								break;
 							}
 
-							//otherwise just concatenate the file names
+							// concatenate the parts back into the file name (until we hit the date)
 							name += nameParts[i] + "_";
 						}
+
+						// add back part 0, and remove the last underscore from the name
+						name = name.substring(0, name.length() - 1);
 
 						backups.add(new Backup(id, date, user, size));
 
@@ -2407,6 +2409,8 @@ public class Application {
 
 					// split the name by _ to find the seperate bits
 					String[] nameParts = fileName.split("_");
+					// assume name is blank, we'll add it back as we look for the date to allow _ in the name
+					String name = "";
 
 					// there must be at least 3 bits: name, id (newer), date, user
 					if (nameParts.length >= 3) {
@@ -2438,9 +2442,14 @@ public class Application {
 								break;
 							}
 
+							// add this part back to the name as we look for the date, allowing for skipping just one occurrence of the id
+							name += nameParts[i] + "_";
+
 						}
 
-						String name = nameParts[0];
+						// add back part 0 and remove the final _ from when we built it back
+						name = name.substring(0, name.length() - 1);
+						// get the size of the backup
 						String size = Files.getSizeName(backup);
 
 						backups.add(new Backup(fileName, name, date, user, size));
