@@ -2384,8 +2384,6 @@ public class Rapid extends Action {
 								String formWebserviceType = jsonAction.optString("formWebserviceType");
 								String formWebserviceSOAPAction = jsonAction.optString("formWebserviceSOAPAction");
 
-								String securityAdapterType = jsonAction.optString("securityAdapterType","rapid");
-
 								// assume we do not need to update the applications drop down
 								boolean appUpdated = false;
 
@@ -2444,13 +2442,6 @@ public class Rapid extends Action {
 								app.setFormWebserviceType(formWebserviceType);
 								app.setFormWebserviceSOAPAction(formWebserviceSOAPAction);
 
-								if (!securityAdapterType.equals(app.getSecurityAdapterType())) {
-
-									app.setSecurityAdapterType(securityAdapterType);
-									app.setSecurityAdapter(servletContext, securityAdapterType);
-
-								}
-
 								// reload
 								if (appReload) {
 
@@ -2458,6 +2449,9 @@ public class Rapid extends Action {
 									app.getPages().loadpages(servletContext);
 
 								}
+
+								// save - this also saves the settings object to its file if one is being used
+								app.save(rapidServlet, rapidActionRequest, true);
 
 								// if there are settings
 								if (settingsId == null || settingsId.length() == 0) {
@@ -2467,9 +2461,6 @@ public class Rapid extends Action {
 									// load and set them!
 									app.setSettings(Settings.load(servletContext, app));
 								}
-
-								// save - this also saves the settings object to its file if one is being used
-								app.save(rapidServlet, rapidActionRequest, true);
 
 								// add the application to the response
 								result.put("message", "Application details saved");

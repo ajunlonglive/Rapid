@@ -891,16 +891,26 @@ public class Application {
 		if (_useSettings && _settings != null) {
 
 			switch(property) {
-			case themeType : return _settings.getThemeType();
-			case styles : return _settings.getStyles();
-			case statusBarColour : return _settings.getStatusBarColour();
-			case statusBarHighlightColour : return _settings.getStatusBarHighlightColour();
-			case statusBarTextColour : return _settings.getStatusBarTextColour();
-			case statusBarIconColour : return _settings.getStatusBarIconColour();
-			case databaseConnections : return _settings.getDatabaseConnections();
-			case parameters : return _settings.getParameters();
-			case securityAdapterType : return _settings.getSecurityAdapterType();
-			default : return value;
+			case themeType :
+				return _settings.getThemeType();
+			case styles :
+				return _settings.getStyles();
+			case statusBarColour :
+				return _settings.getStatusBarColour();
+			case statusBarHighlightColour :
+				return _settings.getStatusBarHighlightColour();
+			case statusBarTextColour :
+				return _settings.getStatusBarTextColour();
+			case statusBarIconColour :
+				return _settings.getStatusBarIconColour();
+			case databaseConnections :
+				return _settings.getDatabaseConnections();
+			case parameters :
+				return _settings.getParameters();
+			case securityAdapterType :
+				return _settings.getSecurityAdapterType();
+			default :
+				return value;
 			}
 
 		} else {
@@ -916,29 +926,47 @@ public class Application {
 		if (_useSettings && _settings != null) {
 
 			switch(property) {
-			case themeType : _settings.setThemeType((String) value); break;
-			case styles : _settings.setStyles((String) value); break;
-			case statusBarColour : _settings.setStatusBarColour((String) value); break;
-			case statusBarHighlightColour : _settings.setStatusBarHighlightColour((String) value); break;
-			case statusBarTextColour : _settings.setStatusBarTextColour((String) value); break;
-			case statusBarIconColour :  _settings.setStatusBarIconColour((String) value); break;
-			case databaseConnections : _settings.setDatabaseConnections((List<DatabaseConnection>) value); break;
-			case parameters : _settings.setParameters((List<Parameter>) value); break;
-			case securityAdapterType : _settings.setSecurityAdapterType((String) value); break;
+			case themeType :
+				_settings.setThemeType((String) value); break;
+			case styles :
+				_settings.setStyles((String) value); break;
+			case statusBarColour :
+				_settings.setStatusBarColour((String) value); break;
+			case statusBarHighlightColour :
+				_settings.setStatusBarHighlightColour((String) value); break;
+			case statusBarTextColour :
+				_settings.setStatusBarTextColour((String) value); break;
+			case statusBarIconColour :
+				_settings.setStatusBarIconColour((String) value); break;
+			case databaseConnections :
+				_settings.setDatabaseConnections((List<DatabaseConnection>) value); break;
+			case parameters :
+				_settings.setParameters((List<Parameter>) value); break;
+			case securityAdapterType :
+				_settings.setSecurityAdapterType((String) value); break;
 			}
 
 		} else {
 
 			switch(property) {
-			case themeType : _themeType = (String) value; break;
-			case styles : _styles = (String) value; break;
-			case statusBarColour : _statusBarColour = (String) value; break;
-			case statusBarHighlightColour : _statusBarHighlightColour = (String) value; break;
-			case statusBarTextColour : _statusBarTextColour = (String) value; break;
-			case statusBarIconColour :  _statusBarIconColour = (String) value; break;
-			case databaseConnections : _databaseConnections = (List<DatabaseConnection>) value; break;
-			case parameters : _parameters = (List<Parameter>) value; break;
-			case securityAdapterType : _securityAdapterType = (String) value; break;
+			case themeType :
+				_themeType = (String) value; break;
+			case styles :
+				_styles = (String) value; break;
+			case statusBarColour :
+				_statusBarColour = (String) value; break;
+			case statusBarHighlightColour :
+				_statusBarHighlightColour = (String) value; break;
+			case statusBarTextColour :
+				_statusBarTextColour = (String) value; break;
+			case statusBarIconColour :
+				_statusBarIconColour = (String) value; break;
+			case databaseConnections :
+				_databaseConnections = (List<DatabaseConnection>) value; break;
+			case parameters :
+				_parameters = (List<Parameter>) value; break;
+			case securityAdapterType :
+				_securityAdapterType = (String) value; break;
 			}
 
 		}
