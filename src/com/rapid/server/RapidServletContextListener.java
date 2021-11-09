@@ -93,6 +93,18 @@ import com.rapid.utils.Strings;
 
 public class RapidServletContextListener implements ServletContextListener {
 
+	// Comparator for the common task of sorting JSON objects by name
+	public static class JSONNameComparator implements Comparator<JSONObject> {
+		@Override
+		public int compare(JSONObject c1, JSONObject c2) {
+			try {
+				return Comparators.AsciiCompare(c1.getString("name"), c2.getString("name"), false);
+			} catch (JSONException e) {
+				return 0;
+			}
+		}
+	}
+
 	// the logger which we will initialise
 	private static Logger _logger;
 
@@ -203,7 +215,7 @@ public class RapidServletContextListener implements ServletContextListener {
 		JSONObject jsonDatabaseDriverCollection = org.json.XML.toJSONObject(xml).getJSONObject("databaseDrivers");
 
 		// prepare the array we are going to popoulate
-		JSONArray jsonDatabaseDrivers = new JSONArray();
+		List<JSONObject> databaseDrivers = new ArrayList<>();
 
 		JSONObject jsonDatabaseDriver;
 		int index = 0;
@@ -223,8 +235,8 @@ public class RapidServletContextListener implements ServletContextListener {
 			try {
 
 				// check this type does not already exist
-				for (int i = 0; i < jsonDatabaseDrivers.length(); i++) {
-					if (jsonDatabaseDriver.getString("name").equals(jsonDatabaseDrivers.getJSONObject(i).getString("name"))) throw new Exception(" database driver type is loaded already. Type names must be unique");
+				for (int i = 0; i < databaseDrivers.size(); i++) {
+					if (jsonDatabaseDriver.getString("name").equals(databaseDrivers.get(i).getString("name"))) throw new Exception(" database driver type is loaded already. Type names must be unique");
 				}
 
 				// get  the class name
@@ -240,8 +252,8 @@ public class RapidServletContextListener implements ServletContextListener {
 					Class.forName(className, true, classLoader);
 				}
 
-				// add the jsonControl to our array
-				jsonDatabaseDrivers.put(jsonDatabaseDriver);
+				// add the jsonDatabaseDriver to our array
+				databaseDrivers.add(jsonDatabaseDriver);
 
 			} catch (Exception ex) {
 
@@ -256,6 +268,12 @@ public class RapidServletContextListener implements ServletContextListener {
 			if (index < count) jsonDatabaseDriver = jsonDatabaseDriverCollection.getJSONArray("databaseDriver").getJSONObject(index);
 
 		} while (index < count);
+
+		// sort the drivers
+		Collections.sort(databaseDrivers, new JSONNameComparator());
+
+		// make the json array object
+		JSONArray jsonDatabaseDrivers = new JSONArray(databaseDrivers);
 
 		// put the jsonControls in a context attribute (this is available via the getJsonActions method in RapidHttpServlet)
 		servletContext.setAttribute("jsonDatabaseDrivers", jsonDatabaseDrivers);
@@ -337,10 +355,7 @@ public class RapidServletContextListener implements ServletContextListener {
 		});
 
 		// create a JSON Array object which will hold json for all of the available security adapters
-		JSONArray jsonConnectionAdapters = new JSONArray();
-
-		// loop the sorted connection adapters and add to the json array
-		for (JSONObject jsonConnectionAdapter : connectionAdapters) jsonConnectionAdapters.put(jsonConnectionAdapter);
+		JSONArray jsonConnectionAdapters = new JSONArray(connectionAdapters);
 
 		// put the jsonControls in a context attribute (this is available via the getJsonActions method in RapidHttpServlet)
 		servletContext.setAttribute("jsonConnectionAdapters", jsonConnectionAdapters);
@@ -362,9 +377,6 @@ public class RapidServletContextListener implements ServletContextListener {
 		// retain our class constructors in a hashtable - this speeds up initialisation
 		HashMap<String,Constructor> securityConstructors = new HashMap<>();
 
-		// create a JSON Array object which will hold json for all of the available security adapters
-		JSONArray jsonSecurityAdapters = new JSONArray();
-
 		// get the directory in which the control xml files are stored
 		File dir = new File(servletContext.getRealPath("/") + "/WEB-INF/security/");
 
@@ -380,6 +392,9 @@ public class RapidServletContextListener implements ServletContextListener {
 	    Schema schema = _schemaFactory.newSchema(new File(servletContext.getRealPath("/") + "/WEB-INF/schemas/" + "/securityAdapter.xsd"));
 	    // create a validator
 	    Validator validator = schema.newValidator();
+
+	    // a list of JSON adapters we read from the files that we can sort (and back to the json array later)
+	    List<JSONObject> securityAdapters = new ArrayList<>();
 
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) {
@@ -407,12 +422,18 @@ public class RapidServletContextListener implements ServletContextListener {
 			securityConstructors.put(type, classClass.getConstructor(ServletContext.class, Application.class));
 
 			// add to our collection
-			jsonSecurityAdapters.put(jsonSecurityAdapter);
+			securityAdapters.add(jsonSecurityAdapter);
 
 			// increment the count
 			adapterCount++;
 
 		}
+
+		// sort the list of adapters by name
+		Collections.sort(securityAdapters, new JSONNameComparator());
+
+		// create a JSON Array object which will hold json for all of the available security adapters
+		JSONArray jsonSecurityAdapters = new JSONArray(securityAdapters);
 
 		// put the jsonControls in a context attribute (this is available via the getJsonActions method in RapidHttpServlet)
 		servletContext.setAttribute("jsonSecurityAdapters", jsonSecurityAdapters);
@@ -437,9 +458,6 @@ public class RapidServletContextListener implements ServletContextListener {
 		// retain our payment class constructors in a hashtable - this speeds up initialisation
 		HashMap<String,Constructor> paymentConstructors = new HashMap<>();
 
-		// create a JSON Array object which will hold json for all of the available security adapters
-		JSONArray jsonAdapters = new JSONArray();
-
 		// get the directory in which the control xml files are stored
 		File dir = new File(servletContext.getRealPath("/") + "/WEB-INF/forms/");
 
@@ -455,6 +473,9 @@ public class RapidServletContextListener implements ServletContextListener {
 	    Schema schema = _schemaFactory.newSchema(new File(servletContext.getRealPath("/") + "/WEB-INF/schemas/" + "/formAdapter.xsd"));
 	    // create a validator
 	    Validator validator = schema.newValidator();
+
+	    // a list of JSON adapters we read from the files that we can sort (and back to the json array later)
+	    List<JSONObject> formAdapters = new ArrayList<>();
 
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) {
@@ -495,15 +516,21 @@ public class RapidServletContextListener implements ServletContextListener {
 			}
 
 			// add to our collection
-			jsonAdapters.put(jsonFormAdapter);
+			formAdapters.add(jsonFormAdapter);
 
 			// increment the count
 			adapterCount++;
 
 		}
 
+		// sort the list of adapters by name
+		Collections.sort(formAdapters, new JSONNameComparator());
+
+		// create a JSON Array object which will hold json for all of the available security adapters
+		JSONArray jsonFormAdapters = new JSONArray(formAdapters);
+
 		// put the jsonControls in a context attribute (this is available via the getJsonActions method in RapidHttpServlet)
-		servletContext.setAttribute("jsonFormAdapters", jsonAdapters);
+		servletContext.setAttribute("jsonFormAdapters", jsonFormAdapters);
 
 		// put the constructors hashmap in a context attribute (this is available via the getContructor method in RapidHttpServlet)
 		servletContext.setAttribute("formConstructors", formConstructors);
@@ -611,17 +638,7 @@ public class RapidServletContextListener implements ServletContextListener {
 		}
 
 		// sort the list of actions by name
-		Collections.sort(jsonActions, new Comparator<JSONObject>() {
-			@Override
-			public int compare(JSONObject c1, JSONObject c2) {
-				try {
-					return Comparators.AsciiCompare(c1.getString("name"), c2.getString("name"), false);
-				} catch (JSONException e) {
-					return 0;
-				}
-			}
-
-		});
+		Collections.sort(jsonActions, new JSONNameComparator());
 
 		// create a JSON Array object which will hold json for all of the available controls
 		JSONArray jsonArrayActions = new JSONArray(jsonActions);
@@ -709,17 +726,7 @@ public class RapidServletContextListener implements ServletContextListener {
 		}
 
 		// sort the list of controls by name
-		Collections.sort(jsonControls, new Comparator<JSONObject>() {
-			@Override
-			public int compare(JSONObject c1, JSONObject c2) {
-				try {
-					return Comparators.AsciiCompare(c1.getString("name"), c2.getString("name"), false);
-				} catch (JSONException e) {
-					return 0;
-				}
-			}
-
-		});
+		Collections.sort(jsonControls, new JSONNameComparator());
 
 		// create a JSON Array object which will hold json for all of the available controls
 		JSONArray jsonArrayControls = new JSONArray(jsonControls);
