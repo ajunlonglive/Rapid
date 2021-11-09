@@ -589,7 +589,8 @@ public class Application {
 		statusBarTextColour,
 		statusBarIconColour,
 		databaseConnections,
-		parameters
+		parameters,
+		securityAdapterType
 	}
 
 	// static variables
@@ -816,8 +817,8 @@ public class Application {
 	public void setWebservices(List<Webservice> webservices) { _webservices = webservices; }
 
 	// the type name of the security adapter this application uses
-	public String getSecurityAdapterType() { return _securityAdapterType; }
-	public void setSecurityAdapterType(String securityAdapterType) { _securityAdapterType = securityAdapterType; }
+	public String getSecurityAdapterType() { return (String) getSettings(SettingsProperty.securityAdapterType, _securityAdapterType); }
+	public void setSecurityAdapterType(String securityAdapterType) { setSettings(SettingsProperty.securityAdapterType, securityAdapterType); }
 
 	// whether to apply device security to this application
 	public boolean getDeviceSecurity() { return _deviceSecurity; }
@@ -898,6 +899,7 @@ public class Application {
 			case statusBarIconColour : return _settings.getStatusBarIconColour();
 			case databaseConnections : return _settings.getDatabaseConnections();
 			case parameters : return _settings.getParameters();
+			case securityAdapterType : return _settings.getSecurityAdapterType();
 			default : return value;
 			}
 
@@ -922,6 +924,7 @@ public class Application {
 			case statusBarIconColour :  _settings.setStatusBarIconColour((String) value); break;
 			case databaseConnections : _settings.setDatabaseConnections((List<DatabaseConnection>) value); break;
 			case parameters : _settings.setParameters((List<Parameter>) value); break;
+			case securityAdapterType : _settings.setSecurityAdapterType((String) value); break;
 			}
 
 		} else {
@@ -935,6 +938,7 @@ public class Application {
 			case statusBarIconColour :  _statusBarIconColour = (String) value; break;
 			case databaseConnections : _databaseConnections = (List<DatabaseConnection>) value; break;
 			case parameters : _parameters = (List<Parameter>) value; break;
+			case securityAdapterType : _securityAdapterType = (String) value; break;
 			}
 
 		}
@@ -1397,24 +1401,26 @@ public class Application {
 	public SecurityAdapter getSecurityAdapter() { return _securityAdapter; }
 	// set the security to a given type
 	public void setSecurityAdapter(ServletContext servletContext, String securityAdapterType) throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
-		// set the security adaper type from the incoming parameter
-		_securityAdapterType = securityAdapterType;
-		// if it was null update to rapid
-		if (_securityAdapterType == null) _securityAdapterType = "rapid";
+
+		// if incoming parameter is null set to rapid
+		if (securityAdapterType == null) securityAdapterType = "rapid";
+
 		// get a map of the security adapter constructors
 		HashMap<String,Constructor> constructors = (HashMap<String, Constructor>) servletContext.getAttribute("securityConstructors");
 		// get the constructor for our type
-		Constructor<SecurityAdapter> constructor = constructors.get(_securityAdapterType);
+		Constructor<SecurityAdapter> constructor = constructors.get(securityAdapterType);
 		// if we couldn't find a constructor for the specified type
 		if (constructor == null) {
 			// set the type to rapid
-			_securityAdapterType = "rapid";
-			// instantiate a rapid security adapter
+			securityAdapterType = "rapid";
+			// make a RapidSecurityAdapter
 			_securityAdapter = new RapidSecurityAdapter(servletContext, this);
 		} else {
 			// instantiate the specified security adapter
 			_securityAdapter = constructor.newInstance(servletContext, this);
 		}
+		// set the security adapter type from the incoming parameter
+		setSettings(SettingsProperty.securityAdapterType, securityAdapterType);
 	}
 
 	// an instance of the form adapter used by this object
@@ -1617,8 +1623,11 @@ public class Application {
 		// trace log that we're initialising
 		_logger.trace("Initialising application " + _name + "/" + _version);
 
+		// get the security adapter type from settings
+		String securityAdapterType = (String) getSettings(SettingsProperty.securityAdapterType, _securityAdapterType);
+
 		// initialise the security adapter
-		setSecurityAdapter(servletContext, _securityAdapterType);
+		setSecurityAdapter(servletContext, securityAdapterType);
 
 		// initialise the form adapter
 		setFormAdapter(servletContext, _formAdapterType);

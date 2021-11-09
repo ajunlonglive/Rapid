@@ -2384,6 +2384,8 @@ public class Rapid extends Action {
 								String formWebserviceType = jsonAction.optString("formWebserviceType");
 								String formWebserviceSOAPAction = jsonAction.optString("formWebserviceSOAPAction");
 
+								String securityAdapterType = jsonAction.optString("securityAdapterType","rapid");
+
 								// assume we do not need to update the applications drop down
 								boolean appUpdated = false;
 
@@ -2441,6 +2443,13 @@ public class Rapid extends Action {
 								app.setFormWebserviceURL(formWebserviceURL);
 								app.setFormWebserviceType(formWebserviceType);
 								app.setFormWebserviceSOAPAction(formWebserviceSOAPAction);
+
+								if (!securityAdapterType.equals(app.getSecurityAdapterType())) {
+
+									app.setSecurityAdapterType(securityAdapterType);
+									app.setSecurityAdapter(servletContext, securityAdapterType);
+
+								}
 
 								// reload
 								if (appReload) {
@@ -3470,6 +3479,7 @@ public class Rapid extends Action {
 								settings.setStatusBarIconColour(app.getStatusBarIconColour());
 								settings.setDatabaseConnections(app.getDatabaseConnections());
 								settings.setParameters(app.getParameters());
+								settings.setSecurityAdapterType(app.getSecurityAdapterType());
 
 								// save the settings
 								settings.save(servletContext, app);

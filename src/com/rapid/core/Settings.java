@@ -52,7 +52,7 @@ public class Settings {
 	// private instance variables
 
 	private static Logger _logger = LogManager.getLogger(RapidSecurityAdapter.class);
-	private String _id, _name, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour;
+	private String _id, _name, _themeType, _styles, _statusBarColour, _statusBarHighlightColour, _statusBarTextColour, _statusBarIconColour, _securityAdapterType;
 	private List<DatabaseConnection> _databaseConnections;
 	private List<Parameter> _parameters;
 
@@ -95,6 +95,10 @@ public class Settings {
 	// a collection of parameters for this application
 	public List<Parameter> getParameters() { return _parameters; }
 	public void setParameters(List<Parameter> parameters) { _parameters = parameters; }
+
+	// the type name of the security adapter this application uses
+	public String getSecurityAdapterType() { return _securityAdapterType; }
+	public void setSecurityAdapterType(String securityAdapterType) { _securityAdapterType = securityAdapterType; }
 
 	// default constructor
 	public Settings() {

@@ -591,7 +591,9 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				formWebservice: getData_checkbox(ev, "rapid_P0_C1905_"),
 				formWebserviceURL: $("#rapid_P0_C1903_").val(),
 				formWebserviceType: $("#rapid_P0_C1902_").val(),
-				formWebserviceSOAPAction: $("#rapid_P0_C1901_").val()
+				formWebserviceSOAPAction: $("#rapid_P0_C1901_").val(),
+				
+				securityAdapterType: $("#rapid_P0_C81").val()
 				
 			};	
 		break;
