@@ -1169,6 +1169,9 @@ if (data !== undefined && data !== "") {
 				grid.parent().addClass("gridSortsApplied");
 			
 			}
+			
+			// let dialogues resize
+			$(window).resize();
 		
 		}  // afterLoaded function
 		
