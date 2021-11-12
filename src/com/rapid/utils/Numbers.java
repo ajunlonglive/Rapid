@@ -84,5 +84,10 @@ public class Numbers {
 	public static final String pad(int length, Object number) {
 		return pad(length, number, "0");
 	}
+	
+	public static final double round(double number, int decimalPlaces) {
+		double factor = Math.pow(10, (double) decimalPlaces);
+		return Math.round(number * factor) / factor;
+	}
 
 }
