@@ -1399,6 +1399,7 @@ public class Page {
     }
 
     private void getEventJavaScriptFunction(RapidRequest rapidRequest, StringBuilder stringBuilder, Application application, Control control, Event event) throws JSONException {
+
     	// check actions are initialised
 		if (event.getActions() != null) {
 			// check there are some to loop
@@ -1522,16 +1523,17 @@ public class Page {
 
     // build the event handling page JavaScript iteratively
     private void getEventHandlersJavaScript(RapidRequest rapidRequest, StringBuilder stringBuilder, Application application, List<Control> controls) throws JSONException {
+    	// if we're at the root of the page
+		if (_controls == null || _controls.equals(controls)) {
+			// check for page events
+			if (_events != null) {
+				// loop page events and get js functions
+    			for (Event event : _events) getEventJavaScriptFunction(rapidRequest, stringBuilder, application, null, event);
+			}
+		}
     	// check there are some controls
     	if (controls != null) {
-			// if we're at the root of the page
-    		if (controls.equals(_controls)) {
-    			// check for page events
-    			if (_events != null) {
-    				// loop page events and get js functions
-        			for (Event event : _events) getEventJavaScriptFunction(rapidRequest, stringBuilder, application, null, event);
-    			}
-    		}
+    		// loop controls
     		for (Control control : controls) {
     			// check event actions
     			if (control.getEvents() != null) {
@@ -1747,8 +1749,8 @@ public class Page {
 			pageLoadLines.add("Event_initForm('" + _id + "');\n");
 		}
 
-		// check for page events (this is here so all listeners are registered by now) and controls (there should not be none but nothing happens without them)
-		if (_events != null && _controls != null) {
+		// check for page events (this is here so all listeners are registered by now)
+		if (_events != null) {
 			// loop page events
 			for (Event event : _events) {
 				// only if there are actually some actions to invoke
