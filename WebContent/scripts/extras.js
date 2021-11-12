@@ -1408,8 +1408,11 @@ function successCheck(groupId, actionId, success, ev) {
 				var size = 0;
 				// add all entries (if any)
 				for (k in g) size ++;
-				// if we have removed all entries, all calls have returned successfully! So call the success
-				if (size == 0 && window[groupId + "success"]) window[groupId + "success"](ev);
+				// if we have removed all entries, all calls have returned successfully! 
+				if (size == 0 && window[groupId + "success"]) {					
+					// call the success
+					window[groupId + "success"](ev);
+				}
 			} else {
 				// a call has errored so null the v to prevent further checks
 				g == null;

@@ -388,6 +388,7 @@ public class Mobile extends Action {
 
 	// a helper method to check controls exist
 	private boolean checkControl(ServletContext servletContext, Application application, Page page, String controlId) {
+
 		// assume control not found
 		boolean controlFound = false;
 		// check we got a control id
@@ -405,7 +406,8 @@ public class Mobile extends Action {
 	}
 
 	@Override
-	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) {
+	public String getJavaScript(RapidRequest rapidRequest, Application application, Page page, Control control, JSONObject jsonDetails) throws Exception {
+
 		// start the js
 		String js = "";
 		// get the servlet
@@ -1001,8 +1003,24 @@ public class Mobile extends Action {
 
 			} else if ("online".equals(type)) {
 
+				// assume we're not doing any success check
+				boolean successCheck = false;
+
 				// see if we have any online success or error actions
-				boolean successActions = ((_successActions != null && _successActions.size() > 0) || (_errorActions != null && _errorActions.size() > 0));
+				if ((_successActions != null && _successActions.size() > 0) || (_errorActions != null && _errorActions.size() > 0)) {
+
+					// retain that we're doing a success check
+					successCheck = true;
+
+					// ensure we have a details object
+					if (jsonDetails == null) jsonDetails = new JSONObject();
+
+					// retain on the details that we have an offline page
+					jsonDetails.put("successCheck", id);
+					// set it to empty
+					js += "_" + id + "successChecks = {};\n";
+
+				}
 
 				// check we have online actions
 				if (_onlineActions != null && _onlineActions.size() > 0) {
@@ -1030,19 +1048,14 @@ public class Mobile extends Action {
 						// record that we have an offline page
 						if (offlinePage != null && !offlinePage.equals("")) jsonDetails.put("offlinePage", offlinePage);
 
-						// if there are success actions
-						if (successActions) {
-							// retain on the details that we have an offline page
-							jsonDetails.put("successCheck", id);
-							// set it to empty
-							js += "  _" + id + "successChecks = {};\n";
-						}
-
 						// loop the online actions (this will apply the working and offline entries in the details)
 						for (Action action : _onlineActions) {
 							// add the child action JavaScript
 							js += "  " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 						}
+
+						// check the success, if there is one, in case all actions were client-side
+						if (successCheck) js += "successCheck('" + id + "', null, true, ev);\n";
 
 						// js online check fail
 						js += "} else {\n";
@@ -1060,13 +1073,8 @@ public class Mobile extends Action {
 
 				} else {
 
-					// if there are no online actions but there are success actions
-					if (successActions) {
-
-						// call the any success immediately
-						js += id + "success(ev);\n";
-
-					}
+					// if there are no online actions but there are success actions call the any success immediately
+					if (successCheck) js += id + "success(ev);\n";
 
 				} // online actions check non-null check
 

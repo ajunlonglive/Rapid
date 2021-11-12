@@ -171,27 +171,42 @@ public class Group extends Action {
 		// start the js that we're making
 		String js = "";
 
+		// get this actions id
+		String id = getId();
+
+		// assume we're not doing any success check
+		boolean successCheck = false;
+
+		// see if we have any online success or error actions
+		if ((_successActions != null && _successActions.size() > 0) || (_errorActions != null && _errorActions.size() > 0)) {
+
+			// retain that we're doing a success check
+			successCheck = true;
+
+			// ensure we have a details object
+			if (jsonDetails == null) jsonDetails = new JSONObject();
+
+			// retain on the details that we have an offline page
+			jsonDetails.put("successCheck", id);
+			// set it to empty
+			js += "_" + id + "successChecks = {};\n";
+
+		}
+
 		// add any actions
 		if (_actions != null && _actions.size() > 0) {
 
-			// see if we have any online success or error actions
-			if ((_successActions != null && _successActions.size() > 0) || (_errorActions != null && _errorActions.size() > 0)) {
-
-				// ensure we have a details object
-				if (jsonDetails == null) jsonDetails = new JSONObject();
-
-				// get this actions id
-				String id = getId();
-
-				// retain on the details that we have an offline page
-				jsonDetails.put("successCheck", id);
-				// set it to empty
-				js += "  _" + id + "successChecks = {};\n";
-
-			}
-
 			// loop the actions and add them
 			for (Action action : _actions) js += action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim() + "\n";
+
+			// check the success, if there is one
+			if (successCheck) js += "successCheck('" + id + "', null, true, ev);\n";
+
+		} else {
+
+			// if there are no actions for any reason, but there is a success, call it immediately
+			if (_successActions != null && _successActions.size() > 0) js += id + "success(ev);\n";
+
 		}
 
 		// return what we built
