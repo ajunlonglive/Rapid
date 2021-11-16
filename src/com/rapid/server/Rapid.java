@@ -171,7 +171,7 @@ public class Rapid extends RapidHttpServlet {
 				// get the file path from the root
 				String fileRoot = file.getPath().substring(rootLength);
 				// any replaces
-				fileRoot = fileRoot.replace("\\com\\rapid", "\\WEB-INF\\classes\\rapid");
+				fileRoot = fileRoot.replace("\\bin\\com\\rapid", "\\WEB-INF\\classes\\com\\rapid").replace("\\build\\com\\rapid", "\\WEB-INF\\classes\\com\\rapid");
 				// get the file details
 				String fileDetails = fileRoot + "\t" + (file.isDirectory() ? "" : file.length()) + sizeAndChecksum + "\r\n";
 				// print the file details
