@@ -168,12 +168,43 @@ public class Rapid extends RapidHttpServlet {
 				// reduce the file count
 				fileCount --;
 			} else {
+				// get the file path from the root
+				String fileRoot = file.getPath().substring(rootLength);
+				// any replaces
+				fileRoot = fileRoot.replace("\\com\\rapid", "\\WEB-INF\\classes\\rapid");
+				// get the file details
+				String fileDetails = fileRoot + "\t" + (file.isDirectory() ? "" : file.length()) + sizeAndChecksum + "\r\n";
 				// print the file details
-				out.print(file.getPath().substring(rootLength) + "\t" + (file.isDirectory() ? "" : file.length()) + sizeAndChecksum + "\r\n");
+				out.print(fileDetails);
 			}
+			
+			// get the file name 
+			String filename = file.getName();
 
 			// if it is a directory, but not the applications nor logs nor temp nor update nor uploads one
-			if (file.isDirectory() && !"applications".equals(file.getName()) && !"logs".equals(file.getName()) && !"temp".equals(file.getName()) && !"update".equals(file.getName()) && !"uploads".equals(file.getName())) {
+			if (file.isDirectory() && !"applications".equals(filename) && !"logs".equals(filename) && !"temp".equals(filename) && !"update".equals(filename) && !"uploads".equals(filename)) {
+				
+				// if this is the WEB-INF/classes folder
+				if ("classes".equals(filename) && "WEB-INF".equals(file.getParentFile().getName())) {
+					
+					// this could be Jetty in which case the classes are in bin or build folder so see if they exist
+					File binFile = new File(file.getParentFile().getParentFile().getParentFile().getAbsolutePath() + "/bin/com/");
+					// try build as well if not found
+					if (!binFile.exists()) binFile = new File(file.getParentFile().getParentFile().getParentFile().getAbsolutePath() + "/build/com/");
+					
+					// if it exists 
+					if (binFile.exists()) {
+
+						// use it instead
+						file = binFile;
+						
+						// adjust the rootlength
+						rootLength = file.getParentFile().getAbsolutePath().length();
+						
+					}
+					
+				}
+				
 				// go iterative, and add to fileCount
 				fileCount += printConfig(out, digest, rootLength, file);
 			}
