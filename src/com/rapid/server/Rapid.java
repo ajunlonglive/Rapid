@@ -153,6 +153,9 @@ public class Rapid extends RapidHttpServlet {
 			}
 
 		});
+		
+		// retain rootLength in case it changes
+		int retainRootLength = rootLength;
 
 		// loop the files
 		for (File file : files) {
@@ -183,7 +186,7 @@ public class Rapid extends RapidHttpServlet {
 
 			// if it is a directory, but not the applications nor logs nor temp nor update nor uploads one
 			if (file.isDirectory() && !"applications".equals(filename) && !"logs".equals(filename) && !"temp".equals(filename) && !"update".equals(filename) && !"uploads".equals(filename)) {
-				
+
 				// if this is the WEB-INF/classes folder
 				if ("classes".equals(filename) && "WEB-INF".equals(file.getParentFile().getName())) {
 					
@@ -199,7 +202,7 @@ public class Rapid extends RapidHttpServlet {
 						file = binFile;
 						
 						// adjust the rootlength
-						rootLength = file.getParentFile().getAbsolutePath().length();
+						rootLength = file.getParentFile().getParentFile().getAbsolutePath().length();
 						
 					}
 					
@@ -207,7 +210,11 @@ public class Rapid extends RapidHttpServlet {
 				
 				// go iterative, and add to fileCount
 				fileCount += printConfig(out, digest, rootLength, file);
+
 			}
+			
+			// restore any original root length
+			rootLength = retainRootLength;
 
 		}
 
