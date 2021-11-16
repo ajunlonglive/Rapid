@@ -572,6 +572,7 @@ public class Database extends Action {
 	}
 
 	private String getJsonInputValue(JSONArray jsonFields, JSONArray jsonRow, String id) {
+		// loop the fields
 		for (int j = 0; j < jsonFields.length(); j++) {
 			// get the id from the fields
 			String jsonId = jsonFields.optString(j);
@@ -590,6 +591,72 @@ public class Database extends Action {
 	private static String _parameterSlotRegex = "(\\?\"[^\"]+\")|(\\?\\w\\S*)|\\?";
 	// finds ? followed by a number
 	private static String _unspecifySlotsRegex = "(\\?\\d*)";
+
+	// determine if a string needs escaping for XSS
+	private int escapeXSSPos(String value) {
+
+		// skip if null or less than 5
+		if (value != null && value.length() > 5) {
+
+			// find any <
+			int ltPos = value.indexOf("<");
+
+			// if we had one, and it was more than 5 from the end
+			if (ltPos >= 0 && ltPos < value.length() - 5) {
+
+				// if the next character is !, so this looks like an xml comment
+				if ("!".equals(value.substring(ltPos + 1, ltPos + 2))) {
+
+					// look for any further <
+					ltPos = value.indexOf("<", ltPos + 1);
+
+					// return here if there wasn't one
+					if (ltPos < 0) return ltPos;
+
+				}
+
+				// find any >
+				int gtPos = value.indexOf(">", ltPos);
+
+				// if there was one more then 5 characters after the < (to allow for <>)
+				if (gtPos > ltPos + 5) {
+
+					// send back the position of lt
+					return ltPos;
+
+				}
+
+			}
+
+		}
+
+		// send -1 to indicate nothing to escape
+		return -1;
+
+	}
+
+
+	// iteratively escape a string for xss before sending to the front end
+	private String escapeXSS(String value) {
+
+		// check for any escape pos
+		int pos = escapeXSSPos(value);
+
+		// skip if null or less than 5
+		while (pos >= 0) {
+
+			// escape at this pos
+			value = value.substring(0, pos) + "&lt;" + value.substring(pos + 1);
+
+			// check again
+			pos = escapeXSSPos(value);
+
+		}
+
+		// return the value
+		return value;
+
+	}
 
 
 	public JSONObject doQuery(RapidRequest rapidRequest, JSONObject jsonAction, Application application, DataFactory df) throws Exception {
@@ -864,6 +931,8 @@ public class Database extends Action {
 													}
 												break;
 												default :
+													// string type data needs sanitising to prevent cross-site scripting (XSS)
+													value = escapeXSS(value);
 													jsonRow.put(value);
 												}
 											}
