@@ -686,7 +686,7 @@ public class Mobile extends Action {
 						// get the progress out control
 						Control progressOutput = application.getControl(servletContext, progressOutputId);
 						// if we got a control
-						if (progressOutput != null) progressOutputJavaScript = ", {id:'" + progressOutputId + "', type:'" + progressOutput.getType() + "', field:" + progressOutputField + ", details:" + progressOutput.getDetails() + "}";
+						if (progressOutput != null) progressOutputJavaScript = ", {id:'" + progressOutputId + "', type:'" + progressOutput.getType() + "', field:'" + progressOutputField + "', details:" + progressOutput.getDetails() + "}";
 					}
 
 					// if we got any urls check whether request is from a mobile - upload the images
