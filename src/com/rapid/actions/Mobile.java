@@ -666,7 +666,7 @@ public class Mobile extends Action {
 							if ("signature".equals(imageControl.getType())) {
 								js += "urls += getData_signature(ev, '" + controlId + "');\n";
 							} else {
-								js += "$('#" + id + "').find('.galleryItem').each( function() { urls += $(this).attr('src') + ',' });\n";
+								js += "$('#" + controlId + "').find('.galleryItem').each( function() { urls += $(this).attr('src') + ',' });\n";
 							}
 						}
 
