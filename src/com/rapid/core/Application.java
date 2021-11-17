@@ -3251,17 +3251,25 @@ public class Application {
 				if ("rapid".equals(application.getId()) && !RapidFilter.hasLogon()) {
 					// get any parameters
 					List<Parameter> parameters = application.getParameters();
-					// if null or no parameters
-					if (parameters == null || parameters.size() == 0) {
-						// add a login false
-						parameters.add(new Parameter("hasLogon","false"));
-					} else {
-						// loop the parameters
-						for (Parameter parameter : parameters) {
-							// set hasLogon to false
-							if ("hasLogon".equals(parameter.getName())) parameter.setValue("false");
+					// if null, make some
+					if (parameters == null) parameters = new ArrayList<>();
+					// assume we haven't updated
+					boolean updatedHasLogon = false;
+					// loop the parameters
+					for (Parameter parameter : parameters) {
+						// if this is the hasLogon parameter
+						if ("hasLogon".equals(parameter.getName())) {
+							// set it to false
+							parameter.setValue("false");
+							// retain that we updated
+							updatedHasLogon = true;
+							// we're done]
+							break;
 						}
+
 					}
+					// if we didn't update the existing parameter, add one
+					if (!updatedHasLogon) parameters.add(new Parameter("hasLogon","false"));
 				}
 
 			}
