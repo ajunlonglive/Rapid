@@ -153,7 +153,7 @@ public class Rapid extends RapidHttpServlet {
 			}
 
 		});
-		
+
 		// retain rootLength in case it changes
 		int retainRootLength = rootLength;
 
@@ -172,16 +172,18 @@ public class Rapid extends RapidHttpServlet {
 				fileCount --;
 			} else {
 				// get the file path from the root
-				String fileRoot = file.getPath().substring(rootLength);
-				// any replaces
-				fileRoot = fileRoot.replace("\\bin\\com\\rapid", "\\WEB-INF\\classes\\com\\rapid").replace("\\build\\com\\rapid", "\\WEB-INF\\classes\\com\\rapid");
+				String filePath = file.getPath().substring(rootLength);
+				// replace \ with / to standardise between Windows and Linux
+				filePath = filePath.replace("\\", "/");
+				// any relative replaces from Jetty to Tomcat
+				filePath = filePath.replace("/bin/com/rapid", "/WEB-INF/classes/com/rapid").replace("/build/com/rapid", "/WEB-INF/classes/com/rapid");
 				// get the file details
-				String fileDetails = fileRoot + "\t" + (file.isDirectory() ? "" : file.length()) + sizeAndChecksum + "\r\n";
+				String fileDetails = filePath + "\t" + (file.isDirectory() ? "" : file.length()) + sizeAndChecksum + "\r\n";
 				// print the file details
 				out.print(fileDetails);
 			}
-			
-			// get the file name 
+
+			// get the file name
 			String filename = file.getName();
 
 			// if it is a directory, but not the applications nor logs nor temp nor update nor uploads one
@@ -189,30 +191,30 @@ public class Rapid extends RapidHttpServlet {
 
 				// if this is the WEB-INF/classes folder
 				if ("classes".equals(filename) && "WEB-INF".equals(file.getParentFile().getName())) {
-					
+
 					// this could be Jetty in which case the classes are in bin or build folder so see if they exist
 					File binFile = new File(file.getParentFile().getParentFile().getParentFile().getAbsolutePath() + "/bin/com/");
 					// try build as well if not found
 					if (!binFile.exists()) binFile = new File(file.getParentFile().getParentFile().getParentFile().getAbsolutePath() + "/build/com/");
-					
-					// if it exists 
+
+					// if it exists
 					if (binFile.exists()) {
 
 						// use it instead
 						file = binFile;
-						
+
 						// adjust the rootlength
 						rootLength = file.getParentFile().getParentFile().getAbsolutePath().length();
-						
+
 					}
-					
+
 				}
-				
+
 				// go iterative, and add to fileCount
 				fileCount += printConfig(out, digest, rootLength, file);
 
 			}
-			
+
 			// restore any original root length
 			rootLength = retainRootLength;
 
