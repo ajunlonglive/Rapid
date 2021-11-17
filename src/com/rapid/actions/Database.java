@@ -636,7 +636,7 @@ public class Database extends Action {
 	}
 
 
-	// iteratively escape a string for xss before sending to the front end
+	// iteratively escape a string for xss, makes < &lt; if there is sufficient space around it and a closing >
 	private String escapeXSS(String value) {
 
 		// check for any escape pos
@@ -780,6 +780,10 @@ public class Database extends Action {
 								}
 								// if still null try the session
 								if (value == null) value = (String) rapidRequest.getSessionAttribute(input.getItemId());
+
+								// escape any possible XSS on the way in, as we sometimes like to select html (which would break if we did it on the way out)
+								value = escapeXSS(value);
+
 								// add the parameter
 								parameters.add(value);
 							}
@@ -931,8 +935,6 @@ public class Database extends Action {
 													}
 												break;
 												default :
-													// string type data needs sanitising to prevent cross-site scripting (XSS)
-													value = escapeXSS(value);
 													jsonRow.put(value);
 												}
 											}
