@@ -37,6 +37,7 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -55,6 +56,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.rapid.core.Application;
+import com.rapid.core.Application.Parameter;
 import com.rapid.core.Application.RapidLoadingException;
 import com.rapid.core.Page;
 import com.rapid.core.Page.Variable;
@@ -89,6 +91,9 @@ public class Rapid extends RapidHttpServlet {
 	public static final String USERS_ROLE = "RapidUsers"; // allows user management in Rapid Admin
 	public static final String SUPER_ROLE = "RapidSuper"; // allows design of the Rapid Admin app
 	public static final String MASTER_ROLE = "RapidMaster"; // allows all apps to appear in Rapid Admin
+	
+	// whether there is a logon (meaning we don't show the logout link in Rapid Admin) - and the checked which we have to do just once in the before get Rapid Admin page P0 as the filter is initialised after the app and adapte
+	protected static boolean _hasLogon, _hasLogonChecked;
 
 	//  helper methods for forms
 	private String getFirstPageForFormType(Application app, int formPageType) throws RapidLoadingException {
@@ -733,6 +738,39 @@ public class Rapid extends RapidHttpServlet {
 
 										// set designer link to false if action is dialogue
 										if ("dialogue".equals(rapidRequest.getActionName())) designerLink =  false;
+										
+										// if this is the special rapid P0 with the LOG OUT - we only do this once
+										if (!_hasLogonChecked && !_hasLogon && "rapid".equals(app.getId()) && "P0".equals(page.getId())) {
+											
+											// special thing for the Rapid app the hasLogon parameter is set from the RapidFilter hasLogon - the default is true
+											if (!RapidFilter.hasLogon()) {
+												// get any parameters
+												List<Parameter> parameters = app.getParameters();
+												// if null, make some
+												if (parameters == null) parameters = new ArrayList<>();
+												// assume we haven't updated
+												boolean updatedHasLogon = false;
+												// loop the parameters
+												for (Parameter parameter : parameters) {
+													// if this is the hasLogon parameter
+													if ("hasLogon".equals(parameter.getName())) {
+														// set it to false
+														parameter.setValue("false");
+														// retain that we updated
+														updatedHasLogon = true;
+														// we're done]
+														break;
+													}
+
+												}
+												// if we didn't update the existing parameter, add one
+												if (!updatedHasLogon) parameters.add(new Parameter("hasLogon","false"));
+											}
+											
+											// rememeber we've now checked
+											_hasLogonChecked = true;
+											
+										}
 
 										// set the response type
 										response.setContentType("text/html");

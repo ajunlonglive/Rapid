@@ -3247,31 +3247,6 @@ public class Application {
 				// initialise the application and create the resources
 				application.initialise(servletContext, true);
 
-				// special thing for the Rapid app the hasLogon parameter is set from the RapidFilter hasLogon - the default is true
-				if ("rapid".equals(application.getId()) && !RapidFilter.hasLogon()) {
-					// get any parameters
-					List<Parameter> parameters = application.getParameters();
-					// if null, make some
-					if (parameters == null) parameters = new ArrayList<>();
-					// assume we haven't updated
-					boolean updatedHasLogon = false;
-					// loop the parameters
-					for (Parameter parameter : parameters) {
-						// if this is the hasLogon parameter
-						if ("hasLogon".equals(parameter.getName())) {
-							// set it to false
-							parameter.setValue("false");
-							// retain that we updated
-							updatedHasLogon = true;
-							// we're done]
-							break;
-						}
-
-					}
-					// if we didn't update the existing parameter, add one
-					if (!updatedHasLogon) parameters.add(new Parameter("hasLogon","false"));
-				}
-
 			}
 
 			// log that the application was loaded
