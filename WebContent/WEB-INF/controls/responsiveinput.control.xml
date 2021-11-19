@@ -292,11 +292,13 @@ if (data != null && data !== undefined) {
 var container = $("#" + id);
 // get control input
 var control = container.find("input,textarea");
+// unescape any xss escaping in the data before going into the value
+if (value) value = value.replaceAll("&lt;","<");
 // set the value
 control.val(value);
 // fire any autoheight
 if (control.is(".autoheight")) textarea_autoheight_size(control, true);
-// fire any change events
+// fire any change events, if requested
 if (changeEvents) container.trigger("change");
 			]]>
 	    </setDataJavaScript>

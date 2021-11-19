@@ -47,14 +47,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <refreshProperties>true</refreshProperties>	            
 	            <helpHtml>Enables you to define a database query. SQL can be entered within the text area and selected inputs and outputs can be chosen. There is also a capability to test your SQL against a specified database connection. Reference inputs in your SQL with a question mark, or reuse them by their name or number prefixed with a question mark (?1, ?inpName).</helpHtml>
 	        </property>
-	          
-	        <property>
-	            <key>showLoading</key>
-	            <name>Loading animation</name>
-	            <changeValueJavaScript>databaseNotChildCheckbox</changeValueJavaScript>
-	            <helpHtml>Displays a loading animation on top of some output controls whilst the database query executes.</helpHtml>
-	        </property>
-	        
+
 	        <property>
 	            <key>childDatabaseActions</key>
 	            <name>Child actions</name>
@@ -76,8 +69,14 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <key>mergeChildren</key>
 	            <name>Merge child data</name>
 	            <changeValueJavaScript>databaseNoChildrenCheckbox</changeValueJavaScript>
-	            <getValuesFunction>return false;</getValuesFunction>
 	            <helpHtml>Whether to use values in columns with the same name in the parent and child queries to create child data objects for each matching parent row.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>showLoading</key>
+	            <name>Loading animation</name>
+	            <changeValueJavaScript>databaseNotChildCheckbox</changeValueJavaScript>
+	            <helpHtml>Displays a loading animation on top of some output controls whilst the database query executes.</helpHtml>
 	        </property>
 	        
 	        <property>

@@ -2491,7 +2491,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	table.parent().removeClass("dialogueTable");
 		
 	// initialise the query object if need be
-	if (!propertyObject[property.key]) propertyObject[property.key] = {inputs:[], databaseConnectionIndex: 0, outputs:[]};
+	if (!propertyObject[property.key]) propertyObject[property.key] = {inputs:[], databaseConnectionIndex: 0, outputs:[], avoidXSS: true};
 	// get the query
 	var query = propertyObject[property.key];
 	// get the sql into a variable
@@ -2712,10 +2712,11 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	
 	// add the multi-row, database connection, and test button
 	table.append("<tr><td>Multi-row input data?&nbsp;<input class='multi' type='checkbox'" + (query.multiRow ? "checked='checked'" : "" ) + " style='vertical-align: middle;margin-top: -3px;'/></td>" +
-			"<td style='text-align: left;overflow:inherit;padding:0 10px;'>" + databaseConnection + "<button style='float:right;'>Test SQL</button></td></tr>");
+			"<td style='text-align: left;overflow:inherit;padding:0 10px;'>" + databaseConnection + "<button style='float:right;'>Test SQL</button></td>" +
+			"<td style='text-align: right;'>Avoid XSS?&nbsp;<input class='avoidXSS' type='checkbox'" + (query.avoidXSS ? "checked='checked'" : "" ) + " style='vertical-align: middle;margin-top: -3px;'/></td></tr>");
 	
 	// get a reference to the multi-data check box
-	var multiRow = table.find("tr").last().find("input");
+	var multiRow = table.find("tr").last().find("input.multi");
 	// add a listener for if it changes
 	addListener( multiRow.change( {cell: cell, propertyObject: propertyObject, property: property, details: details, query: query}, function(ev) {
 		// set the multiData value
@@ -2730,6 +2731,16 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	addListener( dbConnection.change( {query: query}, function(ev) {
 		// set the index value
 		ev.data.query.databaseConnectionIndex = ev.target.selectedIndex;
+	}));
+	
+	// get a reference to the multi-data check box
+	var multiRow = table.find("tr").last().find("input.avoidXSS");
+	// add a listener for if it changes
+	addListener( multiRow.change( {cell: cell, propertyObject: propertyObject, property: property, details: details, query: query}, function(ev) {
+		// set the multiData value
+		ev.data.query.avoidXSS = $(ev.target).is(":checked");
+		// refresh the dialogue
+		Property_databaseQuery(ev.data.cell, ev.data.propertyObject, ev.data.property, ev.data.details);
 	}));
 	
 	// get a reference to the test button

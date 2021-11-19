@@ -72,7 +72,7 @@ public class Database extends Action {
 
 		private List<Parameter> _inputs, _outputs;
 		private String _sql;
-		private boolean _multiRow;
+		private boolean _multiRow, _avoidXSS;
 		private int _databaseConnectionIndex;
 
 		public List<Parameter> getInputs() { return _inputs; }
@@ -90,13 +90,17 @@ public class Database extends Action {
 		public int getDatabaseConnectionIndex() { return _databaseConnectionIndex; }
 		public void setDatabaseConnectionIndex(int databaseConnectionIndex) { _databaseConnectionIndex = databaseConnectionIndex; }
 
+		public boolean getAvoidXSS() { return _avoidXSS; }
+		public void setAvoidXSS(boolean avoidXSS) { _avoidXSS = avoidXSS; }
+
 		public Query() {};
-		public Query(List<Parameter> inputs, List<Parameter> outputs, String sql, boolean multiRow, int databaseConnectionIndex) {
+		public Query(List<Parameter> inputs, List<Parameter> outputs, String sql, boolean multiRow, int databaseConnectionIndex, boolean avoidXSS) {
 			_inputs = inputs;
 			_outputs = outputs;
 			_sql = sql;
 			_multiRow = multiRow;
 			_databaseConnectionIndex = databaseConnectionIndex;
+			_avoidXSS = avoidXSS;
 		}
 
 	}
@@ -164,8 +168,9 @@ public class Database extends Action {
 			String sql = jsonQuery.optString("SQL");
 			boolean multiRow = jsonQuery.optBoolean("multiRow");
 			int databaseConnectionIndex = jsonQuery.optInt("databaseConnectionIndex");
+			boolean avoidXSS = jsonQuery.optBoolean("avoidXSS");
 			// make the object
-			_query = new Query(inputs, outputs, sql, multiRow, databaseConnectionIndex);
+			_query = new Query(inputs, outputs, sql, multiRow, databaseConnectionIndex, avoidXSS);
 		}
 
 		// look for showLoading
@@ -781,9 +786,6 @@ public class Database extends Action {
 								// if still null try the session
 								if (value == null) value = (String) rapidRequest.getSessionAttribute(input.getItemId());
 
-								// escape any possible XSS on the way in, as we sometimes like to select html (which would break if we did it on the way out)
-								value = escapeXSS(value);
-
 								// add the parameter
 								parameters.add(value);
 							}
@@ -935,6 +937,9 @@ public class Database extends Action {
 													}
 												break;
 												default :
+													// escape an XSS, if required (the default for new actions)
+													if (_query.getAvoidXSS()) value = escapeXSS(value);
+													// put the value in the result
 													jsonRow.put(value);
 												}
 											}
