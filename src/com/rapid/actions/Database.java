@@ -72,7 +72,8 @@ public class Database extends Action {
 
 		private List<Parameter> _inputs, _outputs;
 		private String _sql;
-		private boolean _multiRow, _avoidXSS;
+		private boolean _multiRow;
+		private boolean _avoidXSS = true; // note this default will be applied to all previous actions as the default
 		private int _databaseConnectionIndex;
 
 		public List<Parameter> getInputs() { return _inputs; }
@@ -1305,6 +1306,8 @@ public class Database extends Action {
 	public boolean isWebService() {
 		return true;
 	}
+
+	// static methods
 
 	// returns a list of all parameters for the sql by finding any ?'s followed by numbers/names and creating a longer parameter list populated with those mapped by index to the inputs - also used by designer sql check where the input names come from json
 	public static List<Integer> getParameterMap(String sql, List<String> inputNames, Application application, ServletContext context) throws SQLException {
