@@ -73,7 +73,7 @@ public class Database extends Action {
 		private List<Parameter> _inputs, _outputs;
 		private String _sql;
 		private boolean _multiRow;
-		private boolean _avoidXSS = true; // note this default will be applied to all previous actions as the default
+		private boolean _avoidXSS;
 		private int _databaseConnectionIndex;
 
 		public List<Parameter> getInputs() { return _inputs; }
