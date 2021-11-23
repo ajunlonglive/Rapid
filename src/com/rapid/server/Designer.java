@@ -282,11 +282,16 @@ public class Designer extends RapidHttpServlet {
     	Iterator<String> keys = jsonObject.keys();
 
     	while (keys.hasNext()) {
+
     		String key = keys.next();
     		output += "\r\n";
     		for (int i = 0; i < thisLevel; i++) output += "\t";
 
-    		String value = JSONObject.valueToString(jsonObject.get(key));
+    		// we want line breaks and tabs in values printed as is (not escaped)
+    		String value = jsonObject.get(key).toString();
+
+    		// if it has line breaks - add one in front so it all appears on the margin
+    		if (value != null && value.contains("\n")) value = "\r\n" + value;
 
     		if (looksLikeJSONObject(value)) {
     			value = printJSONObject(jsonObject.getJSONObject(key), thisLevel);
