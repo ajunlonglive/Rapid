@@ -566,7 +566,10 @@ function showAction(actionsTable, action, collection, refreshFunction, details) 
 				// get the key value
 				var value = action[property.visibility.key];
 				// update visibility base on values matching
-				if (value !== property.visibility.value) visible = false;
+				var values = property.visibility.value; // possibly an array or a single value
+				if (Array.isArray(values) ? values.indexOf(value) == -1 : value !== values){
+					visible = false;
+				}
 			}
 			// check that visibility is not explicitly false
 			if (visible) {
