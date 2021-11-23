@@ -91,7 +91,7 @@ public class Rapid extends RapidHttpServlet {
 	public static final String USERS_ROLE = "RapidUsers"; // allows user management in Rapid Admin
 	public static final String SUPER_ROLE = "RapidSuper"; // allows design of the Rapid Admin app
 	public static final String MASTER_ROLE = "RapidMaster"; // allows all apps to appear in Rapid Admin
-	
+
 	// whether there is a logon (meaning we don't show the logout link in Rapid Admin) - and the checked which we have to do just once in the before get Rapid Admin page P0 as the filter is initialised after the app and adapte
 	protected static boolean _hasLogon, _hasLogonChecked;
 
@@ -738,10 +738,10 @@ public class Rapid extends RapidHttpServlet {
 
 										// set designer link to false if action is dialogue
 										if ("dialogue".equals(rapidRequest.getActionName())) designerLink =  false;
-										
+
 										// if this is the special rapid P0 with the LOG OUT - we only do this once
 										if (!_hasLogonChecked && !_hasLogon && "rapid".equals(app.getId()) && "P0".equals(page.getId())) {
-											
+
 											// special thing for the Rapid app the hasLogon parameter is set from the RapidFilter hasLogon - the default is true
 											if (!RapidFilter.hasLogon()) {
 												// get any parameters
@@ -766,10 +766,10 @@ public class Rapid extends RapidHttpServlet {
 												// if we didn't update the existing parameter, add one
 												if (!updatedHasLogon) parameters.add(new Parameter("hasLogon","false"));
 											}
-											
+
 											// rememeber we've now checked
 											_hasLogonChecked = true;
-											
+
 										}
 
 										// set the response type
@@ -1379,17 +1379,20 @@ public class Rapid extends RapidHttpServlet {
 										// check the content type is allowed
 										if (getUploadMimeTypes().contains(contentType)) {
 
-											// get the bytes
-											List<byte[]> bytes = getUploadMimeTypeBytes().get(contentType);
+											// get the byte patterns
+											List<byte[]> byteSignatures = getUploadMimeTypeBytes().get(contentType);
 
 											// if we got some
-											if (bytes != null) {
+											if (byteSignatures != null) {
 
 												// for each byte[] in the bytes list
-												for (int i = 0; i < bytes.size(); i++) {
+												for (int i = 0; i < byteSignatures.size(); i++) {
 
-													// check the jpg, gif, png, bmp, or pdf file signature (from http://en.wikipedia.org/wiki/List_of_file_signatures)
-													if (Bytes.findPattern(bodyBytes, bytes.get(i), bytesOffset, bytes.get(i).length) > -1) {
+													// get this byte pattern
+													byte[] byteSignature = byteSignatures.get(i);
+
+													// if there was a byte signature for this mimetype check the jpg, gif, png, bmp, pdf, etc. file signature (from http://en.wikipedia.org/wiki/List_of_file_signatures)
+													if (byteSignature.length == 0 || Bytes.findPattern(bodyBytes, byteSignature, bytesOffset) > -1) {
 
 														try {
 

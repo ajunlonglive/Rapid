@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -338,8 +338,16 @@ public class RapidHttpServlet extends HttpServlet {
 				List<byte[]> bytesList = _uploadMimeTypeBytes.get(mimeType);
 				// initialise an array list if it doesnt exist
 				if (bytesList == null) bytesList = new ArrayList<>();
-				// add bytes to list
-				bytesList.add(Bytes.fromHexString(signatureBytes[i]));
+				// get the signature bytes
+				String signatureByte = signatureBytes[i];
+				// if this is the wild card
+				if ("*".equals(signatureByte)) {
+					// add empty collection (which we can't do from the split)
+					bytesList.add(new byte[] {});
+				} else {
+					// add bytes to list
+					bytesList.add(Bytes.fromHexString(signatureBytes[i]));
+				}
 				// add list to map
 				_uploadMimeTypeBytes.put(mimeType, bytesList);
 			}
