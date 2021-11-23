@@ -292,8 +292,8 @@ if (data != null && data !== undefined) {
 var container = $("#" + id);
 // get control input
 var control = container.find("input,textarea");
-// unescape any xss escaping in the data before going into the value
-if (value) value = value.replaceAll("&lt;","<");
+// unescape any xss escaping in the data before going into the value, with conversion for numbers, etc. to strings)
+if (value) value = ("" + value).replaceAll("&lt;","<");
 // set the value
 control.val(value);
 // fire any autoheight
