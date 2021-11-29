@@ -533,15 +533,19 @@ public class DataFactory {
 			_sql = sql.trim();
 		}
 
-		if (_connection == null) _connection = getConnection(rapidRequest);
-
+		// close any previously prepared statement
 		if (_preparedStatement != null) _preparedStatement.close();
+
+		// if there is no connection yet, or the one we have is closed - possibly from an error
+		if (_connection == null || _connection.isClosed()) _connection = getConnection(rapidRequest);
 
 		try {
 
+			// prepare the statement for the current sql
 			_preparedStatement = _connection.prepareStatement(_sql);
 
-			String sqlCheck = _sql.trim().toLowerCase().replace(" ", "");
+			// clean and prepare the sql for checking
+			String sqlCheck = _sql.toLowerCase().replace(" ", "");
 
 			// don't check parameter numbers for exec queries or call
 			populateStatement(rapidRequest, _preparedStatement, parameters, 0, !sqlCheck.startsWith("exec") && !sqlCheck.startsWith("begin") && !sqlCheck.startsWith("execute") && !sqlCheck.startsWith("{call"));
