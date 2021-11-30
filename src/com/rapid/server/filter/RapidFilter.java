@@ -341,17 +341,24 @@ public class RapidFilter implements Filter {
 					// forward to it in its folder
 					forwardRequest(filteredRequest, response, "/" + secondLastPathPart + "/" + lastPathPart);
 
-				// if user has provided at least 1 path part (i.e. part1/) and is requesting known resources like login.jsp
+				// if user has provided at least 1 path part (i.e. part1/) and is requesting known resources like login.jsp or downloadCSV.jsp
 				} else if (pathPart.length > 1 && (lastPathPartLower.endsWith(".jsp"))) {
 
-					// redirect to the root of the context - which is the root when seen from outside
-					res.sendRedirect(req.getContextPath() + "/" + lastPathPart + queryString);
+					// check POST (or get)
+					if ("POST".equals(req.getMethod())) {
 
-					// send redirect immediately
-					return;
+						// forward it so we don't lose the data
+						forwardRequest(filteredRequest, response, "/" + lastPathPart + queryString);
 
-					// if user has provided at least 1 path part (i.e. part1/) and is requesting any .jsp
-				} else if (pathPart.length > 1 && (lastPathPartLower.endsWith(".jsp"))) {
+					} else {
+
+						// redirect to the root of the context - which is the root when seen from outside
+						res.sendRedirect(req.getContextPath() + "/" + lastPathPart + queryString);
+
+						// send redirect immediately
+						return;
+
+					}
 
 				// if user has provided at least 1 path part (i.e. part1/) and the first part is a known application
 				} else if (pathPart.length > 0 && applications.get(pathPart[0]) != null) {
