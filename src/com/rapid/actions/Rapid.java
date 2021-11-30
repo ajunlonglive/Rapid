@@ -2517,10 +2517,10 @@ public class Rapid extends Action {
 										// get the database connection
 										DatabaseConnection dbConn = dbConns.get(index);
 
-										// set the databse connection properties
+										// set the database connection properties
 										dbConn.setName(jsonAction.getString("name"));
 										dbConn.setDriverClass(jsonAction.getString("driver"));
-										dbConn.setConnectionString(jsonAction.getString("connectionString"));
+										dbConn.setConnectionString(jsonAction.getString("connectionString").trim()); // note the trim
 										dbConn.setConnectionAdapterClass(jsonAction.getString("connectionAdapter"));
 										dbConn.setUserName(jsonAction.getString("userName"));
 										String password = jsonAction.getString("password");
