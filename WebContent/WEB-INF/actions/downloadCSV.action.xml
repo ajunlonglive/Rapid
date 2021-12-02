@@ -4,7 +4,7 @@
 
 <!-- 
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -99,17 +99,17 @@ function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColu
 	    var grid = control;
 	    // find the table
 	    var table = grid.is("table") ? grid : grid.find('table').last();
-	    
+	    var columns = details.columns || details.dynamicColumns;
 	    // loop the rows
 	    table.find('tr').each( function(idx) {
 		    // add a rows collection if not header row
 		    if (idx > 0) data.rows.push([]);
 			    // loop the cells
-			    $(this).find('td').each( function() {
+			    $(this).find('td').each( function(columnIndex) {
 			    // get a ref to the cell
 			    var c = $(this);
 			     // ignore hidden columns
-			    if (includeHiddenColumns || c.is(':visible')) {
+			    if (includeHiddenColumns || (columns && columns[columnIndex].visible)) {
 				    // if this the header row
 				    if (idx == 0) {
 					    // add to headers
