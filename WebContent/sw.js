@@ -429,7 +429,7 @@ self.addEventListener("fetch", function(event) {
 							
 						} else { // development mode / resources
 							
-							return new Promise((resolve, reject) =>
+							return new Promise(resolve =>
 								(navigator.onLine ? fetch(url, fetchOptions) : Promise.reject())
 								.then(freshResponse => {
 									if (freshResponse && (freshResponse.ok || freshResponse.type === "opaqueredirect")) {
@@ -444,6 +444,8 @@ self.addEventListener("fetch", function(event) {
 										}
 									} else if (freshResponse.status === 404) {
 										fetch(_contextPath + "page404.htm").then(resolve);
+									} else if ([401, 403].includes(freshResponse.status)) {
+										resolve(freshResponse);
 									} else if (freshResponse.status === 500) {
 										fetch(_contextPath + "page500.htm").then(resolve);
 									} else {
