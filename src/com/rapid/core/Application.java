@@ -1519,7 +1519,7 @@ public class Application {
 
 		// only if we got something we can use
 		if (css != null) {
-			Matcher cssClassMatcher = Pattern.compile("((\\.)|(\\[class\\s*~=\\s*))(?<className>[^\\s{\\.\\[\\]]+)").matcher(css);
+			Matcher cssClassMatcher = Pattern.compile("(\\A|\\D)((\\.)|(\\[class\\s*~=\\s*))(?<className>[^\\s{\\.,:\\[\\]]+)").matcher(css);
 			while(cssClassMatcher.find()) {
 				String className = cssClassMatcher.group("className");
 				if (!classes.contains(className)) classes.add(className);
