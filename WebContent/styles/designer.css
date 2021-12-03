@@ -618,19 +618,15 @@ table.stylesPanelTable  {
 	width: 32px;
 }
 
-.stylesPanelTable tr:first-child > td {
+.controlStyles .stylesPanelTable tr:first-child > td {
 	background: #D5D6D2;
 	border-bottom: none;
 	height: 21px;
     font-size: 12px;
 }
 
-#designerTools .stylesPanelTable select {
-	width: 100%;
-	font-size: 11px;
-	border-width: 0;
-	border-radius: 0;
-	padding: 3px 5px;
+.controlStyleClasses tr:last-child {
+	background: #d5d6d2;
 }
 
 td.styleCell {
