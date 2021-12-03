@@ -475,22 +475,25 @@ public class Email extends Action {
 		for (int i = 0; i < size; i++) {
 
 			// get the file name parts for the attachment
-			String fileName = jsonFiles.optString(i, null);
+			String fileNames = jsonFiles.optString(i, null);
 
 			// if there was one
-			if (fileName != null && !fileName.equals("")) {
+			if (fileNames != null && !fileNames.equals("")) {
 
 				// split into parts
-				String[] fileNameParts = fileName.split(",");
+				String[] fileNameParts = fileNames.split(",");
 
 				// loop the parts
 				for (int j = 0; j < fileNameParts.length; j++) {
 
+					// get the file name
+					String fileName = fileNameParts[j];
+
 					// assume no base path
 					String basePath = "";
 
-					// if not in images
-					if (!fileNameParts[j].startsWith("images")) {
+					// if not in the root images folder (we'll skip if so, so images known to Rapid in the root get the root basePath)
+					if (!fileName.startsWith("images")) {
 
 						// build simple application base path
 						basePath = "uploads/" + rapidRequest.getAppId();
@@ -498,16 +501,34 @@ public class Email extends Action {
 						// servers with public access must use the secure upload location
 						if (rapidRequest.getRapidServlet().isPublic()) basePath = "WEB-INF/" + basePath;
 
+						// if it contains paths we only want the last part - this is mostly from the Rapid Mobile file upload where the url is http://images/
+						if (fileName.contains("/")) {
+
+							// get the path parts
+							String[] filePathParts = fileName.split("/");
+
+							// filename is the last part
+							fileName = filePathParts[filePathParts.length - 1];
+
+						}
+
 					}
 
 					// determine the file path
-					String filePath = rapidRequest.getRapidServlet().getServletContext().getRealPath(basePath + "/" + fileNameParts[j]);
+					String filePath = rapidRequest.getRapidServlet().getServletContext().getRealPath(basePath + "/" + fileName);
 
-					// get a file
-					File file = new File(filePath);
+					// issues with the name part may result in a null filePath
+					if (filePath != null) {
 
-					// if the file exists, add it as an attachment
-					if (file.exists()) attachments.add(new Attachment(fileNameParts[j], new FileDataSource(file)));
+						// get a file
+						File file = new File(filePath);
+
+						// if the file exists, add it as an attachment
+						if (file.exists()) {
+							attachments.add(new Attachment(fileName, new FileDataSource(file)));
+						}
+
+					}
 
 				}
 
