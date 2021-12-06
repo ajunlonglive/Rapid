@@ -1520,14 +1520,12 @@ public class Application {
 		// only if we got something we can use
 		if (css != null) {
 			Matcher cssSelectorMatcher = Pattern.compile("^(?<selector>.*)\\{", Pattern.MULTILINE).matcher(css);
-			List<String> selectors = new ArrayList<String>();
-			while (cssSelectorMatcher.find()) {
-				String selector = cssSelectorMatcher.group("selector");
-				if (selector != null) selectors.add(selector.trim());
-			}
 			Pattern cssClassPattern = Pattern.compile("\\.(?<className>[\\w\\d\\-\\_]+)");
-			for (String selector : selectors) {
-				Matcher cssClassMatcher = cssClassPattern.matcher(selector);
+			
+			selectorScan: while (cssSelectorMatcher.find()) {
+				String selector = cssSelectorMatcher.group("selector");
+				if (selector == null) continue selectorScan;
+				Matcher cssClassMatcher = cssClassPattern.matcher(selector.trim());
 				while (cssClassMatcher.find()) {
 					String className = cssClassMatcher.group("className");
 					if (className != null && !classes.contains(className)) classes.add(className);
