@@ -806,8 +806,8 @@ public class Page {
 				String pageId = action.getProperty("page");
 				// if we got one
 				if (pageId != null) {
-					// add if it is something
-					if (pageId.length() > 0) _dialoguePageIds.add(pageId);
+					// add if it is something not there already
+					if (pageId.length() > 0 && !_dialoguePageIds.contains(pageId)) _dialoguePageIds.add(pageId);
 				}
 			}
 		}
@@ -1882,6 +1882,41 @@ public class Page {
 					}
 				} // redundantActions != null
 			} // action loop to check redundancy
+			
+			// build the dialoguePageIds list
+			getDialoguePageIds();
+			// if there are any dialogues we want to check their actions for redundancy avoidance back to this page, typically from dialogues
+			if (_dialoguePageIds != null) {
+				// loop these pages
+				for (String pageId : _dialoguePageIds) {
+					// get this page
+					Page dialoguePage = application.getPages().getPage(pageId);
+					// if we got one
+					if (dialoguePage != null) {
+						// get its actions
+						List<Action> dialoguePageActions = dialoguePage.getAllActions();
+						// if there were some
+						if (dialoguePageActions != null) {
+							// loop these actions
+							for (Action dialoguePageAction : dialoguePageActions) {
+								// if this action adds redundancy to any others
+								if (dialoguePageAction.getRedundantActions() != null) {
+									// loop them
+									for (String actionId : dialoguePageAction.getRedundantActions()) {
+										// try and find the action
+										Action redundantAction = getAction(actionId);
+										// if we got one
+										if (redundantAction != null) {
+											// update the redundancy avoidance flag
+											redundantAction.avoidRedundancy(true);
+										}
+									}
+								}
+							} 
+						}
+					}
+				}
+			}
 
 			// a json object for the actions to communicate with each other - this should tree walk, or keep a list of actions done
 			JSONObject jsonDetails = new JSONObject();
