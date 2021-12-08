@@ -267,7 +267,12 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue, closeAct
        	function closeDialogue() {
        	    dialogue.remove();
        	    $(dialogueCover).remove();
-			$("script." + actionId).remove();
+			$("script." + actionId).each(function(_, element) {
+				// Remove the element
+				element.remove();
+				// Collect the object's memory
+				if (/^blob/.test(element.src)) URL.revokeObjectURL(element.src);
+			});
        	}
        	
        	// if this is a dismissibleDialogue allow clicking on the cover to close it
