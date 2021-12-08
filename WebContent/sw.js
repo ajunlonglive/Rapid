@@ -543,12 +543,17 @@ function updateCache(resourcesToCache, redirects) {
 			// loop the resources array passing in the url
 			resourcesToCache.map(function (url) {
 				var fetchOptions = { redirect: "manual" };
+				var contextPath = _contextPath;
+				if (url.startsWith("http") || url.startsWith("//")) {
+					fetchOptions = { mode: "no-cors" };
+					contextPath = "";
+				}
 				// getApps is a POST
 				if (url.endsWith("~?action=getApps")) fetchOptions.method = "POST";
 				// if we have redirects and this is one, use the redirected url instead
 				var redirectedUrl = redirects && redirects[url] || url
 				// fetch the url (we do this rather than use the add method, so we can check the response codes
-				fetch(_contextPath + redirectedUrl, fetchOptions)
+				fetch(contextPath + redirectedUrl, fetchOptions)
 				.then(response => {
 					// if we got a response and the code is 200 - we want to ignore redirects and authentication failures
 					if (response && response.ok) {
