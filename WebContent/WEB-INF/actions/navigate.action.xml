@@ -345,8 +345,8 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue, closeAct
 		           				var s = items[i].outerHTML;
 		           				// exclude the app id, version, page, mobile resume link
 		           				if (s.indexOf("var _appId =") == -1 && s.indexOf("var _appVersion =") == -1 && s.indexOf("var _pageId =") == -1 && s.indexOf("var _mobileResume =") == -1) {
-		           					// append to script variable - we will make one combined string and add as a blob
-		           					script += items[i].innerText.trim() + "\n\n";									
+		           					// append to script variable - we will make one combined string and add as a blob. innerHTML has line breaks for single-line comments on IE as innerText caused errors
+		           					script += items[i].innerHTML.trim() + "\n\n";									
 								}
 		           			} else {
 		           				// fetch the text
