@@ -234,20 +234,23 @@ if (this.responsiveLabel) inputId = " id='" + this.id + "input'";
 
 var autocompleteHtml = this.autocomplete ? " autocomplete='" + this.autocomplete + "'" : "";
 
-// only check the decimal length of the integer part of a number (e.g. "123.45" -> 3)
-var numMax = null;
-var numMin = null;
-var length = parseInt(this.maxLength || "0");
-if (this.maxLength) {
-	var numMax = Array(length).fill("9").join("");
-	var numMin = "-" + Array(length - 1).fill("9").join("");
-}
-
 if (this.value) value = this.value
 switch (this.controlType) {
 	case "N" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='text'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + escapeApos(this.placeholder) + "'" : "") + autocompleteHtml + " class='form-control'></input>"; break;
 	case "L" : html = "<textarea" + inputId + " name='" + this.id + "' class='form-control " + (this.autoHeight ? " autoheight" : "")  + "' " + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + (this.placeholder ? " placeholder='" + escapeApos(this.placeholder) + "'" : "") + autocompleteHtml + ">" + value + "</textarea>"; break;
-	case "Num" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='number'" + (this.maxLength ? " max='" + numMax + "' min='" + numMin + "'" : "") + " " + (this.placeholder ? " placeholder='" + escapeApos(this.placeholder) + "'" : "") + autocompleteHtml + " class='form-control'></input>"; break;
+	case "Num" :
+		// only check the decimal length of the integer part of a number (e.g. "123.45" -> 3)
+		var numMax = null;
+		var numMin = null;
+		var mask = "";
+		if (this.maxLength) {
+			var length = parseInt(this.maxLength || "0");
+			for (var i = 0; i < length; i++) mask += "9";
+			var numMax = mask;
+			var numMin = "-" + mask;
+		} 
+		html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='number'" + (mask ? " max='" + numMax + "' min='" + numMin + "'" : "") + " " + (this.placeholder ? " placeholder='" + escapeApos(this.placeholder) + "'" : "") + autocompleteHtml + " class='form-control'></input>"; 
+		break;
 	case "Tel" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='tel'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + escapeApos(this.placeholder) + "'" : "") + autocompleteHtml + " class='form-control'></input>"; break;
 	case "Eml" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='email'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + escapeApos(this.placeholder) + "'" : "") + autocompleteHtml + " class='form-control'></input>"; break;
 	case "P" : html = "<input" + inputId + " name='" + this.id + "' value='" + escapeApos(value) + "' type='password'" + (this.maxLength ? " maxlength='" + this.maxLength + "'" : "") + " " + (this.placeholder ? " placeholder='" + escapeApos(this.placeholder) + "'" : "") + autocompleteHtml + " class='form-control'></input>"; break;
