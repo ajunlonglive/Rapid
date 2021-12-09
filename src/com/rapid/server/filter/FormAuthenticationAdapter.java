@@ -623,7 +623,7 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 					} else {
 
 						// log that authentication was unsuccessful
-						_logger.debug("FormAuthenticationAdapter failed for " + userName + " from " + requestPath + "  " + deviceDetails);
+						_logger.debug("FormAuthenticationAdapter failed for " + userName + " from " + requestPath + "  " + deviceDetails + " authorised=" + authorised + ", csrf=" + validCSRF + ", rapidmobile=" + isRapidMobile);
 
 						// start the message
 						String message = "Your user name or password has not been recognised";
