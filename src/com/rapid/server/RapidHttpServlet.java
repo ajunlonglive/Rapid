@@ -84,6 +84,7 @@ public class RapidHttpServlet extends HttpServlet {
 
 	private List<String> _uploadMimeTypes;
 	private Map<String, List<byte[]>> _uploadMimeTypeBytes;
+	private Map<String, String> _uploadExtensions;
 
 	// enterprise monitor
 	protected Monitor _monitor = new Monitor();
@@ -356,10 +357,36 @@ public class RapidHttpServlet extends HttpServlet {
 		return _uploadMimeTypeBytes;
 	}
 
+	// allowed upload mimetypes - set in web.xml with uploadMimeTypeBytes, must correspond with uploadMimeTypes
+	public Map<String, String> getUploadExtensions() {
+		// if we don't have one yet
+		if (_uploadExtensions == null) {
+			// make new one
+			_uploadExtensions = new HashMap<>();
+			// get the allowed upload mimetype bytes from the web.xml file
+			String uploadExtensions = getServletContext().getInitParameter("uploadExtensions");
+			// default if null
+			if (uploadExtensions == null) uploadExtensions = "bmp,gif,jpeg,png,mp4,webm,pdf";
+			// get string bytes
+			String[] extensions = uploadExtensions.split(",");
+			// get list and loop
+			List<String> uploadMimeTypes = getUploadMimeTypes();
+			for (int i = 0; i < uploadMimeTypes.size(); i++ ) {
+				// get the ith mimetype from the list
+				String mimeType = uploadMimeTypes.get(i);
+				// add list to map
+				_uploadExtensions.put(mimeType, extensions[i]);
+			}
+		}
+		// return
+		return _uploadExtensions;
+	}
+
 	// force the uploadMimeTypes to refresh
 	public void resetMimeTypes() {
 		_uploadMimeTypes = null;
 		_uploadMimeTypeBytes = null;
+		_uploadExtensions = null;
 	}
 
 	// this is used is actions such as database and webservice to cache results for off-line demos
