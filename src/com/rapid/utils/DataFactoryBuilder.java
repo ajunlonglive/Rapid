@@ -78,21 +78,23 @@ public class DataFactoryBuilder {
 		return createMasterDataFactory(context, application, connection);
 	}
 
-	public static DataFactory createMasterDataFactory(ServletContext context, Application application, DatabaseConnection connection) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		DataFactory dataFactory = null;
+	public static DataFactory createMasterDataFactory(ServletContext context, Application application, ConnectionAdapter connectionAdapter) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		DataFactory dataFactory = new DataFactory(connectionAdapter, false);
+		return dataFactory;
+	}
 
+	public static DataFactory createMasterDataFactory(ServletContext context, Application application, DatabaseConnection connection) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		String driverClass = connection.getDriverClass();
 		String connectionString = connection.getConnectionString();
 		String username = connection.getUserName();
 		String password = connection.getPassword();
 		ConnectionAdapter connectionAdapter = new SimpleConnectionAdapter(context, driverClass, connectionString, username, password);
-		dataFactory = new DataFactory(connectionAdapter, false);
-
+		DataFactory dataFactory = createMasterDataFactory(context, application, connectionAdapter);
 		return dataFactory;
 	}
 
 	public static DataFactory checkDataFactoryConnection(RapidRequest rapidRequest, DataFactory dataFactory) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, SQLException, ConnectionAdapterException {
-		if(dataFactory.getConnection(rapidRequest).isClosed())
+		if (dataFactory.getConnection(rapidRequest).isClosed())
 			dataFactory = createMasterDataFactory(rapidRequest.getRapidServlet().getServletContext(), rapidRequest.getApplication());
 		return dataFactory;
 	}
