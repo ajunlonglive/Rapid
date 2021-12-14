@@ -1872,17 +1872,15 @@ public class Page {
 				if (action.getRedundantActions() != null) {
 					// loop them
 					for (String actionId : action.getRedundantActions()) {
-						// try and find the action
-						Action redundantAction = getAction(actionId);
-						// if we got one
-						if (redundantAction != null) {
-							// update the redundancy avoidance flag
-							redundantAction.avoidRedundancy(true);
+						// loop the page actions again - this allows for the unfortunate situation of duplicate action ids where getting the first wasn't enough
+						for (Action checkAction : pageActions) {
+							// set redundant if matched and allow for duplicate action ids
+							if (checkAction.getId().equals(actionId)) checkAction.avoidRedundancy(true);
 						}
 					}
 				} // redundantActions != null
 			} // action loop to check redundancy
-			
+
 			// build the dialoguePageIds list
 			getDialoguePageIds();
 			// if there are any dialogues we want to check their actions for redundancy avoidance back to this page, typically from dialogues
@@ -1903,16 +1901,14 @@ public class Page {
 								if (dialoguePageAction.getRedundantActions() != null) {
 									// loop them
 									for (String actionId : dialoguePageAction.getRedundantActions()) {
-										// try and find the action
-										Action redundantAction = getAction(actionId);
-										// if we got one
-										if (redundantAction != null) {
-											// update the redundancy avoidance flag
-											redundantAction.avoidRedundancy(true);
+										// loop the page actions - this allows for the unfortunate situation of duplicate action ids where getting the first wasn't enough
+										for (Action checkAction : pageActions) {
+											// set redundant if matched and allow for duplicate action ids
+											if (checkAction.getId().equals(actionId)) checkAction.avoidRedundancy(true);
 										}
 									}
 								}
-							} 
+							}
 						}
 					}
 				}
