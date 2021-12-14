@@ -465,7 +465,7 @@ if (data !== undefined) {
 				if (changeEvents) control.trigger("change");
 			} else {
 				// data is set of dropdown options
-				// if there are details we know we must be a new-ish version (older simple apps didn't make one) and more than 2 columns in the data
+				// if there are details we know we must be a new-ish version (older simple apps didn't make one) and more than 2 columns in the data, also if there are more than 1 columns and details starts null we set the second as the code for legacy
 				if (details && data.fields.length > 2) {
 					// make an options object which will merge current options and incomming data so data from columns not in the markup can be retrieved
 					if (!details.options) details.options = { fields: [], rows: [] };
@@ -493,6 +493,15 @@ if (data !== undefined) {
 				var group = "";
 				// get any previously set value
 				var setValue = control.attr("data-value");
+				// at one time a second field value with no details, or codes, would set codes but we are now adding details, or options above we'll say no keys other than options is the same as no details
+				var keycount = 0;
+				if (details) {
+					for (var k in details) {
+						if (k != "options") keycount ++;
+					}
+				}
+				var canSetCode = ($.isEmptyObject(details) || keycount == 0 || details.codes);
+				// check any fields
 				// loop rows
 				for (var i in data.rows) {
 					var row = data.rows[i];
@@ -512,7 +521,7 @@ if (data !== undefined) {
 					// if there wasn't a value in the field called "text" but there is something in the first column use that as text
 					if (!text && row[0] != null) text = row[0];
 					// if the value is null but there is something in the second column use that, but only if codes are on or there are no details which was the previous behaviour
-					if (value == null && row[1] != null && ($.isEmptyObject(details) || details.codes)) value = row[1];
+					if (value == null && row[1] != null && canSetCode) value = row[1];
 					// if we still don't have a seperate value
 					if (value == null) {
 						// make value an empty string
