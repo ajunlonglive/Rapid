@@ -1546,6 +1546,15 @@ public class Page {
     	}
     }
 
+    // safely replace quotes if value non-null
+    private String safeReplace(String value, String oldChar, String newChar) {
+    	if (value == null) {
+    		return value;
+    	} else {
+    		return value.replace(oldChar, newChar);
+    	}
+    }
+
     // this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
 	private String getHeadLinks(RapidHttpServlet rapidServlet, Application application, boolean isDialogue) throws JSONException {
 
@@ -1562,8 +1571,8 @@ public class Page {
 			stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");
 		}
 		stringBuilder.append("var _pageId = '" + _id + "';\n");
-		stringBuilder.append("var _pageName = '" + _name.replace("'", "\\'") + "';\n");
-		stringBuilder.append("var _pageTitle = '" + _title.replace("'", "\\'") + "';\n");
+		stringBuilder.append("var _pageName = '" + safeReplace(_name, "'", "\\'") + "';\n");
+		stringBuilder.append("var _pageTitle = '" + safeReplace(_title, "'", "\\'") + "';\n");
 		// this flag indicates if the Rapid Mobile client is regaining the foreground
 		stringBuilder.append("var _mobileResume = false;\n");
 		// this flag indicates if any controls are loading asynchronously and the page load method can't be called
@@ -1586,12 +1595,12 @@ public class Page {
 			//writer.write("var _userName = 'RapidMobile';\n");
 			//writer.write("var _userName = 'RapidDescription';\n");
 			// print user - the above is turned off for now until enough people download Rapid Mobile 2.4.1.3 which can send the authenticated user
-			if (user != null) writer.write("var _userName = '" + user.getName() + "';\n");
-			if (user != null) writer.write("var _userDescription = '" + user.getDescription() + "';\n");
+			if (user != null) writer.write("var _userName = '" + safeReplace(user.getName(), "'", "\\'") + "';\n");
+			if (user != null) writer.write("var _userDescription = '" + safeReplace(user.getDescription(), "'", "\\'") + "';\n");
 		} else {
 			// print user
-			if (user != null) writer.write("var _userName = '" + user.getName() + "';\n");
-			if (user != null) writer.write("var _userDescription = '" + user.getDescription() + "';\n");
+			if (user != null) writer.write("var _userName = '" + safeReplace(user.getName(), "'", "\\'") + "';\n");
+			if (user != null) writer.write("var _userDescription = '" + safeReplace(user.getDescription(), "'", "\\'") + "';\n");
 			// get app page variables
 			Variables pageVariables = application.getPageVariables(rapidRequest.getRapidServlet().getServletContext());
 			// if we got some
