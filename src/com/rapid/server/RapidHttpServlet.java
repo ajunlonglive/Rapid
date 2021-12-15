@@ -371,7 +371,7 @@ public class RapidHttpServlet extends HttpServlet {
 			String[] extensions = uploadExtensions.split(",");
 			// get list and loop
 			List<String> uploadMimeTypes = getUploadMimeTypes();
-			for (int i = 0; i < uploadMimeTypes.size(); i++ ) {
+			for (int i = 0; i < extensions.length; i++ ) {
 				// get the ith mimetype from the list
 				String mimeType = uploadMimeTypes.get(i);
 				// add list to map

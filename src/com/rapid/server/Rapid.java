@@ -1326,6 +1326,8 @@ public class Rapid extends RapidHttpServlet {
 														if (contentParts.length > 1) {
 															// set the file extension
 															ext = getUploadExtensions().get(contentType);
+															// if we don't have the extension, derive it
+															if (ext == null) ext = contentParts[1].toLowerCase().trim();
 															// adjust jpeg to jpg
 															if ("jpeg".equals(ext)) ext = "jpg";
 														}
