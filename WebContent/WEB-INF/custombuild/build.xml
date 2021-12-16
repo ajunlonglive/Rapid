@@ -79,6 +79,7 @@ To force it to do the build you might need to change a file slightly and save it
 				<exclude name="**/logs/Rapid*.log" /> <!-- exclude all log files -->
 				<exclude name="**/web.xml" /> <!-- don't overwrite user web.xml -->
 				<exclude name="**/applications/**" /> <!-- exclude all applications -->
+				<exclude name="**/uploads/**" /> <!-- exclude all uploads -->
 				<exclude name="**/_backups/**" /> <!-- exclude all backups -->
 			</fileset>
 			<fileset dir="${rapid_base}/WebContent">
