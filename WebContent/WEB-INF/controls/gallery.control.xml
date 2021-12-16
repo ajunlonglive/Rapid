@@ -432,13 +432,22 @@ function addToImageControl(ev, control, filename, url, type) {
 			// add the correct type of element (img or video) with the url
 			control.append("<" + type + " class='galleryItem' src='" + (url || filename) + "' data-filename='" + filename + "'" + crossOrigin + "/>");
 			
+			// get a reference to the element
+			var galleryItem = control.children().last();
+			
+			// add an error listener to remove it if it doesn't load
+			galleryItem.on("error", function() { 
+				ele.remove(); 
+			});
+			
 			// remember we set an image in the gallery
 			imageSet = true;
 			
+			// get the id
 			var id = control.attr("id");
 			
 			// find the image element and add a click handler
-			control.find(".galleryItem").last().on(START_EV, function(ev) {
+			galleryItem.on(START_EV, function(ev) {
 				var img = this;
 				var details = details || window[id + "details"];
 				if (details) {

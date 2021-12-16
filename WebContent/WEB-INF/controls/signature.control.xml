@@ -101,18 +101,22 @@ $(document).ready( function() {
 		for (var i in _signatureCanvases) {
 			canvas = _signatureCanvases[i];
 			if (canvas.width > 0 && canvas.height > 0) {
-				var context = canvas.getContext("2d");
-				var data = context.getImageData(0,0,canvas.width, canvas.height);
-				// more accurate because of border but 0 if hidden
-			    if (canvas.offsetWidth > 0 && canvas.offsetHeight > 0) {					
-					canvas.width = canvas.offsetWidth * ratio;
-					canvas.height = canvas.offsetHeight * ratio;
-				} else {
-					canvas.width = canvas.width * ratio;
-					canvas.height = canvas.height * ratio;
+				try {
+					var context = canvas.getContext("2d");
+					var data = context.getImageData(0,0,canvas.width, canvas.height);
+					// more accurate because of border but 0 if hidden
+				    if (canvas.offsetWidth > 0 && canvas.offsetHeight > 0) {					
+						canvas.width = canvas.offsetWidth * ratio;
+						canvas.height = canvas.offsetHeight * ratio;
+					} else {
+						canvas.width = canvas.width * ratio;
+						canvas.height = canvas.height * ratio;
+					}
+					context.scale(ratio, ratio);
+				    if (data && data instanceof ImageData) context.putImageData(data, 0, 0);
+				} catch(ex) {
+					console.log("Error resizing signature " + i + " : " + ex);
 				}
-				context.scale(ratio, ratio);
-			    if (data && data instanceof ImageData) context.putImageData(data, 0, 0);
 			 }
 			 
 	    }
