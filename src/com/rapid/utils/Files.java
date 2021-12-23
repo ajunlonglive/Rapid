@@ -47,23 +47,6 @@ import org.apache.logging.log4j.Logger;
 public class Files {
 
 	// deletes the given file object, if it is a directory recursively deletes its contents
-	public static boolean deleteRecurring(File file) {
-		// check file is directory
-		if (file.isDirectory()) {
-			// get a list of contents
-			File[] files = file.listFiles();
-			// if we got some
-			if (files != null) {
-				// loop contents recursively calling itself to delete those contents
-				for (int i = 0; i < files.length; i ++) {
-					deleteRecurring(files[i]);
-				}
-			}
-		}
-		// if we're here we've arrived at a physical file, return its delete
-		return file.delete();
-	}
-
 	public static boolean deleteRecurring(File file, boolean deleteParentFolder) {
 		// check file is directory
 		if (file.isDirectory()) {
@@ -78,46 +61,62 @@ public class Files {
 			}
 		}
 		// if we're here we've arrived at a physical file, return its delete
-		if(deleteParentFolder)
+		if (deleteParentFolder)
 			return file.delete();
 		else
 			return true;
 	}
 
-	// byte copies one file to another
-	public static void copyFile(File src, File dest) throws IOException {
+	// an override to the above with default deleteParentFolder
+	public static boolean deleteRecurring(File file) {
+		// use the above with default deleteParentFolder
+		return deleteRecurring(file, true);
+	}
 
-		// if dest is a directory
-		if (dest.isDirectory()) {
-			// make any folders we might need
-			dest.mkdirs();
-			// update dest to same name as src, but in its location
-			dest = new File(dest + "/" + src.getName());
+	// byte copies one file to another with the mustExist check (used mainly in the update to only overwrite existing files)
+	public static void copyFile(File src, File dest, boolean mustExist) throws IOException {
+
+		// if not must exists or it exists
+		if (!mustExist || dest.exists()) {
+
+			// if dest is a directory
+			if (dest.isDirectory()) {
+				// make any folders we might need
+				dest.mkdirs();
+				// update dest to same name as src, but in its location
+				dest = new File(dest + "/" + src.getName());
+			}
+
+			// file input stream
+			FileInputStream fis = new FileInputStream(src.getPath());
+			FileOutputStream fos = new FileOutputStream(dest.getPath());
+
+			int size = 1024;
+		    byte data[] = new byte[size];
+		    int count;
+
+		    BufferedOutputStream bos = new BufferedOutputStream(fos, size);
+		    while ((count = fis.read(data, 0, size)) != -1) {
+		       bos.write(data, 0, count);
+		    }
+
+		    bos.flush();
+		    bos.close();
+		    fos.close();
+		    fis.close();
+
 		}
-
-		// get src input stream
-		FileInputStream fis = new FileInputStream(src.getPath());
-		// get destination output stream
-		FileOutputStream fos = new FileOutputStream(dest.getPath());
-
-		int size = 1024;
-	    byte data[] = new byte[size];
-	    int count;
-
-	    BufferedOutputStream bos = new BufferedOutputStream(fos, size);
-	    while ((count = fis.read(data, 0, size)) != -1) {
-	       bos.write(data, 0, count);
-	    }
-
-	    bos.flush();
-	    bos.close();
-	    fos.close();
-	    fis.close();
 
 	}
 
+	// override to the above with must exist = false so always copy
+	public static void copyFile(File src, File dest) throws IOException {
+		// always copy this file
+		copyFile(src, dest, false);
+	}
+
 	// copies the contents of one folder to another recursively, allowing for a list of files/folder to ignore by name
-	public static void copyFolder(File src, File dest, List<String> ignoreFiles) throws IOException {
+	public static void copyFolder(File src, File dest, List<String> ignoreFiles, boolean mustExist) throws IOException {
 
 		// whether to ignore
 		boolean ignore = false;
@@ -139,26 +138,23 @@ public class Files {
 		if (!ignore) {
 
 			// if source is directory
-	    	if (src.isDirectory()){
+	    	if (src.isDirectory()) {
 	    		// if directory not exists, create it
 	    		if (!dest.exists()) dest.mkdirs();
 	    		// list all the directory contents
 	    		String files[] = src.list();
-	    		// if we got some
-	    		if (files != null) {
-		    		// loop directory contents
-		    		for (String file : files) {
-		    		   // create a file object for the source
-		    		   File srcFile = new File(src, file);
-		    		   // create a file object for the destination, note the dest folder is the parent
-		    		   File destFile = new File(dest, file);
-		    		   // recursive copy
-		    		   copyFolder(srcFile, destFile, ignoreFiles);
-		    		}
+	    		// loop directory contents
+	    		for (String file : files) {
+	    		   // create a file object for the source
+	    		   File srcFile = new File(src, file);
+	    		   // create a file object for the destination, note the dest folder is the parent
+	    		   File destFile = new File(dest, file);
+	    		   // recursive copy with must exist check
+	    		   if (!mustExist || destFile.exists()) copyFolder(srcFile, destFile, ignoreFiles, mustExist);
 	    		}
 	    	} else {
-	    		// not a directory so only copy the file to the destination
-	    		copyFile(src, dest);
+	    		// not a directory so only copy the file to the destination, with must exist check
+	    		if (!mustExist || dest.exists()) copyFile(src, dest, mustExist);
 	    	}
 
 		}
@@ -166,8 +162,18 @@ public class Files {
     }
 
 	// an override to the above without the list of folder/file ignore names
+	public static void copyFolder(File src, File dest, List<String> ignoreFiles) throws IOException {
+		copyFolder(src, dest, ignoreFiles, false);
+	}
+
+	// an override to the above without the list of folder/file ignore names
+	public static void copyFolder(File src, File dest, boolean mustExist) throws IOException {
+		copyFolder(src, dest, null, mustExist);
+	}
+
+	// an override to the above without the list of folder/file ignore names
 	public static void copyFolder(File src, File dest) throws IOException {
-		copyFolder(src, dest, null);
+		copyFolder(src, dest, null, false);
 	}
 
 	public static String safeName(String name) {
@@ -367,22 +373,22 @@ public class Files {
 
 							// if this was the create that we are watching for
 							if (kind.equals(StandardWatchEventKinds.ENTRY_CREATE)) {
-								
+
 								// get the file name
 								Path fileName = (Path) event.context();
-								
+
 								// log
 								_logger.debug("Watcher event for " + fileName);
-								
+
 								// get from file
 								File fromFile = new File(_from + "/" + fileName);
-								
+
 								// the size of the file
 								long size;
-								
+
 								// some safety to stop the loop below being non-terminating
 								int safety = 0;
-								
+
 								do {
 									// get the current size of the file
 									size = fromFile.length();
@@ -402,7 +408,7 @@ public class Files {
 
 									_logger.debug("File watcher will not copy " + fileName + " as it exists already");
 
-								} else {									
+								} else {
 
 									// copy the from file to the to file
 									Files.copyFile(fromFile, toFile);

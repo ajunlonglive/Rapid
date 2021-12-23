@@ -1,0 +1,25 @@
+# This file is found in the update and files below are deleted if they are in the Rapid instance
+
+# jquery 
+/scripts/jquery-1.10.2.js
+/scripts/jquery-3.3.1.js
+/scripts/jquery-ui-1.10.3.js
+/scripts_min/jquery-1.10.2.min.js
+/scripts_min/jquery-3.3.1.min.js
+/scripts_min/jquery-ui-1.10.3.min.js
+
+# log4j
+/WEB-INF/lib/log4j-1.2.16.jar
+/WEB-INF/lib/log4j-api-2.6.2.jar
+/WEB-INF/lib/log4j-core-2.6.2.jar
+/WEB-INF/lib/log4j-web-2.6.2.jar
+/WEB-INF/lib/log4j-api-2.15.0.jar
+/WEB-INF/lib/log4j-core-2.15.0.jar
+/WEB-INF/lib/log4j-web-2.15.0.jar
+/WEB-INF/lib/log4j-api-2.16.0.jar
+/WEB-INF/lib/log4j-core-2.16.0.jar
+/WEB-INF/lib/log4j-web-2.16.0.jar
+
+# pdfbox
+/WEB-INF/lib/pdfbox-2.0.9.jar
+/WEB-INF/lib/fontbox-2.0.9.jar
