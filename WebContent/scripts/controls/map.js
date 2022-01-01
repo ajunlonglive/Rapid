@@ -351,6 +351,8 @@ function getMapPosition(data, rowIndex, callBack, map, details, zoomMarkers) {
 				if (f == "e" || f == "east" || f == "easting" || f == "eastings") pos.e = data.rows[rowIndex][i];
 				// do the northing checks
 				if (f == "n" || f == "north" || f == "northing" || f == "northings") pos.n = data.rows[rowIndex][i];
+				// do the search checks
+				if (f == "s" || f == "search" || f == "address") pos.s = data.rows[rowIndex][i];
 				// do the title checks
 				if (f == "title") pos.title = data.rows[rowIndex][i];
 				// do the info checks
@@ -404,8 +406,14 @@ function getMapPosition(data, rowIndex, callBack, map, details, zoomMarkers) {
 						}
 					} else if (data.fields.length == 1) {
 						// if this is a simple data object
-						pos.s = data.rows[0][0];
-					} 
+						if (data && data.rows) {
+							if (data.rows.length > 0) {
+								pos.s = data.rows[rowIndex][0];
+							} else {
+						 		pos.s = data.rows[0][0];
+							}
+						}
+					}
 				} // no search term
 				// if there is a callback (getting positions for navigate to won't have one so will avoid the geo-coder) and a search term
 				if (callBack && pos.s) {
