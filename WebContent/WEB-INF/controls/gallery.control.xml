@@ -437,7 +437,7 @@ function addToImageControl(ev, control, filename, url, type) {
 			
 			// add an error listener to remove it if it doesn't load
 			galleryItem.on("error", function() { 
-				ele.remove(); 
+				$(this).remove(); 
 			});
 			
 			// remember we set an image in the gallery
