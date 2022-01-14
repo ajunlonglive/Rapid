@@ -98,35 +98,27 @@ $(document).ready( function() {
 	
 		var ratio =  window.devicePixelRatio || 1;
 	
-		for (var i in _signatureCanvases) {
-			canvas = _signatureCanvases[i];
-			if (canvas.width > 0 && canvas.height > 0) {
-				try {
-					var context = canvas.getContext("2d");
-					var data = context.getImageData(0,0,canvas.width, canvas.height);
-					var url = canvas.toDataURL();
-					var img = new Image();
-					img.src = url;
-					// more accurate because of border but 0 if hidden
-					if (canvas.offsetWidth > 0 && canvas.offsetHeight > 0) {
-						canvas.width = canvas.offsetWidth * ratio;
-						canvas.height = canvas.offsetHeight * ratio;
-					} else {
-						canvas.width = canvas.desiredWidth * ratio;
-						canvas.height = canvas.desiredHeight * ratio;
-					}
-					context.scale(ratio, ratio);
-					//if (data && data instanceof ImageData) context.putImageData(data, 0, 0, 0, 0, canvas.width, canvas.height);
-					img.onload = function() {
-						context.drawImage(img, 0, 0, canvas.desiredWidth, canvas.desiredHeight);
-					};
-				} catch(ex) {
-					console.log("Error resizing signature " + i + " : " + ex);
-				}
-			 }
+		_signatureCanvases.forEach(function(canvas) {
+			
+			try {
+				var context = canvas.getContext("2d");
+				var data = context.getImageData(0, 0, $(canvas).width(), $(canvas).height());
+				var url = canvas.toDataURL();
+				var img = new Image();
+				img.src = url;
+				canvas.width = $(canvas).width() * ratio;
+				canvas.height = $(canvas).height() * ratio;
+				context.scale(ratio, ratio);
+				//if (data && data instanceof ImageData) context.putImageData(data, 0, 0, 0, 0, $(canvas).width(), $(canvas).height());
+				img.onload = function() {
+					context.drawImage(img, 0, 0, $(canvas).width(), $(canvas).height());
+				};
+			} catch(ex) {
+				console.log("Error resizing signature " + i + " : " + ex);
+			}
 			 
-	    }
-	    
+		});
+		
 	});
 	
 });	                                
@@ -187,9 +179,19 @@ if (signature && signature.points && signature.points.length > 0) {
 	    
 	    <setDataJavaScript>
 	        <![CDATA[
+
+var isPageLoadEvent = function(f) {
+	return f.caller && /^Event_pageload/.test(f.caller.name) || isPageLoadEvent(f.caller);
+};
+
+var delayedCall = isPageLoadEvent(setData_signature) ?
+	function(f) { setTimeout(f, 300) } : 
+	function(f) { f() };
+
+delayedCall(function() {
 var signature = _signatureControls[id];
 if (signature) {
-	var data = makeDataObject(data, field);
+	data = makeDataObject(data, field);
 	if (data && data.rows) {
 		// call signature from data url method
 		signature.fromDataURL(data.rows[0][0]);
@@ -199,6 +201,7 @@ if (signature) {
 		signature.clear();
 	}
 }
+});
 	        ]]>
 	    </setDataJavaScript>
 	    
@@ -248,15 +251,9 @@ if (canvas) {
 	});
 	_signatureControls[id] = signature;
 	var ratio =  window.devicePixelRatio || 1;
-	if (canvas.offsetWidth > 0 && canvas.offsetHeight > 0) {
+	if ($(canvas).width() > 0 && $(canvas).height() > 0) {
 		// more accurate because of border but 0 if hidden
-		canvas.desiredWidth = canvas.width = canvas.offsetWidth * ratio;
-		canvas.desiredHeight = canvas.height = canvas.offsetHeight * ratio;
 		canvas.getContext("2d").scale(ratio, ratio);
-	} else {
-		canvas.desiredWidth = canvas.width = canvas.width * ratio;
-		canvas.desiredHeight = canvas.height = canvas.height * ratio;
-		
 	}
 	_signatureCanvases.push(canvas);
 }
