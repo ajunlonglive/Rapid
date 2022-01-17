@@ -21,8 +21,13 @@
 /WEB-INF/lib/log4j-web-2.16.0.jar
 
 # pdfbox
-/WEB-INF/lib/pdfbox-2.0.9.jar
+/WEB-INF/lib/jempbox-1.8.10.jar
+/WEB-INF/lib/fontbox-1.8.10.jar
+/WEB-INF/lib/pdfbox-1.8.10.jar
+/WEB-INF/lib/preflight-1.8.10.jar
+/WEB-INF/lib/xmpbox-1.8.10.jar
 /WEB-INF/lib/fontbox-2.0.9.jar
+/WEB-INF/lib/pdfbox-2.0.9.jar
 
 # sqlite
 /WEB-INF/lib/sqlite-jdbc-3.7.2.jar
