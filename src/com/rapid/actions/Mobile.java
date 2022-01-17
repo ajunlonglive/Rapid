@@ -110,6 +110,16 @@ public class Mobile extends Action {
 		}
 	}
 
+	// whether we have success actions by looking at both whether the collection is initialised and its size
+	public boolean hasSuccessActions() {
+		return !(_successActions == null || _successActions.size() == 0);
+	}
+
+	// whether we have success actions by looking at both whether the collection is initialised and its size
+	public boolean hasErrorActions() {
+		return !(_errorActions == null || _errorActions.size() == 0);
+	}
+
 	// overridden methods
 
 	@Override
@@ -155,7 +165,7 @@ public class Mobile extends Action {
 		}
 
 		// reference to these success and fail actions are sent as callbacks to the on-mobile device file upload function, uploadImages always has at least an error
-		if ( _successActions == null && _errorActions == null && !"uploadImages".equals(type)) {
+		if (!hasSuccessActions() && !hasErrorActions() && !"uploadImages".equals(type)) {
 			return null;
 		} else {
 
@@ -165,13 +175,13 @@ public class Mobile extends Action {
 			// get the control (the slow way)
 			Control control = page.getActionControl(id);
 			// check if we have any success actions
-			if (_successActions != null || "uploadImages".equals(type)) {
+			if (hasSuccessActions() || "uploadImages".equals(type)) {
 				// start the callback function
 				js += "function " + id + "success(ev) {\n";
 				// hide any working page
 				js += getWorkingPageHideJavaScript(workingPage, "  ");
 				// if there are success actions
-				if (_successActions != null) {
+				if (hasSuccessActions()) {
 					// the success actions
 					for (Action action : _successActions) {
 						js += "  " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
@@ -180,12 +190,12 @@ public class Mobile extends Action {
 				js += "}\n\n";
 			}
 			// check if we have any error actions, or we are doing uploadImages
-			if (_errorActions != null || "uploadImages".equals(type)) {
+			if (hasErrorActions() || "uploadImages".equals(type)) {
 				// start the callback function
 				js += "function " + id + "error(ev, server, status, message) {\n";
 				// hide any working page
 				js += getWorkingPageHideJavaScript(workingPage, "  ");
-				if (_errorActions == null) {
+				if (hasErrorActions()) {
 					// look for any offline page
 					String offlinePage = jsonDetails.optString("offlinePage", null);
 					// use the default error handler
@@ -208,7 +218,7 @@ public class Mobile extends Action {
 		// check that rapidmobile is available
 		String js = "if (typeof _rapidmobile == 'undefined') {\n";
 		// check we have errorActions
-		if (_errorActions == null) {
+		if (hasErrorActions()) {
 			if (alert) js += "  alert('This action is only available in Rapid Mobile');\n";
 		} else {
 			js += "  " + getId() + "error(ev, {}, 1, 'This action is only available in Rapid Mobile');\n";
@@ -1007,7 +1017,7 @@ public class Mobile extends Action {
 				boolean successCheck = false;
 
 				// see if we have any online success or error actions
-				if ((_successActions != null && _successActions.size() > 0) || (_errorActions != null && _errorActions.size() > 0)) {
+				if (hasSuccessActions() || hasErrorActions()) {
 
 					// retain that we're doing a success check
 					successCheck = true;
