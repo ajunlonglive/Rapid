@@ -1055,7 +1055,7 @@ public class Mobile extends Action {
 						}
 
 						// check the success, if there is one, in case all actions were client-side
-						if (successCheck) js += "successCheck('" + id + "', null, true, ev);\n";
+						if (successCheck) js += "  successCheck('" + id + "', null, true, ev);\n";
 
 						// js online check fail
 						js += "} else {\n";
