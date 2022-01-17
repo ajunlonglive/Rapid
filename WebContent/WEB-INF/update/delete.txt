@@ -1,4 +1,4 @@
-# This file is found in the update and files below are deleted if they are in the Rapid instance
+# This file is found in the update and files below are deleted if they are in the Rapid instance. They are typically out of date libraries.
 
 # jquery 
 /scripts/jquery-1.10.2.js
@@ -23,3 +23,6 @@
 # pdfbox
 /WEB-INF/lib/pdfbox-2.0.9.jar
 /WEB-INF/lib/fontbox-2.0.9.jar
+
+# sqlite
+/WEB-INF/lib/sqlite-jdbc-3.7.2.jar
