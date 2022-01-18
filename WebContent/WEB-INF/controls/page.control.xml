@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -266,11 +266,12 @@ div.loading {
 
 span.loading {
 	position: absolute;
-	background: url("../../../images/wait_120x15.gif");
+	background: url("../../../images/wait_200x200.gif");
 	background-repeat : no-repeat;
-	width: 120px;
-	height: 15px;
-	border: 2px solid #777;
+	background-size: 60px 60px;
+	width: 60px;
+	height: 60px;
+    border: none;
 	display: none;
 }
 

@@ -76,12 +76,14 @@ function positionLoadingCover(control, loadingCover) {
 	loadingCover.children("div").css({
 		height: control.outerHeight()
 	});
-	if (control.width() > 0) {
+	if (loadingCover.width() > 0) {
 		var image = loadingCover.children("span");
-		image.css({
-			left: (control.outerWidth() - image.outerWidth())/2,
-			top: (control.outerHeight() - image.outerHeight())/2
-		}).show();
+		if (loadingCover.width() > image.width() && loadingCover.height() > image.height()) {
+			image.css({
+				left: (control.outerWidth() - image.outerWidth())/2,
+				top: (control.outerHeight() - image.outerHeight())/2
+			}).show();
+		}
 	}
 }
 

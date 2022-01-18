@@ -5327,6 +5327,8 @@ function Property_glyphCode(cell, controlAction, property, details) {
 		var s = $(this).val();
 		// if there was one
 		if (s) {
+			// clean it up
+			s = s.toLowerCase().trim();
 			// check every row
 			ev.data.table.find("tr").each(function(){
 				// get the row
