@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -1627,7 +1627,7 @@ function uploadImage(url, dataSource, progress, ev, successCallback, errorCallba
 						}
 					}
 					// call callback if there is one
-					if (successCallback) window[successCallback](ev);
+					if (successCallback && window[successCallback]) window[successCallback](ev);
 				}
 			},
 			error: function(server, status, message) {
