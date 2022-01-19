@@ -4861,12 +4861,15 @@ function getPageControlsBulkCopies(datacopyAction, input) {
 	// make actions for all controls, keeping existing actions
 	var copiesForAllControls = getControls()
 	.filter(function(control) {
-		var controlClass = _controlTypes[control.type];
-		if (column.isValidData(controlClass)) return true;
-		var properties = controlClass.runtimeProperties;
-		if (properties) {
-			if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
-			return properties.some(column.isValidProperty);
+		// only controls with names
+		if (control.name) {
+			var controlClass = _controlTypes[control.type];
+			if (column.isValidData(controlClass)) return true;
+			var properties = controlClass.runtimeProperties;
+			if (properties) {
+				if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+				return properties.some(column.isValidProperty);
+			}
 		}
 	})
 	.flatMap(function(control) {
