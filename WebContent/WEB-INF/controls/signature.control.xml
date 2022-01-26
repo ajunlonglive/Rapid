@@ -184,7 +184,11 @@ if (signature && signature.points && signature.points.length > 0) {
 	        <![CDATA[
 
 var isPageLoadEvent = function(f) {
-	return f.caller && /^Event_pageload/.test(f.caller.name) || isPageLoadEvent(f.caller);
+	if (f) {
+		return f.caller && /^Event_pageload/.test(f.caller.name) || isPageLoadEvent(f.caller);
+	} else {
+		return false;
+	}
 };
 
 var delayedCall = isPageLoadEvent(setData_signature) ?
