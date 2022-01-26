@@ -196,18 +196,18 @@ var delayedCall = isPageLoadEvent(setData_signature) ?
 	function(f) { f() };
 
 delayedCall(function() {
-var signature = _signatureControls[id];
-if (signature) {
-	data = makeDataObject(data, field);
-	if (data && data.rows) {
-		// call signature from data url method
-		signature.fromDataURL(data.rows[0][0]);
-		// put a point in points array so getData will not send null
-		signature.points = [0];
-	} else {
-		signature.clear();
+	var signature = _signatureControls[id];
+	if (signature) {
+		data = makeDataObject(data, field);
+		if (data && data.rows) {
+			// call signature from data url method
+			signature.fromDataURL(data.rows[0][0]);
+			// put a point in points array so getData will not send null
+			signature.points = [0];
+		} else {
+			signature.clear();
+		}
 	}
-}
 });
 	        ]]>
 	    </setDataJavaScript>
