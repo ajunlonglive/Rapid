@@ -99,22 +99,25 @@ $(document).ready( function() {
 		var ratio =  window.devicePixelRatio || 1;
 	
 		_signatureCanvases.forEach(function(canvas) {
+		
+			var c = $(canvas);
+			var id = c.attr("id")||"unknown";
 			
 			try {
-				var context = canvas.getContext("2d");
-				var data = context.getImageData(0, 0, $(canvas).width(), $(canvas).height());
+				var w = c.width();
+				var h = c.height();
+				var context = canvas.getContext("2d");				
 				var url = canvas.toDataURL();
 				var img = new Image();
 				img.src = url;
-				canvas.width = $(canvas).width() * ratio;
-				canvas.height = $(canvas).height() * ratio;
+				canvas.width = w * ratio;
+				canvas.height = h * ratio;
 				context.scale(ratio, ratio);
-				//if (data && data instanceof ImageData) context.putImageData(data, 0, 0, 0, 0, $(canvas).width(), $(canvas).height());
 				img.onload = function() {
-					context.drawImage(img, 0, 0, $(canvas).width(), $(canvas).height());
+					context.drawImage(img, 0, 0, w, h);
 				};
 			} catch(ex) {
-				console.log("Error resizing signature " + i + " : " + ex);
+				console.log("Error resizing signature " + id + " : " + ex.message||ex);
 			}
 			 
 		});
