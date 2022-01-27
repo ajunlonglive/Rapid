@@ -1,4 +1,4 @@
 #!/bin/bash
 
-# update
+# Run the update .jar - You should use sudo
 java -jar update.jar
