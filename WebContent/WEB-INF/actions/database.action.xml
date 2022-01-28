@@ -147,9 +147,10 @@ function getDatabaseActionInputData(multiRow, inputs, sourceId, sourceData) {
 	var data = {};
 	// check multirow
 	if (multiRow) {
+		// turn any json objects into Rapid data object
 		sourceData = makeDataObject(sourceData);
-		// check there are sourceData rows
-		if (sourceData.fields.length > 0 && sourceData.rows.length > 0) {
+		// check there is sourceData and rows
+		if (sourceData && sourceData.fields.length > 0 && sourceData.rows.length > 0) {
 			// create the fields collection we're sending as the source id plus the field, this matches how we do non multi row queries
 			data.fields = inputs.map(function(input) {
 				return input.field ? (sourceId + "." + input.field) : input.id;
