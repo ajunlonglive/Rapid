@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -196,15 +196,15 @@ public class Mobile extends Action {
 				// hide any working page
 				js += getWorkingPageHideJavaScript(workingPage, "  ");
 				if (hasErrorActions()) {
-					// look for any offline page
-					String offlinePage = jsonDetails.optString("offlinePage", null);
-					// use the default error handler
-					js += "  " + getDefaultErrorJavaScript(application, page, control, offlinePage).replaceAll("\n", "\n  ") + "\n";
-				} else {
 					// the error actions
 					for (Action action : _errorActions) {
 						js += "  " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 					}
+				} else {
+					// look for any offline page
+					String offlinePage = jsonDetails.optString("offlinePage", null);
+					// use the default error handler
+					js += "  " + getDefaultErrorJavaScript(application, page, control, offlinePage).replaceAll("\n", "\n  ") + "\n";
 				}
 				js += "}\n\n";
 			}
