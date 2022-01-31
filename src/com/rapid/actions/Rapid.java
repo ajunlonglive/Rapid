@@ -1108,6 +1108,22 @@ public class Rapid extends Action {
 					result.put("title", app.getTitle());
 					// add the description
 					result.put("description", app.getDescription());
+					
+					SimpleDateFormat format = rapidServlet.getLocalDateTimeFormatter();
+					Date createdDate = app.getCreatedDate();
+					String createdUser = app.getCreatedBy();
+					String createdBy = (createdDate != null && createdUser != null) ? " by" : "";
+					String createdDateString = createdDate == null ? "" : format.format(createdDate);
+					createdUser = createdUser == null ? "" : " " + createdUser;
+					
+					Date modifiedDate = app.getModifiedDate();
+					String modifiedUser = app.getModifiedBy();
+					String modifiedBy = (modifiedDate != null && modifiedUser != null) ? " by" : "";
+					String modifiedDateString = modifiedDate == null ? "" : format.format(modifiedDate);
+					modifiedUser = modifiedUser == null ? "" : " " + modifiedUser;
+					
+					result.put("createdBy", createdDateString + createdBy + createdUser);
+					result.put("modifiedBy", modifiedDateString + modifiedBy + modifiedUser);
 
 					// add whether to show control ids
 					result.put("pageNameIds", app.getPageNameIds());
