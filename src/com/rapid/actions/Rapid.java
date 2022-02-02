@@ -1108,22 +1108,45 @@ public class Rapid extends Action {
 					result.put("title", app.getTitle());
 					// add the description
 					result.put("description", app.getDescription());
-					
+
+					// date time formatter to use on created / modified date times
 					SimpleDateFormat format = rapidServlet.getLocalDateTimeFormatter();
+
+					// assume no data for app created value
+					String created = "";
+					// get any created date
 					Date createdDate = app.getCreatedDate();
+					// if we had a created date format as created
+					if (createdDate != null) created = format.format(createdDate);
+					// get any created user
 					String createdUser = app.getCreatedBy();
-					String createdBy = (createdDate != null && createdUser != null) ? " by" : "";
-					String createdDateString = createdDate == null ? "" : format.format(createdDate);
-					createdUser = createdUser == null ? "" : " " + createdUser;
-					
+					// if we had one
+					if (createdUser != null) {
+						// add by to go after date if we had that
+						if (createdDate != null) created += " by ";
+						// append the user name
+						created += createdUser;
+					}
+					// add to to result
+					result.put("createdBy", created);
+
+					// assume no data for app modified value
+					String modified = "";
+					// get any created date
 					Date modifiedDate = app.getModifiedDate();
+					// if we had a modifiedDate date, format as modified
+					if (modifiedDate != null) modified = format.format(modifiedDate);
+					// get any modified user
 					String modifiedUser = app.getModifiedBy();
-					String modifiedBy = (modifiedDate != null && modifiedUser != null) ? " by" : "";
-					String modifiedDateString = modifiedDate == null ? "" : format.format(modifiedDate);
-					modifiedUser = modifiedUser == null ? "" : " " + modifiedUser;
-					
-					result.put("createdBy", createdDateString + createdBy + createdUser);
-					result.put("modifiedBy", modifiedDateString + modifiedBy + modifiedUser);
+					// if we had one
+					if (modifiedUser != null) {
+						// add by to go after date if we had that
+						if (modifiedDate != null) modified += " by ";
+						// append the user name
+						modified += modifiedUser;
+					}
+					// add to result
+					result.put("modifiedBy", modified);
 
 					// add whether to show control ids
 					result.put("pageNameIds", app.getPageNameIds());
