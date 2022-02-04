@@ -117,7 +117,10 @@ public class Mobile extends Action {
 
 	// whether we have success actions by looking at both whether the collection is initialised and its size
 	public boolean hasErrorActions() {
-		return !(_errorActions == null || _errorActions.size() == 0);
+		// get the type - some types assume the error action function is present as they use getMobileCheck(false)
+		String type = getProperty("actionType");
+		// determine if the error action function is expected
+		return (!(_errorActions == null || _errorActions.size() == 0) || "message".equals(type) || "disableBackButton".equals(type) || "stopGPS".equals(type));
 	}
 
 	// overridden methods
@@ -862,6 +865,7 @@ public class Mobile extends Action {
 				String message = getProperty("message");
 				// update to empty string if null
 				if (message == null) message = "";
+
 				// mobile check with silent fail
 				js += getMobileCheck(false);
 				// add js, replacing any dodgy inverted commas
@@ -874,9 +878,9 @@ public class Mobile extends Action {
 				// mobile check with silent fail
 				js += getMobileCheck(false);
 				// add js
-				js += "    _rapidmobile.disableBackButton();\n";
+				js += "  _rapidmobile.disableBackButton();\n";
 				// close mobile check
-				js += "  }\n";
+				js += "}\n";
 
 			} else if ("sendGPS".equals(type)) {
 
