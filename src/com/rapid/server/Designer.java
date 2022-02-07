@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -2156,7 +2156,7 @@ public class Designer extends RapidHttpServlet {
 													throw new Exception("Select statement should have at least one output");
 												} else {
 													// not a select so just prepare the statement by way of testing it
-													df.getPreparedStatement(rapidRequest,sql , parameters);
+													df.getPreparedStatement(rapidRequest, sql, parameters).execute();
 												}
 
 											} else {
