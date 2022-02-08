@@ -1,7 +1,7 @@
 /*
 
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -4109,7 +4109,7 @@ var _gridColumnSorts = {
 // the sort function help text
 var _gridSortFunctionHelpText = "// enter JavaScript here that returns a number to reflect\n// the order by comparing two objects, \"item1\" and \"item2\"\n// each has a \"value\" and \"index\" property";
 // the cell function help text
-var _gridCellFunctionHelpText = "// enter JavaScript here that can alter the contents when this\n// cell is populated. The value is available in the \"value\"\n// variable, and the cell in \"this\"";
+var _gridCellFunctionHelpText = "// enter JavaScript here that can alter the contents when this\n// cell is populated. The value is available in the \"value\"\n// variable, the cell in \"this\", and the row data in row";
 // the cell content edit html
 var _gridCellEditHtml = "<i class='fas fa-pencil-alt' title='Edit function'></i>";
 
