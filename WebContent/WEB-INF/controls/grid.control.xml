@@ -1294,18 +1294,18 @@ if (data !== undefined && data !== "") {
 			                       
 			        // if there are cell functions to apply to the rows
 					if (cellFunctions) {
-						// make row
-						var row = {};
-						details.columns.forEach(function(column, i) {
-							if (column.field) {
-								// get a reference to the cell (add 1 if multiSelect to account for this column)
-								var cellObject = rowObject.children(":nth-child(" + ((details.multiSelect ? 2 : 1) + i*1) + ")");
-								// get it's value
-								var value = cellObject.html();
-								row[column.field] = value;
+						// make object/map of current row data to use in cell function parameter
+						var rowData = {};
+						// if there is data and fields
+						if (data && data.fields && data.fields) {
+							// loop fields
+							for (var i in data.fields) {
+								// get the field
+								var field = data.fields[i];
+								// if there is a field add its corresponding row data to the rowData object which we'll provide into the cell functions below
+								if (field) rowData[field] = row[i];
 							}
-						});
-						
+						}
 						// loop columns looking for cell functions
 						for (var i in details.columns) {
 							// if this column has a cell function
@@ -1315,7 +1315,7 @@ if (data !== undefined && data !== "") {
 								// get it's value
 								var value = cellObject.html();
 								// apply the function to the cellObject!
-								details.columns[i].f.apply(cellObject,[id, data, details.columns[i].field, details, value, row]);
+								details.columns[i].f.apply(cellObject,[id, data, details.columns[i].field, details, value, rowData]);
 							}
 						}
 					}
