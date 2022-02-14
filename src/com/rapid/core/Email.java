@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2019 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -345,7 +345,7 @@ public class Email {
             messageBodyPart.setText(text);
 
             // add html if present
-            if (html != null) messageBodyPart.setContent(html, "text/html");
+            if (html != null) messageBodyPart.setContent(html, "text/html; charset=utf-8");
 
             // Create a multipart message
             Multipart multipart = new MimeMultipart();
@@ -369,7 +369,7 @@ public class Email {
         } else {
 
         	// set message content type for html
-        	if (html != null) message.setContent(html, "text/html");
+        	if (html != null) message.setContent(html, "text/html; charset=utf-8");
 
         } // attachment check
 
