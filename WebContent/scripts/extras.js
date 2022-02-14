@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -139,7 +139,7 @@ $.fn.extend({
 	  // get a reference to closest dialogue
 	  var dialogue = $(this).closest("div.dialogue");
 	  // if we didn't find one but we have an id, use that
-	  if (dialogue.length == 0 && id) dialogue = $(".dialogue").last();
+	  if (dialogue.length == 0 && id) dialogue = $("#" + id + ".dialogue").last();
 	  var dialogueCover = dialogue.prev("div.dialogueCover");
 	  // remove the dialogue
 	  dialogue.remove();
