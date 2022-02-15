@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -259,7 +259,7 @@ public class Navigate extends Action {
 		// stop event bubbling (both navigation types need this)
 		js += "if (ev.stopPropagation) ev.stopPropagation();\n";
 		// stop the form being submitted
-		js += "ev.preventDefault();\n";
+		js += "if (ev.preventDefault) ev.preventDefault();\n";
 		// return it into the page!
 		return js;
 

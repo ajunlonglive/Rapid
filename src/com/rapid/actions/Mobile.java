@@ -159,12 +159,25 @@ public class Mobile extends Action {
 
 		// if it's online
 		if ("online".equals(type)) {
+			
 			// if there was one record that we have a working page in the details
 			if (workingPage != null && workingPage.trim().length() > 0) jsonDetails.put("workingPage", id);
 			// get the offline dialogue
 			String offlinePage = getProperty("onlineFail");
 			// record that we have an offline page
 			if (offlinePage != null && !offlinePage.equals("")) jsonDetails.put("offlinePage", offlinePage);
+			
+			// see if we have any online success or error actions - this starts the success check for this action tree
+			if (hasSuccessActions() || hasErrorActions()) {
+
+				// ensure we have a details object
+				if (jsonDetails == null) jsonDetails = new JSONObject();
+
+				// retain on the details that we have a success check, but only if there isn't one already on this tree
+				if (!jsonDetails.has("successCheck")) jsonDetails.put("successCheck", id);
+
+			}
+			
 		}
 
 		// reference to these success and fail actions are sent as callbacks to the on-mobile device file upload function, uploadImages always has at least an error
@@ -172,8 +185,14 @@ public class Mobile extends Action {
 			return null;
 		} else {
 
-			// we add the successCheck to the the details in the getJavaScript (and empty is again each time before it runs)
-			String js = "_" + id + "successChecks = {};\n\n";
+			// start the js
+			String js = "";
+			
+			// get any success check
+			String successCheck = getSuccesCheck(jsonDetails);
+			
+			// if for this action we add the successCheck to the the details in the getJavaScript (and empty it again each time before it runs), only for first in the tree, see above
+			if (id.equals(successCheck)) js += "var _" + id + "successChecks = {};\n\n";
 
 			// get the control (the slow way)
 			Control control = page.getActionControl(id);
@@ -189,6 +208,8 @@ public class Mobile extends Action {
 					for (Action action : _successActions) {
 						js += "  " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 					}
+					// add any success check for actions further down the tree
+					if ("uploadImages".equals(type)) js += getSuccessCheckSuccess(successCheck, "  ");
 				}
 				js += "}\n\n";
 			}
@@ -702,8 +723,14 @@ public class Mobile extends Action {
 						if (progressOutput != null) progressOutputJavaScript = ", {id:'" + progressOutputId + "', type:'" + progressOutput.getType() + "', field:'" + progressOutputField + "', details:" + progressOutput.getDetails() + "}";
 					}
 
+					// get any success check
+					String successCheck = getSuccesCheck(jsonDetails);
+
 					// if we got any urls check whether request is from a mobile - upload the images
 					js += "if (urls) { \n"
+						// add any success check start
+						+ "   " + getSuccessCheckStart(successCheck)
+						// check for Rapid Mobile or browser upload
 						+ "   if (typeof _rapidmobile == 'undefined') {\n"
 						+ "      uploadImages(" + new JSONArray(controlIds) + ", ev, " + successCallback + ", " + errorCallback + progressOutputJavaScript + ");\n"
 						+ "   } else {\n"
@@ -1020,19 +1047,20 @@ public class Mobile extends Action {
 				// assume we're not doing any success check
 				boolean successCheck = false;
 
-				// see if we have any online success or error actions
+				// see if we have any online success or error actions - setting the successCheck is in the getPageJavaScript
 				if (hasSuccessActions() || hasErrorActions()) {
 
 					// retain that we're doing a success check
 					successCheck = true;
 
-					// ensure we have a details object
-					if (jsonDetails == null) jsonDetails = new JSONObject();
-
-					// retain on the details that we have an offline page
-					jsonDetails.put("successCheck", id);
 					// set it to empty
 					js += "_" + id + "successChecks = {};\n";
+					
+					// ensure we have a details object
+					if (jsonDetails == null) jsonDetails = new JSONObject();
+					
+					// retain on the details that we have a success check, but only if there isn't one already on this tree
+					if (!jsonDetails.has("successCheck")) jsonDetails.put("successCheck", id);
 
 				}
 
