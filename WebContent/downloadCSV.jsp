@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/csv; charset=UTF-8" pageEncoding="UTF-8"%><%@ page import="org.json.JSONObject" %><%@ page import="org.json.JSONArray" %><%!
+<%@ page language="java" contentType="text/csv; charset=UTF-8" pageEncoding="UTF-8"%><%@ page import="org.json.JSONObject" %><%@ page import="org.json.JSONArray" %><%@ page import="java.io.OutputStream" %><%!
 
 /*
 
@@ -59,6 +59,15 @@ public String escapeValue(String value) {
 	// Expect that the data from the front-end is encoded as UTF-8
 	request.setCharacterEncoding("UTF-8");
 
+	// get the output stream (we want to write bytes so we can't use the default out print writer)
+	OutputStream o = response.getOutputStream();
+	
+	// UTF-8 byte order marker - https://en.wikipedia.org/wiki/Byte_order_mark#UTF-8
+	byte[] sig = {(byte) 0xef,(byte) 0xbb,(byte) 0xbf};
+	
+	// write the UTF-8 byte order mark
+	o.write(sig, 0, sig.length);
+	
 	// get any file name provided to us
 	String fileName = request.getParameter("downloadFileName");
 
@@ -73,11 +82,11 @@ public String escapeValue(String value) {
 	
 	// if not data yet look for backwards compatible location
 	if (data == null) data = request.getParameter("data");
-	
+
 	// if we got some data
 	if (data != null) {
-		
-		// turn it into a proper json object 
+				
+		// turn the data into a proper json object 
 		JSONObject jsonData = new JSONObject(data);
 		
 		// get its rows 2d-array
@@ -85,36 +94,65 @@ public String escapeValue(String value) {
 				
 		// look for a headers collection - this was added by looping the grid header row columns 
 		JSONArray headers = jsonData.optJSONArray("headers");
+				
+		// we'll build and then write each row
+		StringBuilder sb = new StringBuilder();
+		
+		// string builder bytes which we'll get from the string builder in UTF-8 and then write to the output stream for each line
+		byte[] sbytes = null;
 		
 		// if we got any headers 
 		if (headers != null) {
+
 			// this is the dynamic header list, so loop it
 			for (int i = 0; i < headers.length(); i++) {
 				// print the escaped header
 				String header = escapeValue(headers.optString(i));
-				out.write(header.replaceAll("[^ -~]", ""));
+				sb.append(header.replaceAll("[^ -~]", ""));
 				
 				// print the comma if not the last value
-				if (i < headers.length() - 1) out.write(",");
+				if (i < headers.length() - 1) sb.append(",");
 			}
 			// print the line break
-			out.write("\r\n");
-		}
+			sb.append("\r\n");
+			
+			// get any string builder bytes for the header as UTF-8
+			sbytes = sb.toString().getBytes("UTF-8");
+			
+			// write them to the output stream
+			o.write(sbytes, 0, sbytes.length);
+			
+		}		
 
 		// now loop the rows
 		for (int i = 0; i < rows.length(); i++) {
+			
+			// empty the string builder
+			sb.setLength(0);
+			
 			// get this row
 			JSONArray row = rows.getJSONArray(i);
 			// loop the cells in the row
 			for (int j = 0; j < row.length(); j++) {
 				// print the escaped col value
-				out.write(escapeValue(row.optString(j)));
+				sb.append(escapeValue(row.optString(j)));
 				// print the comma if not the last value
-				if (j < row.length() - 1) out.write(",");
+				if (j < row.length() - 1) sb.append(",");
 			}				
 			// print the line break
-			out.write("\r\n");
-		}		
+			sb.append("\r\n");
+			
+			// get the string builder bytes for this row as UTF-8
+			sbytes = sb.toString().getBytes("UTF-8");
+			
+			// write them to the output stream
+			o.write(sbytes, 0, sbytes.length);
+			
+		}
 	}
+
+	// flush and close the output stream
+	o.flush();
+	o.close();
 
 %>
