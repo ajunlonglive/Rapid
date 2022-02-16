@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2017 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -54,22 +54,61 @@ public class Applications {
 				versions.add(get(version));
 			}
 			// sort the collection
-			Collections.sort(versions, new Comparator<Application>() {
-				@Override
-				public int compare(Application a1, Application a2) {
-					if (a1.getCreatedDate().after(a2.getCreatedDate())) {
-						return 1;
-					} else if (a2.getCreatedDate().after(a1.getCreatedDate())) {
-						return -1;
-					} else {
-						return 0;
-					}
-				}
-			});
+			Collections.sort(versions, new VersionComparator().thenComparing(new CreatedDateComparator()));
 			// return the list
 			return versions;
 		}
-
+		
+		private static final class CreatedDateComparator implements Comparator<Application> {
+			@Override
+			public int compare(Application a1, Application a2) {
+				if (a1.getCreatedDate().after(a2.getCreatedDate())) {
+					return 1;
+				} else if (a2.getCreatedDate().after(a1.getCreatedDate())) {
+					return -1;
+				} else {
+					return 0;
+				}
+			}
+		}
+		
+		private static final class VersionComparator implements Comparator<Application> {
+			@Override
+			public int compare(Application v1, Application v2) {
+				return compare(v1.getVersion(), v2.getVersion());
+			}
+			public int compare(String s1, String s2) {
+				if (s1 == null) s1 = "";
+				if (s2 == null) s2 = "";
+				if (s1.isEmpty() && s2.isEmpty()) return 0;
+				int s1PartEnd = s1.indexOf(".");
+				if (s1PartEnd == -1) s1PartEnd = s1.length();
+				int s2PartEnd = s2.indexOf(".");
+				if (s2PartEnd == -1) s2PartEnd = s2.length();
+				String s1Part = s1.substring(0, s1PartEnd);
+				String s2Part = s2.substring(0, s2PartEnd);
+				int comparison = 0;
+				try {
+					String s1LetterFree = s1Part.replaceAll("[^0-9]", "");
+					String s2LetterFree = s2Part.replaceAll("[^0-9]", "");
+					int n1 = Integer.parseInt(s1LetterFree);
+					int n2 = Integer.parseInt(s2LetterFree);
+					comparison = Integer.compare(n1, n2);
+				} catch (NumberFormatException ex) {
+					comparison = s1Part.compareTo(s2Part);
+				}
+				if (comparison == 0) {
+					String s1Tail = null;
+					String s2Tail = null;
+					try { s1Tail = s1.substring(s1PartEnd + 1); } catch (StringIndexOutOfBoundsException ex) {}
+					try { s2Tail = s2.substring(s2PartEnd + 1); } catch (StringIndexOutOfBoundsException ex) {}
+					return compare(s1Tail, s2Tail);
+				} else {
+					return comparison;
+				}
+			}
+		};
+		
 	}
 
 	// private instance variables
