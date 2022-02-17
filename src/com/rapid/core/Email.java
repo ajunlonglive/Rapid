@@ -57,6 +57,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.utils.JAXB.EncryptedXmlAdapter;
@@ -135,6 +136,7 @@ public class Email {
 	}
 
 	// private static variables
+	private static Logger _logger = LogManager.getLogger(Email.class);
 	private static Properties _properties;
 	private static Authenticator _authenticator;
 	private static Email _email;
@@ -312,69 +314,78 @@ public class Email {
 	    // get the default session
     	Session session = Session.getInstance(_properties, _authenticator);
 
-    	// create the message
-    	Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(from));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to.replace(";", ",")));
-        message.setSubject(subject);
-        message.setText(text);
+    	try {
 
-        // assume no attachments
-        boolean gotAttachments = false;
-        // if something was provided
-        if (attachments != null) {
-        	 // loop the attachments
-            for (Attachment attachment : attachments) {
-            	// if non- null
-            	if (attachment != null) {
-            		// remember we have attachments
-            		gotAttachments = true;
-            		// we're done
-            		break;
-            	}
-            }
-        }
+	    	// create the message
+	    	Message message = new MimeMessage(session);
+	        message.setFrom(new InternetAddress(from));
+	        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to.replace(";", ",")));
+	        message.setSubject(subject);
+	        message.setText(text);
 
-        // if there were any attachments
-        if (gotAttachments) {
+	        // assume no attachments
+	        boolean gotAttachments = false;
+	        // if something was provided
+	        if (attachments != null) {
+	        	 // loop the attachments
+	            for (Attachment attachment : attachments) {
+	            	// if non- null
+	            	if (attachment != null) {
+	            		// remember we have attachments
+	            		gotAttachments = true;
+	            		// we're done
+	            		break;
+	            	}
+	            }
+	        }
 
-        	// Create the message part
-            BodyPart messageBodyPart = new MimeBodyPart();
+	        // if there were any attachments
+	        if (gotAttachments) {
 
-            // set the text part
-            messageBodyPart.setText(text);
+	        	// Create the message part
+	            BodyPart messageBodyPart = new MimeBodyPart();
 
-            // add html if present
-            if (html != null) messageBodyPart.setContent(html, "text/html; charset=utf-8");
+	            // set the text part
+	            messageBodyPart.setText(text);
 
-            // Create a multipart message
-            Multipart multipart = new MimeMultipart();
+	            // add html if present
+	            if (html != null) messageBodyPart.setContent(html, "text/html; charset=utf-8");
 
-            // Set body message part
-            multipart.addBodyPart(messageBodyPart);
+	            // Create a multipart message
+	            Multipart multipart = new MimeMultipart();
 
-            // loop the attachments
-            for (Attachment attachment : attachments) {
-            	// may be null
-            	if (attachment != null) {
-		            messageBodyPart = new MimeBodyPart();
-		            messageBodyPart.setFileName(attachment.getName());
-		            messageBodyPart.setDataHandler( new DataHandler(attachment.getDataSource()));
-		            multipart.addBodyPart(messageBodyPart);
-            	}
-            }
-            // add the complete message parts
-            message.setContent(multipart);
+	            // Set body message part
+	            multipart.addBodyPart(messageBodyPart);
 
-        } else {
+	            // loop the attachments
+	            for (Attachment attachment : attachments) {
+	            	// may be null
+	            	if (attachment != null) {
+			            messageBodyPart = new MimeBodyPart();
+			            messageBodyPart.setFileName(attachment.getName());
+			            messageBodyPart.setDataHandler( new DataHandler(attachment.getDataSource()));
+			            multipart.addBodyPart(messageBodyPart);
+	            	}
+	            }
+	            // add the complete message parts
+	            message.setContent(multipart);
 
-        	// set message content type for html
-        	if (html != null) message.setContent(html, "text/html; charset=utf-8");
+	        } else {
 
-        } // attachment check
+	        	// set message content type for html
+	        	if (html != null) message.setContent(html, "text/html; charset=utf-8");
 
-        // send it!
-        Transport.send(message);
+	        } // attachment check
+
+	        // send it!
+	        Transport.send(message);
+
+    	} catch (Exception ex) {
+
+    		// quietly fail and just log the error
+    		_logger.error("Error sending email to " + to + " from " + from + ": " + ex.getMessage(), ex);
+
+    	}
 
     }
 
