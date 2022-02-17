@@ -2467,6 +2467,9 @@ public class Designer extends RapidHttpServlet {
 												// update the version
 												appNew.setVersion(appVersion);
 
+												// update the created by
+												appNew.setCreatedBy(userName);
+
 												// update the created date
 												appNew.setCreatedDate(new Date());
 
