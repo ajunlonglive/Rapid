@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -1983,7 +1983,7 @@ function doPaste(control, _parent, avoidNameCheck) {
 	
 	// loop the control ids in the paste string
 	for (var i = 0; i < _pasteControls.length; i++) {
-		// replace all occurances of the ids in the paste string with a prefix so they don't conflict with ids in the page
+		// replace all occurrences of the ids in the paste string with a prefix so they don't conflict with ids in the page
 		pasteString = pasteString.replaceAll(_pasteControls[i].id, "p_" + _pasteControls[i].id);
 	}
 	
@@ -2052,6 +2052,9 @@ function doPaste(control, _parent, avoidNameCheck) {
 				newControlString = newControlString.replaceAll(oldId + " ", newId + " ");				
 			}
 		}
+		
+		// for some reason we've seen p_'s remain in new ids so remove them here
+		newControlString = newControlString.replaceAll('"p_' + _page.id + '_',_page.id + '_');
 		
 		// turn the replaced string back into an object
 		var mappedControl = JSON.parse(newControlString);
