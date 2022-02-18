@@ -5722,6 +5722,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 	setPropertyVisibilty(mobileAction, "remoteSource", false);
 	setPropertyVisibilty(mobileAction, "includeAudio", false);
 	setPropertyVisibilty(mobileAction, "captureMode", false);
+	setPropertyVisibilty(mobileAction, "imageMultiple", false);
 	setPropertyVisibilty(mobileAction, "cameraSelectImage", false);
 	setPropertyVisibilty(mobileAction, "galleryControlIds", false);
 	setPropertyVisibilty(mobileAction, "barcodeDestinations", false);
@@ -5774,6 +5775,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "cameraSelectImage", true);
 			setPropertyVisibilty(mobileAction, "remoteSource", true);
 			setPropertyVisibilty(mobileAction, "captureMode", true);
+			setPropertyVisibilty(mobileAction, "imageMultiple", true);
 		break;
 		case "addVideo" :
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
@@ -5783,6 +5785,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "remoteSource", true);
 			setPropertyVisibilty(mobileAction, "includeAudio", true);
 			setPropertyVisibilty(mobileAction, "captureMode", true);
+			setPropertyVisibilty(mobileAction, "imageMultiple", true);
 		break;
 		case "addImageVideo" :
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
@@ -5793,10 +5796,13 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "remoteSource", true);
 			setPropertyVisibilty(mobileAction, "includeAudio", true);
 			setPropertyVisibilty(mobileAction, "captureMode", true);
+			setPropertyVisibilty(mobileAction, "imageMultiple", true);
 		break;
 		case "selectImage" :
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
 			setPropertyVisibilty(mobileAction, "imageMaxSize", true);
+			setPropertyVisibilty(mobileAction, "imageQuality", true);
+			setPropertyVisibilty(mobileAction, "imageMultiple", true);
 		break;
 		case "uploadImages" :
 			setPropertyVisibilty(mobileAction, "galleryControlIds", true);

@@ -173,6 +173,15 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.messa
 	        </property>
 	        
 	        <property>
+	            <key>imageMultiple</key>
+	            <name>Allow multiple</name>
+	            <visible>false</visible>
+	            <setConstructValueFunction>return false;</setConstructValueFunction>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <helpHtml>Sets whether or not to offer the option of selecting an image from the device.</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>captureMode</key>
 	            <name>Mode</name>
 	            <visible>false</visible>
@@ -672,7 +681,7 @@ if (navigator.mediaDevices && !!navigator.mediaDevices.getDisplayMedia && naviga
 function getFacingMode() {
 
 	// if local storage is supported read the value from that
-	if (typeof(Storage) !== "undefined") _currentFacingMode = localStorage.getItem("currentFacingMode");
+	if (typeof(Storage) !== "undefile.typefined") _currentFacingMode = localStorage.getItem("currentFacingMode");
 	// set the default if no value held yet
 	if (!_currentFacingMode) setFacingMode("environment");
 	return _currentFacingMode;
@@ -955,7 +964,7 @@ function optimalVideoMimeType(formats, codecs) {
 	}
 }
 
-function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelectImage, mediums, remoteSource, includeAudio, captureMode) {
+function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelectImage, mediums, remoteSource, includeAudio, captureMode, allowMultiple) {
 	
 	_size = size;
 	_cameraSelectImage = cameraSelectImage;
@@ -985,39 +994,49 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			.map(function(medium) { return medium + "/" + "*" })
 			.join(",");
 		
-		$("#inputImage").remove();
-		$(document.body).append("<input type='file' accept='" + mimeTypes + "' id='inputImage' style='display:none;'>");
+		var multiple = allowMultiple ? "multiple" : "";
 		
-		$("#inputImage").on("change", function(changeEvent) {
+		$("#inputImage").remove();
+		$(document.body).append("<input type='file' accept='" + mimeTypes + "' id='inputImage' style='display:none;' " + multiple + ">");
+		
+		var input = $("#inputImage");
+		
+		input.on("change", function(changeEvent) {
 			
 			$("#cameraVideoContainer").remove();
 			$(document.body).css({overflow:"unset", "touch-action":"auto"});
 			$(window).css({overflow:"unset", "touch-action":"auto"});
 			
-			var fileReader = new FileReader();
-			
-			$(fileReader).on("load", function(loadEvent) {
+			for (var fileIndex = 0; fileIndex < input[0].files.length; fileIndex++) {
 				
-				var image = new Image();
-				image.src = loadEvent.target.result;
+				var file = input[0].files[fileIndex];
+				var fileReader = new FileReader();
+				fileReader.fileType = file.type;
 				
-				$(image).on("load", function(loadEvent) {
+				$(fileReader).on("load", function(loadEvent) {
 					
-					var imageWidth = loadEvent.target.width;
-					var imageHeight = loadEvent.target.height;
+					var image = new Image();
+					image.src = loadEvent.target.result;
+					image.type = loadEvent.target.fileType;
 					
-					// Get a data url of the canvas, containing a representation of the image
-					// Default format type is image/png
-					var dataURL = scaleImageToDataURL(image, image.width, image.height) || image.src;
-			
-					// call gallery set data to display image
-					setData_gallery(loadEvent, galleryControlId, "url", galleryDetails, dataURL);
-					
-					$(".inputImagePage").remove();
+					$(image).on("load", function(loadEvent) {
+						
+						var imageWidth = loadEvent.target.width;
+						var imageHeight = loadEvent.target.height;
+						
+						// Get a data url of the canvas, containing a representation of the image
+						// Default format type is image/png
+						var dataURL = scaleImageToDataURL(image, image.width, image.height, loadEvent.target.type) || image.src;
+				
+						// call gallery set data to display image
+						setData_gallery(loadEvent, galleryControlId, "url", galleryDetails, dataURL);
+						
+						$(".inputImagePage").remove();
+					});
 				});
-			});
-			
-			fileReader.readAsDataURL(this.files[0]);
+				
+				fileReader.readAsDataURL(file);
+			}
 		});
 		
 		var inputImageHtml = _cameraSelectImage ? "<div style='position:fixed; top:0; width:100%; text-align:center;'>"
@@ -1267,7 +1286,7 @@ function mergeAudioStreams(stream1, stream2) {
 	return destination.stream.getAudioTracks()[0];
 }
 
-function scaleImageToDataURL(image, imageWidth, imageHeight) {
+function scaleImageToDataURL(image, imageWidth, imageHeight, type) {
 	
 	var maxSize = _size;
 	
@@ -1277,26 +1296,25 @@ function scaleImageToDataURL(image, imageWidth, imageHeight) {
 	// Set the width and height of the canvas, before drawing
 	// Find the longest side of the videoplayer
 	if (imageHeight > imageWidth) {
-		
-		canvas.height = Math.min(imageHeight ,maxSize);
-		canvas.width = Math.min(imageWidth ,(imageWidth / imageHeight) * maxSize);
-		
+		canvas.height = maxSize != undefined ? Math.min(imageHeight, maxSize) : imageHeight;
+		canvas.width = maxSize != undefined ? Math.min(imageWidth, (imageWidth / imageHeight) * maxSize) : imageWidth;
 	} else {
-	
-		canvas.height = Math.min(imageHeight ,(imageHeight / imageWidth) * maxSize);
-		canvas.width = Math.min(imageWidth ,maxSize);
-		
+		canvas.height = maxSize != undefined ? Math.min(imageHeight, (imageHeight / imageWidth) * maxSize) : imageHeight;
+		canvas.width = maxSize != undefined ? Math.min(imageWidth, maxSize) : imageWidth;
 	}
 	
 	// Draw a single frame in the player to the canvas
 	canvasContext.drawImage(image, 0, 0, canvas.width, canvas.height);
 	
+	var quality = _quality != undefined ? Math.min(1, Math.max(0, _quality / 100)) : 1;
+	if (_quality != undefined) type = "image/jpeg";
+	
 	// Get a data url of the canvas, containing a representation of the image
 	// Default format type is image/png
-	return canvas.toDataURL();
+	return canvas.toDataURL(type, quality);
 }
 
-function selectItem(galleryControlId, size, mediums, message) {
+function selectItem(galleryControlId, size, mediums, message, quality, allowMultiple) {
 	
 	_size = size;
 	
@@ -1308,9 +1326,13 @@ function selectItem(galleryControlId, size, mediums, message) {
 	
 	var selectWhat = mediums.join(" or ");
 	
+	_quality = quality;
+	
+	var multiple = allowMultiple ? "multiple" : "";
+	
 	$("#inputImage").remove();
 	
-	var inputHtml = "<input type='file' accept='" + mimeTypes + "' id='inputImage' style='display:none;'>"
+	var inputHtml = "<input type='file' accept='" + mimeTypes + "' id='inputImage' style='display:none;' " + multiple + ">"
 		+ "<label for='inputImage' class='r-button button btn inputImagePageButton col-xs-12'>Select " + selectWhat + "</label>";
 		
 	var closeButtonHtml = "<button id='closeInputPage' class='r-button button btn inputImagePageButton col-xs-12'>Cancel</button>";
@@ -1332,34 +1354,42 @@ function selectItem(galleryControlId, size, mediums, message) {
 		$(".inputImagePage").remove();
 	});
 	
-	$("#inputImage").on("change", function(changeEvent) {
+	var input = $("#inputImage");
+	
+	input.on("change", function(changeEvent) {
 		
-		var fileReader = new FileReader();
-		
-		$(fileReader).on("load", function(loadEvent) {
+		for (var fileIndex = 0; fileIndex < input[0].files.length; fileIndex++) {
 			
-			var image = new Image();
-			image.src = loadEvent.target.result;
-			
-			$(image).on("load", function(loadEvent) {
-				
-				var imageWidth = loadEvent.target.width;
-				var imageHeight = loadEvent.target.height;
-				
-				// Get a data url of the canvas, containing a representation of the image
-				// Default format type is image/png
-				var dataURL = scaleImageToDataURL(image, image.width, image.height) || image.src;
-		
-				// call gallery set data to display image
-				setData_gallery(loadEvent, galleryControlId, "url", galleryDetails, dataURL);
-				
-				$("body").css({"overflow":"unset"});
-				$(".inputImagePage").remove();
-				
+			var file = input[0].files[fileIndex];
+			var fileReader = new FileReader();
+			fileReader.fileType = file.type;
+
+			$(fileReader).on("load", function(loadEvent) {
+
+				var image = new Image();
+				image.src = loadEvent.target.result;
+				image.type = loadEvent.target.fileType;
+
+				$(image).on("load", function(loadEvent) {
+
+					var imageWidth = loadEvent.target.width;
+					var imageHeight = loadEvent.target.height;
+
+					// Get a data url of the canvas, containing a representation of the image
+					// Default format type is image/png
+					var dataURL = scaleImageToDataURL(image, image.width, image.height, loadEvent.target.type) || image.src;
+
+					// call gallery set data to display image
+					setData_gallery(loadEvent, galleryControlId, "url", galleryDetails, dataURL);
+
+					$("body").css({"overflow":"unset"});
+					$(".inputImagePage").remove();
+
+				});
 			});
-		});
-		
-		fileReader.readAsDataURL(this.files[0]);
+
+			fileReader.readAsDataURL(file);
+		}
 	});
 }
 

@@ -590,8 +590,10 @@ public class Mobile extends Action {
 				if (galleryControl == null) {
 					js += "  //gallery control " + galleryControlId + " not found\n";
 				} else {
-					int maxSize = Integer.parseInt(getProperty("imageMaxSize"));
-					int quality = Integer.parseInt(getProperty("imageQuality"));
+					Integer maxSize = null;
+					try { maxSize = Integer.parseInt(getProperty("imageMaxSize")); } catch (NumberFormatException ex) {}
+					Integer quality = null;
+					try { quality = Integer.parseInt(getProperty("imageQuality")); } catch (NumberFormatException ex) {}
 					int maxDuration = 0;
 					if(getProperty("videoMaxDuration") != null && !getProperty("videoMaxDuration").isEmpty())
 						maxDuration = Integer.parseInt(getProperty("videoMaxDuration"));
@@ -601,6 +603,7 @@ public class Mobile extends Action {
 					String remoteSource = getProperty("remoteSource");
 					String captureMode = getProperty("captureMode");
 					String includeAudio = getProperty("includeAudio");
+					Boolean imageMultiple = Boolean.parseBoolean(getProperty("imageMultiple"));
 
 					String mediums =
 							"addImage".equals(type) ? "['image']" :
@@ -610,7 +613,7 @@ public class Mobile extends Action {
 
 					// mobile check, use
 					js += "if (typeof _rapidmobile == 'undefined') {\n"
-						+ "  turnOnCamera('" + galleryControlId + "'," + maxSize + "," + quality + "," + maxDuration + "," + cameraSelectImage + ", " + mediums + ", " + remoteSource + ", " + includeAudio + ", '" + captureMode + "');\n"
+						+ "  turnOnCamera('" + galleryControlId + "'," + maxSize + "," + quality + "," + maxDuration + "," + cameraSelectImage + ", " + mediums + ", " + remoteSource + ", " + includeAudio + ", '" + captureMode + "', " + imageMultiple + ");\n"
 						+ "} else {\n";
 					js += "  _rapidmobile.addImage('" + galleryControlId + "'," + maxSize + "," + quality + ");\n";
 					// close mobile check
@@ -627,8 +630,12 @@ public class Mobile extends Action {
 				if (galleryControl == null) {
 					js += "  //output control " + galleryControlId + " not found\n";
 				} else {
-					int maxSize = Integer.parseInt(getProperty("imageMaxSize"));
-					js += "selectItem('" + galleryControlId + "', " + maxSize + ", ['image','video']);\n";
+					Integer maxSize = null;
+					try { maxSize = Integer.parseInt(getProperty("imageMaxSize")); } catch (NumberFormatException ex) {}
+					Integer quality = null;
+					try { quality = Integer.parseInt(getProperty("imageQuality")); } catch (NumberFormatException ex) {}
+					Boolean imageMultiple = Boolean.parseBoolean(getProperty("imageMultiple"));
+					js += "selectItem('" + galleryControlId + "', " + maxSize + ", ['image','video'], undefined," + quality + ", " + imageMultiple + ");\n";
 				}
 
 			} else if ("uploadImages".equals(type)) {
