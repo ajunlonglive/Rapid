@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -99,12 +99,30 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        </property>
 	        
 	         <property>
+	            <key>maxImages</key>
+	            <name>Max images</name>
+	            <visible>true</visible>
+	            <setConstructValueFunction>return "";</setConstructValueFunction>
+	            <changeValueJavaScript>integer</changeValueJavaScript>
+	            <helpHtml>The maximum number of images the gallery will accept. (Optional)</helpHtml>
+	        </property>
+	        
+	         <property>
 	            <key>gotCaptions</key>
 	            <name>Got captions</name>
 	            <visible>false</visible>
 	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	        </property>
+
+			<property>
+				<key>advancedProperties</key>
+				<name>Advanced properties</name>
+				<setConstructValueFunction>return false;</setConstructValueFunction>
+				<changeValueJavaScript>checkbox</changeValueJavaScript>
+				<refreshHtml>true</refreshHtml>
+				<helpHtml>Whether to show advanced properties to actions.</helpHtml>
+			</property>
 	        
 	    </properties>
 	    
@@ -1139,7 +1157,7 @@ return html;
 	    
 	    <getDetailsFunction>
 	        <![CDATA[
-var details = {type:"gallery", onImageClick: this.onImageClick, emptyText: this.emptyText, allowDelete: this.allowDelete != false, allowEdit: this.allowEdit != false};
+var details = {type:"gallery", onImageClick: this.onImageClick, emptyText: this.emptyText, allowDelete: this.allowDelete != false, allowEdit: this.allowEdit != false, maxImages: this.maxImages};
 if (this.images && this.gotCaptions) {
 	details.captions = [];
 	for (var i in this.images) {
@@ -1170,127 +1188,130 @@ return data;
 var control = $("#" + id);
 // check we have some data 
 if (data) {
-	// make a proper data object	
-	data = makeDataObject(data, field);
-	// if it has rows
-	if (data.rows) {	
-		// assume image not set
-		var imageSet = false;
-		// look for url or urls in the fields or use the first column if not found	
-		var urlIndex = 0;
-		if (data.fields) {
-			for (var i in data.fields) {
-				if ((field && data.fields[i] == field) || data.fields[i] == "url" || data.fields[i] == "urls") {
-					urlIndex = i;
-					break;
+	// if there is no image-limit or we haven't hit it
+	if (details.maxImages == undefined || control.find(".galleryItem").length < details.maxImages) {
+		// make a proper data object	
+		data = makeDataObject(data, field);
+		// if it has rows
+		if (data.rows) {
+			// assume image not set
+			var imageSet = false;
+			// look for url or urls in the fields or use the first column if not found	
+			var urlIndex = 0;
+			if (data.fields) {
+				for (var i in data.fields) {
+					if ((field && data.fields[i] == field) || data.fields[i] == "url" || data.fields[i] == "urls") {
+						urlIndex = i;
+						break;
+					}
 				}
 			}
-		}			
-		// loop the rows
-		for (var i in data.rows) {
-		
-			// make sure there is something to set
-			if (data.rows[i][urlIndex]) {
-
-				// get the urls
-				var urls = data.rows[i][urlIndex];
-				
-				// if urls do not start with data allow comma seperated list of urls in single field too
-				if (urls.indexOf("data:") == 0) {
-					urls = [urls];
-				} else {
-					urls = data.rows[i][urlIndex].split(",");
-				}
-				
-				// loop the urls
-				for (var j in urls) {
- 				
-					// get the url
-					var url = urls[j];
+			// loop the rows
+			for (var i in data.rows) {
+			
+				// make sure there is something to set
+				if (data.rows[i][urlIndex]) {
+	
+					// get the urls
+					var urls = data.rows[i][urlIndex];
 					
-					// if we're in Rapid Mobile
-					if (typeof _rapidmobile != "undefined") {
+					// if urls do not start with data allow comma seperated list of urls in single field too
+					if (urls.indexOf("data:") == 0) {
+						urls = [urls];
+					} else {
+						urls = data.rows[i][urlIndex].split(",");
+					}
 					
-						// if it doesn't start with http or data
-						if (url.indexOf("http") != 0 && url.indexOf("data:") != 0) {
-				
-							// if this is Android
-							if (navigator.userAgent.indexOf("Android") > 0) {
-				
-								// add a psuedo host for Rapid Mobile on Android
-								url = "http://images/" + url;
-														
-							} else {
-							
-								// add a psuedo host for Rapid Mobile on iOS
-								url = window.location.origin + "/_images/" + url;
-							
-							}							
-							
+					// loop the urls
+					for (var j in urls) {
+	 				
+						// get the url
+						var url = urls[j];
+						
+						// if we're in Rapid Mobile
+						if (typeof _rapidmobile != "undefined") {
+						
+							// if it doesn't start with http or data
+							if (url.indexOf("http") != 0 && url.indexOf("data:") != 0) {
+					
+								// if this is Android
+								if (navigator.userAgent.indexOf("Android") > 0) {
+					
+									// add a psuedo host for Rapid Mobile on Android
+									url = "http://images/" + url;
+															
+								} else {
+								
+									// add a psuedo host for Rapid Mobile on iOS
+									url = window.location.origin + "/_images/" + url;
+								
+								}							
+								
+							}
+						
 						}
 					
-					}
-				
-					// url type check
-					if (url.indexOf("data:") == 0) { // if url is a data url
-					
-						var imageRecord = { url: url };
- 						imageRecord.filename = makeFilename(url);
- 						IDBputObject(imageRecord);
- 						
- 						var type = url.indexOf("data:video") == 0 ? "video" : "img";
- 						
-						addToImageControl(ev, control, imageRecord.filename, imageRecord.url, type);
+						// url type check
+						if (url.indexOf("data:") == 0) { // if url is a data url
 						
-					} else if (url.indexOf("http") == 0) { // external or mobile image
-									
-						addToImageControl(ev, control, url);
-						
-					} else { // if url is a filename
-						
-						IDBgetByKey(url, function(imageRecord, key) {
+							var imageRecord = { url: url };
+	 						imageRecord.filename = makeFilename(url);
+	 						IDBputObject(imageRecord);
+	 						
+	 						var type = url.indexOf("data:video") == 0 ? "video" : "img";
+	 						
+							addToImageControl(ev, control, imageRecord.filename, imageRecord.url, type);
 							
-							if (imageRecord) { // if an image is stored by this filename
+						} else if (url.indexOf("http") == 0) { // external or mobile image
+										
+							addToImageControl(ev, control, url);
+							
+						} else { // if url is a filename
+							
+							IDBgetByKey(url, function(imageRecord, key) {
 								
-								var type = imageRecord.url.indexOf("data:video") == 0 ? "video" : "img";
-								
-								addToImageControl(ev, control, imageRecord.filename, imageRecord.url, type);
-								
-							} else { // if url is for the rapid logo etc.
-								
-								var filename = key;
-								var specifiedUrl = specifyUrl(filename);
-								
-								var xhr = new XMLHttpRequest();
-								xhr.onload = function() {
-									var reader = new FileReader();
-									reader.onloadend = function() {
-										var dataUrl = reader.result;
-										if (dataUrl.indexOf("data:image") === 0) {
-											addToImageControl(ev, control, filename, dataUrl);
-										} else {
-											addToImageControl(ev, control, filename, filename);
-										}
+								if (imageRecord) { // if an image is stored by this filename
+									
+									var type = imageRecord.url.indexOf("data:video") == 0 ? "video" : "img";
+									
+									addToImageControl(ev, control, imageRecord.filename, imageRecord.url, type);
+									
+								} else { // if url is for the rapid logo etc.
+									
+									var filename = key;
+									var specifiedUrl = specifyUrl(filename);
+									
+									var xhr = new XMLHttpRequest();
+									xhr.onload = function() {
+										var reader = new FileReader();
+										reader.onloadend = function() {
+											var dataUrl = reader.result;
+											if (dataUrl.indexOf("data:image") === 0) {
+												addToImageControl(ev, control, filename, dataUrl);
+											} else {
+												addToImageControl(ev, control, filename, filename);
+											}
+										};
+										reader.readAsDataURL(xhr.response);
 									};
-									reader.readAsDataURL(xhr.response);
-								};
-								xhr.onerror = function() {
-									addToImageControl(ev, control, filename, specifiedUrl);
-								};
-								xhr.open('GET', specifiedUrl);
-								xhr.responseType = 'blob';
-								xhr.send();
-							}
-						});
+									xhr.onerror = function() {
+										addToImageControl(ev, control, filename, specifiedUrl);
+									};
+									xhr.open('GET', specifiedUrl);
+									xhr.responseType = 'blob';
+									xhr.send();
+								}
+							});
+						
+						} // url type check
 					
-					} // url type check
-				
-				} // urls loop
-				
-			} // url index check
- 			
-		} // row loop
-	} 
+					} // urls loop
+					
+				} // url index check
+	 			
+			} // row loop
+		}
+	}
 } else {
 	// no data so remove all images
 	control.find(".galleryItem").remove();
@@ -1397,6 +1418,16 @@ images.each( function(i) {
 	}
 });
 return urls; 
+			        ]]>	  	   	            
+	   	        </getPropertyFunction>
+	   	    </runtimeProperty>
+	   	    <runtimeProperty>
+	   	        <type>maxImages</type>
+	   	        <name>Max images</name>
+				<advanced>true</advanced>
+	   	        <getPropertyFunction>
+			        <![CDATA[
+return details.maxImages;
 			        ]]>	  	   	            
 	   	        </getPropertyFunction>
 	   	    </runtimeProperty>
