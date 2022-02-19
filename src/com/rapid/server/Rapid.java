@@ -1490,7 +1490,7 @@ public class Rapid extends RapidHttpServlet {
 								String userName = rapidRequest.getUserName();
 
 								// log
-								logger.debug("Store data received for " + app.getId() + "/" + app.getVersion() + "/" + userName + "/" + controlId);
+								logger.debug("Server data " + actionName + " received for " + app.getId() + "/" + app.getVersion() + "/" + userName + "/" + controlId);
 
 								// create the path
 								String storePath = "WEB-INF/uploads/" +  app.getId().toLowerCase() + "/" + userName + "_" + controlId + ".json";
