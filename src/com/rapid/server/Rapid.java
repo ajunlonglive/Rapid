@@ -58,6 +58,7 @@ import org.json.JSONObject;
 import com.rapid.core.Application;
 import com.rapid.core.Application.Parameter;
 import com.rapid.core.Application.RapidLoadingException;
+import com.rapid.core.Control;
 import com.rapid.core.Page;
 import com.rapid.core.Page.Variable;
 import com.rapid.core.Pages.PageHeader;
@@ -74,6 +75,7 @@ import com.rapid.security.SecurityAdapter.User;
 import com.rapid.server.filter.RapidFilter;
 import com.rapid.utils.Bytes;
 import com.rapid.utils.Files;
+import com.rapid.utils.Strings;
 
 public class Rapid extends RapidHttpServlet {
 
@@ -998,7 +1000,7 @@ public class Rapid extends RapidHttpServlet {
 					// fail silently if there was an issue
 					try {
 
-						// assume we weren't passed any json
+						// read the json data object from the bodyBytes
 						JSONObject jsonData = getJSONObject(bodyBytes);
 
 						// assume the request wasn't from Rapid Mobile
@@ -1468,10 +1470,71 @@ public class Rapid extends RapidHttpServlet {
 
 							} // body bytes check
 
-						}  else if ("application/x-www-form-urlencoded".equals(request.getContentType())) {
+						} else if ("storeSet".equals(actionName) || "storeGet".equals(actionName)) {
+
+							// get the control
+							Control control = rapidRequest.getControl();
+
+							// check we got one
+							if (control == null) {
+
+								// log
+								logger.error("No control with store data received for " + app.getId() + "/" + app.getVersion());
+
+							} else {
+
+								// get the control id
+								String controlId = control.getId();
+
+								// get the user name
+								String userName = rapidRequest.getUserName();
+
+								// log
+								logger.debug("Store data received for " + app.getId() + "/" + app.getVersion() + "/" + userName + "/" + controlId);
+
+								// create the path
+								String storePath = "WEB-INF/uploads/" +  app.getId().toLowerCase() + "/" + userName + "_" + controlId + ".json";
+								// create a file
+								File storeFile = new File(getServletContext().getRealPath(storePath));
+								// create app folder if need be
+								if (!storeFile.getParentFile().exists()) storeFile.getParentFile().mkdir();
+
+								// read the body into a string
+								String bodyString = new String(bodyBytes, "UTF-8");
+
+								if ("storeSet".equals(actionName)) {
+
+									// save the string!
+									Strings.saveString(bodyString, storeFile);
+
+								} else {
+
+									// assume no data
+									String storeString = "{}";
+
+									// read the string!
+									if (storeFile.exists()) storeString = Strings.getString(storeFile);
+
+									// set the response type
+									response.setContentType("application/json");
+
+									// get a writer to put the content in
+									PrintWriter out = response.getWriter();
+
+									// write a header
+									out.write(storeString);
+
+									// close the writer
+									out.close();
+
+								}
+
+							}
+
+						} else if ("application/x-www-form-urlencoded".equals(request.getContentType())) {
 
 							// log
-							logger.debug("Form data received");
+							logger.debug("Form data received for " + app.getId() + "/" + app.getVersion());
 
 							// get the form adapter
 							FormAdapter formAdapter = app.getFormAdapter();
@@ -1862,7 +1925,7 @@ public class Rapid extends RapidHttpServlet {
 
 						} else {
 
-							// we should never get here under normal operation so we can assume something silly is happening: we'll invalidate the sesssion if there is one
+							// we should never get here under normal operation so we can assume something silly is happening: we'll invalidate the session if there is one
 							HttpSession session = request.getSession(false);
 							// if we got one invalidate it
 							if (session != null) session.invalidate();

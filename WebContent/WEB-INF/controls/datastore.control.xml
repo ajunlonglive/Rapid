@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2020 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -81,20 +81,21 @@ return [["L","Local storage"],["S","Session storage"],["P","Page storage"]];
 	                                
 function getDataStoreData(id, details, field) {
 	var data;
+	var key = _appId + "_" + id;
 	switch (details.storageType) {
 		case "L":
 			// use localStorage
-			if (!localStorage[_appId + "_" + id]) localStorage[_appId + "_" + id] = "{}";
+			if (!localStorage[key]) localStorage[key] = "{}";
 			// get the data string
-			var dataString = localStorage[_appId + "_" + id];
+			var dataString = localStorage[key];
 			// get data
 			data = JSON.parse(dataString);				
 		break;
 		case "S": 
 			// use sessionStorage
-			if (!sessionStorage[_appId + "_" + id]) sessionStorage[_appId + "_" + id] = "{}";
+			if (!sessionStorage[key]) sessionStorage[key] = "{}";
 			// get the data string
-			var dataString = sessionStorage[_appId + "_" + id];
+			var dataString = sessionStorage[key];
 			// get data
 			data = JSON.parse(dataString);
 		break;
@@ -110,14 +111,15 @@ function getDataStoreData(id, details, field) {
 }	                
 
 function saveDataStoreData(id, details, data, changeEvents) {
+	var key = _appId + "_" + id;
 	switch (details.storageType) {
 		case "L":
 			// use localStorage
-			localStorage[_appId + "_" + id] = JSON.stringify(data);			
+			localStorage[key] = JSON.stringify(data);			
 		break;
 		case "S": 
 			// use sessionStorage
-			sessionStorage[_appId + "_" + id] = JSON.stringify(data);
+			sessionStorage[key] = JSON.stringify(data);
 		break;
 		case "P": 
 			// instansiate an object in the page if there isn't one
@@ -129,7 +131,6 @@ function saveDataStoreData(id, details, data, changeEvents) {
 		if (f) f($.Event("change"));
 	}
 }
-
 
 	                ]]>
 	            </contents>

@@ -88,10 +88,10 @@
 				<changeValueJavaScript>select</changeValueJavaScript>
 				<getValuesFunction>
 	                <![CDATA[
-return [["","None"],["L","Local storage"],["S","Session storage"],["P","Page storage"]];
+return [["","None"],["L","Local storage"],["S","Session storage"],["P","Page storage"],["B","Server storage"]];
 					]]>
 	            </getValuesFunction>
-				<helpHtml>Sets the method of data storage. Page storage is for as long as the page is open, session is for as long as the tab/window is open and local is for files to be stored locally on devices.</helpHtml>
+				<helpHtml>Sets the method of data storage. Local storage is retained when the browser or tab is closed and works between tabs, Session storage is retained only in the current tab, Page storage is for as long as the page is open, Server storage is retained on the server, and replaces local storage if it's newer or if local storage is empty.</helpHtml>
 			</property>
 
 			<property>
@@ -235,7 +235,8 @@ function getGridDataStoreData(id, details) {
 	data = null;
 	dataString = null;
 	switch (details.dataStorageType) {
-		case "L" :
+		case "L" : case "B" :
+			// backend / session storage checks at init and saves into local storage
 			dataString = localStorage[_appId + id];
 		break;
 		case "S" :
@@ -257,8 +258,24 @@ function getGridDataStoreData(id, details) {
 
 function saveGridDataStoreData(id, details, data) {
 	switch (details.dataStorageType) {
-		case "L" :
+		case "L" : case "B" :
+			// add the current time
+			data.time = new Date().getTime();
+			// store data in local storage
 			localStorage[_appId + id] = JSON.stringify(data);
+			// if this is backend/server storage
+			if (details.dataStorageType == "B") {
+				// store the data on the backend too
+				$.ajax({
+					url: "~?action=storeSet&a=" + _appId + "&c=" + id,
+					type: "POST",
+					contentType: "application/json",
+					data: JSON.stringify(data),
+					success: function(data) {
+						
+					}
+				});
+			}
 		break;
 		case "S" :		
 			sessionStorage[_appId + id] = JSON.stringify(data);
@@ -1603,9 +1620,10 @@ if (!grid.is("table")) grid = grid.find("table").last();
 // check there are details	        
 if (details) {
 	
-	if (details.dataStorageType === "L" || details.dataStorageType === "S") {
-		
+	// if any storeage type
+	if (details.dataStorageType == "L" || details.dataStorageType == "S" || details.dataStorageType == "B") {
 		var gridKey = _appId + id;
+		// watch the storage and only store once
 		window.addEventListener("storage", function(ev) {
 			if (gridKey === ev.key) {
 				var data = JSON.parse(ev.newValue);
@@ -1638,10 +1656,47 @@ if (details) {
 	}
 	// if this is multiSelect, set up the header checkbox listener, global as it's shared by the no column dynamic header
 	if (details.multiSelect) setGridHeaderMultiSelect(id, grid);
+
 	// if there is a data store
 	if (details.dataStorageType) {
+	
+		// get the stored data
 		var data = getGridDataStoreData(id, details);
-		if (data) setData_grid($.Event('gridinit'), id, null, details, data);
+		
+		// if this storage is backend/server
+		if (details.dataStorageType == "B") {
+		
+			// get any stored data from the backend/server
+			$.ajax({
+				url: "~?action=storeGet&a=" + _appId + "&c=" + id,
+				type: "POST",
+				contentType: "application/json",
+				data: "{}",
+				success: function(serverData) {
+					// if we got back server data (with a time) and either no local data, or it is older (newer local data wins)
+					if (serverData && serverData.time && (!data || !data.time || data.time < serverData.time)) {
+						// save the serverData to local storage
+						saveGridDataStoreData(id, details, serverData);
+						// update data with serverData
+						data = serverData;
+					}
+					// set the local or stored data in the grid
+					setData_grid($.Event('gridinit'), id, null, details, data);
+				},
+				error: function() {
+					// set any local data in the grid (could be offline)
+					if (data) setData_grid($.Event('gridinit'), id, null, details, data);
+				}
+			});
+			
+		} else {
+
+			// if there was stored data set it in the grid
+			if (data) setData_grid($.Event('gridinit'), id, null, details, data);
+		
+		}
+		
+		// find, set, and retain selectedRowNumber when row clicked
 		$("#" + id).click( function(ev) {
 			// get the data
 			var data = getGridDataStoreData(id, details);
