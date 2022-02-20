@@ -171,16 +171,7 @@ return "<option value=''>Please select...</option>" + getInputOptions(this.messa
 	            <changeValueJavaScript>text</changeValueJavaScript>
 	            <helpHtml>Defines a more specific field for the URL source. An example of use would be getting the URL from a table cell within a table, where the cell is the field and the table is the source.</helpHtml>
 	        </property>
-	        
-	        <property>
-	            <key>imageMultiple</key>
-	            <name>Allow multiple</name>
-	            <visible>false</visible>
-	            <setConstructValueFunction>return false;</setConstructValueFunction>
-	            <changeValueJavaScript>checkbox</changeValueJavaScript>
-	            <helpHtml>Sets whether or not to offer the option of selecting an image from the device.</helpHtml>
-	        </property>
-	        
+
 	        <property>
 	            <key>captureMode</key>
 	            <name>Mode</name>
@@ -243,6 +234,16 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gal
 	            <name>Option to select</name>
 	            <visible>false</visible>
 	            <setConstructValueFunction>return true;</setConstructValueFunction>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Sets whether or not to offer the option of selecting an image from the device.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>imageMultiple</key>
+	            <name>Allow multiple</name>
+	            <visible>false</visible>
+	            <setConstructValueFunction>return false;</setConstructValueFunction>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <helpHtml>Sets whether or not to offer the option of selecting an image from the device.</helpHtml>
 	        </property>
@@ -681,7 +682,7 @@ if (navigator.mediaDevices && !!navigator.mediaDevices.getDisplayMedia && naviga
 function getFacingMode() {
 
 	// if local storage is supported read the value from that
-	if (typeof(Storage) !== "undefile.typefined") _currentFacingMode = localStorage.getItem("currentFacingMode");
+	if (typeof(Storage) !== "undefined") _currentFacingMode = localStorage.getItem("currentFacingMode");
 	// set the default if no value held yet
 	if (!_currentFacingMode) setFacingMode("environment");
 	return _currentFacingMode;

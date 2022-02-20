@@ -5775,7 +5775,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "cameraSelectImage", true);
 			setPropertyVisibilty(mobileAction, "remoteSource", true);
 			setPropertyVisibilty(mobileAction, "captureMode", true);
-			setPropertyVisibilty(mobileAction, "imageMultiple", true);
+			if (mobileAction.cameraSelectImage) setPropertyVisibilty(mobileAction, "imageMultiple", true);
 		break;
 		case "addVideo" :
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
@@ -5785,7 +5785,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "remoteSource", true);
 			setPropertyVisibilty(mobileAction, "includeAudio", true);
 			setPropertyVisibilty(mobileAction, "captureMode", true);
-			setPropertyVisibilty(mobileAction, "imageMultiple", true);
+			if (mobileAction.cameraSelectImage) setPropertyVisibilty(mobileAction, "imageMultiple", true);
 		break;
 		case "addImageVideo" :
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
@@ -5796,7 +5796,7 @@ function Property_mobileActionType(cell, mobileAction, property, details) {
 			setPropertyVisibilty(mobileAction, "remoteSource", true);
 			setPropertyVisibilty(mobileAction, "includeAudio", true);
 			setPropertyVisibilty(mobileAction, "captureMode", true);
-			setPropertyVisibilty(mobileAction, "imageMultiple", true);
+			if (mobileAction.cameraSelectImage) setPropertyVisibilty(mobileAction, "imageMultiple", true);
 		break;
 		case "selectImage" :
 			setPropertyVisibilty(mobileAction, "galleryControlId", true);
