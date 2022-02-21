@@ -1238,12 +1238,12 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 			console.log(err.name + ": " + err.message);
 			if (err.name === "NotAllowedError" && err.message !== "Invalid state") {
 				source.permissionDenied(function() {
-					selectItem(galleryControlId, _size, mediums, "Permission to access your camera was denied");
+					selectItem(galleryControlId, _size, mediums, "Permission to access your camera was denied", quality, allowMultiple);
 				});
 			} else if (err.name === "NotReadableError") {
-				if (_cameraSelectImage) selectItem(galleryControlId, _size, mediums, "The camera is not available");
+				if (_cameraSelectImage) selectItem(galleryControlId, _size, mediums, "The camera is not available", quality, allowMultiple);
 			} else {
-				selectItem(galleryControlId, _size, mediums, source.getNotSupportedMessage());
+				selectItem(galleryControlId, _size, mediums, source.getNotSupportedMessage(), quality, allowMultiple);
 			}
 		});
 		
@@ -1252,7 +1252,7 @@ function turnOnCamera(galleryControlId, size, quality, maxDuration, cameraSelect
 		$("#cameraVideoContainer").remove();
 		//alert("getUserMedia() is not supported by your browser");
 		console.log("getUserMedia() is not supported by your browser");
-		selectItem(galleryControlId, _size, mediums, "Video capture is not supported by your browser");
+		selectItem(galleryControlId, _size, mediums, "Video capture is not supported by your browser", quality, allowMultiple);
 	}
 	
 }
