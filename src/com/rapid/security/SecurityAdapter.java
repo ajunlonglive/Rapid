@@ -568,9 +568,25 @@ public abstract class SecurityAdapter {
 
 	// private static methods
 
-	private static boolean getAdaptersValue(ServletContext servletContext, String setting) {
-		// assume setting is false
-		boolean value = false;
+	private static String getAdapterValue(JSONObject jsonSecurityAdapter, String setting) {
+		// if we got one
+		if (jsonSecurityAdapter != null) {
+			// if this has a password reset
+			return jsonSecurityAdapter.optString(setting);
+		}
+		return null;
+	}
+
+	private static boolean getAdapterBooleanValue(JSONObject jsonSecurityAdapter, String setting) {
+		// if we got one
+		if (jsonSecurityAdapter != null) {
+			// if this has a password reset
+			return (jsonSecurityAdapter.optBoolean(setting));
+		}
+		return false;
+	}
+
+	private static JSONObject getAdapterJSON(ServletContext servletContext, String securityAdapterType) {
 		// fetch the security adapters
 		JSONArray jsonSecurityAdapters = (JSONArray) servletContext.getAttribute("jsonSecurityAdapters");
 		// check we have some security adapters
@@ -579,20 +595,40 @@ public abstract class SecurityAdapter {
 			for (int i = 0; i < jsonSecurityAdapters.length(); i++) {
 				// get the item
 				JSONObject jsonSecurityAdapter = jsonSecurityAdapters.optJSONObject(i);
-				// if we got one
-				if (jsonSecurityAdapter != null) {
-					// if this has a password reset
-					if (jsonSecurityAdapter.optBoolean(setting)) {
-						// password reset
-						value = true;
-						// we're done
-						break;
-					}
-				}
+				// return the json if the type matches
+				if (securityAdapterType.equals(getAdapterValue(jsonSecurityAdapter, "type"))) return jsonSecurityAdapter;
 			}
 		}
-		// return
-		return value;
+		// non found so return null
+		return null;
+	}
+
+	private static boolean getAdapterTypeBooleanValue(ServletContext servletContext, String securityAdapterType, String setting) {
+		// get the security adapter JSON
+		JSONObject jsonSecurityAdapter = getAdapterJSON(servletContext, securityAdapterType);
+		// if we got one
+		if (jsonSecurityAdapter != null) {
+			// return the setting
+			return getAdapterBooleanValue(jsonSecurityAdapter, setting);
+		}
+		return false;
+	}
+
+	private static boolean getAdaptersValue(ServletContext servletContext, String setting) {
+		// fetch the security adapters
+		JSONArray jsonSecurityAdapters = (JSONArray) servletContext.getAttribute("jsonSecurityAdapters");
+		// check we have some security adapters
+		if (jsonSecurityAdapters != null) {
+			// loop what we have
+			for (int i = 0; i < jsonSecurityAdapters.length(); i++) {
+				// get the item
+				JSONObject jsonSecurityAdapter = jsonSecurityAdapters.optJSONObject(i);
+				// return true for the first adapter with this setting
+				if (getAdapterBooleanValue(jsonSecurityAdapter, setting)) return true;
+			}
+		}
+		// non found so return false
+		return false;
 	}
 
 	// public static methods
@@ -618,6 +654,14 @@ public abstract class SecurityAdapter {
 		boolean gotPasswordUpdate = getAdaptersValue(servletContext, "canUpdatePassword");
 		// return
 		return gotPasswordUpdate;
+	}
+
+	// if users can be added
+	public static boolean hasManageUsers(ServletContext servletContext, String securityAdpterType) {
+		// assume no app has password reset
+		boolean gotManageUsers = getAdaptersValue(servletContext, "canManageUsers");
+		// return
+		return gotManageUsers;
 	}
 
 

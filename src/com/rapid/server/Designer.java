@@ -95,6 +95,7 @@ import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.Role;
 import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
 import com.rapid.security.SecurityAdapter.User;
+import com.rapid.security.SecurityAdapter.Users;
 import com.rapid.utils.Bytes;
 import com.rapid.utils.Files;
 import com.rapid.utils.Strings;
@@ -2476,11 +2477,11 @@ public class Designer extends RapidHttpServlet {
 												// set the status to In development
 												appNew.setStatus(Application.STATUS_DEVELOPMENT);
 
+												// get the previous version
+												Application appOld = getApplications().get(appOldId);
+
 												// if we're keeping settings
 												if (keepSettings) {
-
-													// get the previous version
-													Application appOld = getApplications().get(appOldId);
 
 													// if we had one
 													if (appOld != null) {
@@ -2677,6 +2678,40 @@ public class Designer extends RapidHttpServlet {
 
 												// get the security for this application
 												SecurityAdapter security = appNew.getSecurityAdapter();
+
+												// if we're keeping settings and the security adapter allows users to be added
+												if (keepSettings && SecurityAdapter.hasManageUsers(context, appNew.getSecurityAdapterType())) {
+
+													// a Rapid request we'll use to delete users from the new app
+													RapidRequest deleteRequest = new RapidRequest(this, request, appNew);
+
+													// get all current users of the new app
+													Users users = security.getUsers(rapidRequest);
+
+													// remove all current users
+													for (int i = 0; i < users.size(); i++) {
+														// get this user
+														User user = users.get(i);
+														// set their name in the delete Rapid request
+														deleteRequest.setUserName(user.getName());
+														// delete them
+														security.deleteUser(deleteRequest);
+														// one less to do
+														i--;
+													}
+
+													// get the old security adapter
+													SecurityAdapter securityOld = appOld.getSecurityAdapter();
+
+													// add old users to the new app
+													for (User user : securityOld.getUsers(rapidRequest)) {
+
+														// add the old user to the new app
+														security.addUser(rapidRequest, user);
+
+													}
+
+												} // new app allows adding users
 
 												// make a rapid request in the name of the import application
 												RapidRequest importRapidRequest = new RapidRequest(this, request, appNew);
