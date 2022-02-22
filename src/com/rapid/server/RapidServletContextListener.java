@@ -372,8 +372,6 @@ public class RapidServletContextListener implements ServletContextListener {
 	// loop all of the .securityAdapter.xml files and check the injectable classes, so we can re-initialise JAXB context to be able to serialise them, and cache their constructors for speedy initialisation
 	public static int loadSecurityAdapters(ServletContext servletContext) throws Exception {
 
-		int adapterCount = 0;
-
 		// retain our class constructors in a hashtable - this speeds up initialisation
 		HashMap<String,Constructor> securityConstructors = new HashMap<>();
 
@@ -395,6 +393,9 @@ public class RapidServletContextListener implements ServletContextListener {
 
 	    // a list of JSON adapters we read from the files that we can sort (and back to the json array later)
 	    List<JSONObject> securityAdapters = new ArrayList<>();
+
+	    // users should just be informed of visible adapters
+	    int visibleAdapters = 0;
 
 		// loop the xml files in the folder
 		for (File xmlFile : dir.listFiles(xmlFilenameFilter)) {
@@ -424,8 +425,8 @@ public class RapidServletContextListener implements ServletContextListener {
 			// add to our collection
 			securityAdapters.add(jsonSecurityAdapter);
 
-			// increment the count
-			adapterCount++;
+			// increment the count if visible
+			if (jsonSecurityAdapter.optBoolean("visible", true)) visibleAdapters++;
 
 		}
 
@@ -441,9 +442,9 @@ public class RapidServletContextListener implements ServletContextListener {
 		// put the constructors hashmapin a context attribute (this is available via the getContructor method in RapidHttpServlet)
 		servletContext.setAttribute("securityConstructors", securityConstructors);
 
-		_logger.info(adapterCount + " security adapters loaded in .securityAdapter.xml files");
+		_logger.info(visibleAdapters + " security adapters loaded in .securityAdapter.xml files");
 
-		return adapterCount;
+		return visibleAdapters;
 
 	}
 

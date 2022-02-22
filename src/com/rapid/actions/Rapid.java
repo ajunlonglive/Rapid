@@ -964,31 +964,36 @@ public class Rapid extends Action {
 						for (int i = 0; i < jsonSecurityAdapters.length(); i++) {
 							// get the item
 							JSONObject jsonSecurityAdapter = jsonSecurityAdapters.getJSONObject(i);
-							// make a simpler send item
-							JSONObject jsonSendAdapter = new JSONObject();
-							// get the type
-							String type = jsonSecurityAdapter.getString("type");
-							// add type
-							jsonSendAdapter.put("value", type);
-							// add name
-							jsonSendAdapter.put("text", jsonSecurityAdapter.getString("name"));
-							// add canManageRoles
-							jsonSendAdapter.put("canManageRoles", jsonSecurityAdapter.optBoolean("canManageRoles"));
-							// add canManageUsers
-							jsonSendAdapter.put("canManageUsers", jsonSecurityAdapter.optBoolean("canManageUsers"));
-							// add canManageUserRoles
-							jsonSendAdapter.put("canManageUserRoles", jsonSecurityAdapter.optBoolean("canManageUserRoles"));
-							// add to collection
-							jsonAdapters.put(jsonSendAdapter);
-							// if this is the one being used by the Rapid Admin app
-							if (type.equals(rapidRequest.getApplication().getSecurityAdapterType())) {
-								// add can manager roles
-								result.put("canManageRoles", jsonSecurityAdapter.optBoolean("canManageRoles"));
-								// add can manager users
-								result.put("canManageUsers", jsonSecurityAdapter.optBoolean("canManageUsers"));
-								// add can manager user roles
-								result.put("canManageUserRoles", jsonSecurityAdapter.optBoolean("canManageUserRoles"));
-							}
+							// determine whether visible
+							boolean visible = jsonSecurityAdapter.optBoolean("visible", true);
+							// only if visible
+							if (visible) {
+								// make a simpler send item
+								JSONObject jsonSendAdapter = new JSONObject();
+								// get the type
+								String type = jsonSecurityAdapter.getString("type");
+								// add type
+								jsonSendAdapter.put("value", type);
+								// add name
+								jsonSendAdapter.put("text", jsonSecurityAdapter.getString("name"));
+								// add canManageRoles
+								jsonSendAdapter.put("canManageRoles", jsonSecurityAdapter.optBoolean("canManageRoles"));
+								// add canManageUsers
+								jsonSendAdapter.put("canManageUsers", jsonSecurityAdapter.optBoolean("canManageUsers"));
+								// add canManageUserRoles
+								jsonSendAdapter.put("canManageUserRoles", jsonSecurityAdapter.optBoolean("canManageUserRoles"));
+								// add to collection
+								jsonAdapters.put(jsonSendAdapter);
+								// if this is the one being used by the Rapid Admin app
+								if (type.equals(rapidRequest.getApplication().getSecurityAdapterType())) {
+									// add can manager roles
+									result.put("canManageRoles", jsonSecurityAdapter.optBoolean("canManageRoles"));
+									// add can manager users
+									result.put("canManageUsers", jsonSecurityAdapter.optBoolean("canManageUsers"));
+									// add can manager user roles
+									result.put("canManageUserRoles", jsonSecurityAdapter.optBoolean("canManageUserRoles"));
+								}
+							} // visible check
 						}
 						// add the security adapters to the result
 						result.put("securityAdapters", jsonAdapters);

@@ -69,6 +69,11 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 						</xs:restriction>
 					</xs:simpleType>
 				</xs:element>
+				<xs:element name="visible" type="xs:boolean" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>If set to false the security adapter will not be available in Rapid Admin to select for adding to applications. Often used for legacy and deprecated adapters.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 				<xs:element name="canManageRoles" type="xs:boolean" />
 				<xs:element name="canManageUsers" type="xs:boolean" />
 				<xs:element name="canManageUserRoles" type="xs:boolean" />
