@@ -27,7 +27,7 @@ header {
 	max-height: 90vh;
 	padding: 0 1em 1.5em;
 	box-sizing: border-box;
-	transition: width 0.2s ease-in-out, height 0.2s ease-in-out, padding 0.2s ease-in-out;
+	transition: width 0.25s ease-in-out, height 0.25s ease-in-out, padding 0.25s ease-in-out;
 }
 
 .singleView .pageView {
@@ -61,6 +61,8 @@ header {
 	margin: 0;
 	white-space: nowrap;
 	display: inline-block;
+	max-width: calc(100% - 4em);
+	overflow: hidden;
 }
 
 .pageView .label {
@@ -78,6 +80,7 @@ header {
 	background: #555;
 	border: none;
 	margin-left: 0.2em;
+	margin-bottom: 0.2em;
 	width: 2.5em;
 	height: 2em;
 	cursor: pointer;
