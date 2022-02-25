@@ -3,7 +3,7 @@
 /*
 
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -159,8 +159,9 @@ self.addEventListener("fetch", function(event) {
 	// proceed to direct server response  if request is for designer
 	var designerIndicators = ["designer", "design.jsp", "~?a=designer", "designpage.jsp"];
 	var adminIndicators = ["rapid", "~?a=rapid"];
+	var previewIndicators = ["pagePreviews.jsp"];
 	
-	if (designerIndicators.concat(adminIndicators).some(indicator => url.startsWith(indicator))) {
+	if (designerIndicators.concat(adminIndicators).concat(previewIndicators).some(indicator => url.startsWith(indicator))) {
 		if (method === "GET") {
 			
 			event.respondWith(new Promise(resolve =>
@@ -180,7 +181,7 @@ self.addEventListener("fetch", function(event) {
 	// ignore resources referred by designer.jsp, allowing resources referred by offline.htm
 	var referrer = event.request.referrer.replace(_contextPath,"");
 	
-	if ((designerIndicators.concat(adminIndicators).some(indicator => referrer.includes(indicator)))
+	if ((designerIndicators.concat(adminIndicators).concat(previewIndicators).some(indicator => referrer.includes(indicator)))
 		&& !_appFiles.some(indicator => referrer.includes(indicator))
 		&& !_offlinePageResources.some(resource => url.endsWith(resource))) {
 		return;

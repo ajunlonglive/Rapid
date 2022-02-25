@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -40,7 +40,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -1326,6 +1328,10 @@ public class Page {
 
     // the resources for the page
     public String getResourcesHtml(Application application, boolean allResources) {
+    	return getResourcesHtml(application, allResources, true);
+    }
+    
+    public String getResourcesHtml(Application application, boolean allResources, boolean includeJS) {
 
     	StringBuilder stringBuilder = new StringBuilder();
 
@@ -1335,7 +1341,7 @@ public class Page {
     	if (_controlTypes == null) _controlTypes = getAllControlTypes();
 
     	// manage the resources links added already so we don't add twice
-    	ArrayList<String> addedResources = new ArrayList<>();
+    	Set<String> addedResources = new HashSet<>();
 
     	// get all resources
     	List<Resource> resources = application.getResources();
@@ -1344,51 +1350,55 @@ public class Page {
 		if (resources != null && resources.size() > 0) {
 			// loop and add the resources required by this application's controls and actions (created when application loads)
 			for (Resource resource : resources) {
-				// if we want all the resources (for the designer) or there is a dependency for this resource
-				if (allResources || resource.hasDependency(ResourceDependency.RAPID) || resource.hasDependency(ResourceDependency.ACTION, _actionTypes) || resource.hasDependency(ResourceDependency.CONTROL, _controlTypes)) {
-					// assume filiters have been passed
-					boolean passedFilters = true;
-					// get any filters
-					List<ResourceFilter> filters = resource.getFilters();
-					// if this resource has filters
-					if (filters != null && filters.size() > 0) {
-						// assume we've not passed
-						passedFilters = false;
-						// loop the filters
-						for (ResourceFilter filter : filters) {
-							// only actions for now (if we use controls or themes we'll have to check the source type)
-							List<Action> actions = this.getAllActions(filter.getType());
-							// loop the actions
-							for (Action action : actions) {
-								// get the value
-								String value = action.getProperty(filter.getProperty());
-								// if this equals our value we're good
-								if (filter.getValue().equals(value)) {
-									// set pass true
-									passedFilters = true;
-									// we're done
-									break;
+				int type = resource.getType();
+				if (includeJS || !(type == Resource.JAVASCRIPT || type == Resource.JAVASCRIPTFILE || type == Resource.JAVASCRIPTLINK)) {
+					// if we want all the resources (for the designer) or there is a dependency for this resource
+					if (allResources || resource.hasDependency(ResourceDependency.RAPID) || resource.hasDependency(ResourceDependency.ACTION, _actionTypes) || resource.hasDependency(ResourceDependency.CONTROL, _controlTypes)) {
+						// assume filiters have been passed
+						boolean passedFilters = true;
+						// get any filters
+						List<ResourceFilter> filters = resource.getFilters();
+						// if this resource has filters
+						if (filters != null && filters.size() > 0) {
+							// assume we've not passed
+							passedFilters = false;
+							// loop the filters
+							for (ResourceFilter filter : filters) {
+								// only actions for now (if we use controls or themes we'll have to check the source type)
+								List<Action> actions = this.getAllActions(filter.getType());
+								// loop the actions
+								for (Action action : actions) {
+									// get the value
+									String value = action.getProperty(filter.getProperty());
+									// if this equals our value we're good
+									if (filter.getValue().equals(value)) {
+										// set pass true
+										passedFilters = true;
+										// we're done
+										break;
+									}
 								}
+								// break here too if done
+								if (passedFilters) break;
 							}
-							// break here too if done
-							if (passedFilters) break;
+	
 						}
-
-					}
-					// if we passed filters
-					if (passedFilters) {
-						// the html we're hoping to get
-						String resourceHtml = getResourceHtml(application, resource);
-						// if we got some html and don't have it already
-						if (resourceHtml != null && !addedResources.contains(resourceHtml)) {
-							// append it
-							stringBuilder.append(resourceHtml + "\n");
-							// remember we've added it
-							addedResources.add(resourceHtml);
+						// if we passed filters
+						if (passedFilters) {
+							// the html we're hoping to get
+							String resourceHtml = getResourceHtml(application, resource);
+							// if we got some html and don't have it already
+							if (resourceHtml != null && !addedResources.contains(resourceHtml)) {
+								// append it
+								stringBuilder.append(resourceHtml + "\n");
+								// remember we've added it
+								addedResources.add(resourceHtml);
+							}
 						}
-					}
+	
+					} // dependency check
 
-				} // dependency check
+				} // optional JS-filter
 
 			} // resource loop
 
@@ -1556,30 +1566,31 @@ public class Page {
     }
 
     // this private method produces the head of the page which is often cached, if resourcesOnly is true only page resources are included which is used when sending no permission
-	private String getHeadLinks(RapidHttpServlet rapidServlet, Application application, boolean isDialogue) throws JSONException {
+	private String getHeadLinks(RapidHttpServlet rapidServlet, Application application, boolean isDialogue, boolean includeJS) throws JSONException {
 
 		// create a string builder containing the head links
     	StringBuilder stringBuilder = new StringBuilder(getHeadStart(rapidServlet, application, _title));
 
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file
-		stringBuilder.append("    " + getResourcesHtml(application, false).trim() + "\n");
-
-		// add a JavaScript block with important global variables - this is removed by the pagePanel loader and navigation action when showing dialogues, by matching to the various variables so be careful changing anything below
-		stringBuilder.append("    <script type='text/javascript'>\n");
-		if (application != null) {
-			stringBuilder.append("var _appId = '" + application.getId() + "';\n");
-			stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");
+		stringBuilder.append("    " + getResourcesHtml(application, false, includeJS).trim() + "\n");
+		
+		if (includeJS) {
+			// add a JavaScript block with important global variables - this is removed by the pagePanel loader and navigation action when showing dialogues, by matching to the various variables so be careful changing anything below
+			stringBuilder.append("    <script type='text/javascript'>\n");
+			if (application != null) {
+				stringBuilder.append("var _appId = '" + application.getId() + "';\n");
+				stringBuilder.append("var _appVersion = '" + application.getVersion() + "';\n");
+			}
+			stringBuilder.append("var _pageId = '" + _id + "';\n");
+			stringBuilder.append("var _pageName = '" + safeReplace(_name, "'", "\\'") + "';\n");
+			stringBuilder.append("var _pageTitle = '" + safeReplace(_title, "'", "\\'") + "';\n");
+			// this flag indicates if the Rapid Mobile client is regaining the foreground
+			stringBuilder.append("var _mobileResume = false;\n");
+			// this flag indicates if any controls are loading asynchronously and the page load method can't be called
+			stringBuilder.append("var _loadingControls = 0;\n");
+			stringBuilder.append("var _loadingPages = [];\n");
+			stringBuilder.append("    </script>\n");
 		}
-		stringBuilder.append("var _pageId = '" + _id + "';\n");
-		stringBuilder.append("var _pageName = '" + safeReplace(_name, "'", "\\'") + "';\n");
-		stringBuilder.append("var _pageTitle = '" + safeReplace(_title, "'", "\\'") + "';\n");
-		// this flag indicates if the Rapid Mobile client is regaining the foreground
-		stringBuilder.append("var _mobileResume = false;\n");
-		// this flag indicates if any controls are loading asynchronously and the page load method can't be called
-		stringBuilder.append("var _loadingControls = 0;\n");
-		stringBuilder.append("var _loadingPages = [];\n");
-		stringBuilder.append("    </script>\n");
-
 		return stringBuilder.toString();
 
     }
@@ -2027,6 +2038,10 @@ public class Page {
 
 	// this routine produces the entire page
 	public void writeHtml(RapidHttpServlet rapidServlet, HttpServletResponse response, RapidRequest rapidRequest,  Application application, User user, Writer writer, boolean designerLink, boolean download) throws JSONException, IOException, RapidLoadingException {
+		writeHtml(rapidServlet, response, rapidRequest,  application, user, writer, designerLink, download, true);
+	}
+	
+	public void writeHtml(RapidHttpServlet rapidServlet, HttpServletResponse response, RapidRequest rapidRequest,  Application application, User user, Writer writer, boolean designerLink, boolean download, boolean includeJS) throws JSONException, IOException, RapidLoadingException {
 
 		// get the servlet context
 		ServletContext servletContext = rapidServlet.getServletContext();
@@ -2081,34 +2096,34 @@ public class Page {
 		    	// check whether or not we rebuild
 		    	if (rebuildPages) {
 		    		// get fresh head links
-		    		writer.write(getHeadLinks(rapidServlet, application, !designerLink));
+		    		writer.write(getHeadLinks(rapidServlet, application, !designerLink, includeJS));
 		    		// write the user-specific JS
-		    		writeUserJS(writer, rapidRequest, application, user, download);
+		    		if (includeJS) writeUserJS(writer, rapidRequest, application, user, download);
 		    		// get fresh js and css
 		    		writer.write(getHeadCSS(rapidRequest, application, !designerLink));
 		    		// open the script
-					writer.write("    <script type='text/javascript'>\n");
+		    		if (includeJS) writer.write("    <script type='text/javascript'>\n");
 		    		// write the ready JS
-		    		writer.write(getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter));
+		    		if (includeJS) writer.write(getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter));
 		    	} else {
 		    		// rebuild any uncached
-		    		if (_cachedHeadLinks == null) _cachedHeadLinks = getHeadLinks(rapidServlet, application, !designerLink);
+		    		if (_cachedHeadLinks == null) _cachedHeadLinks = getHeadLinks(rapidServlet, application, !designerLink, includeJS);
 		    		if (_cachedHeadCSS == null) _cachedHeadCSS = getHeadCSS(rapidRequest, application, !designerLink);
 		    		if (_cachedHeadReadyJS == null) _cachedHeadReadyJS = getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter);
 		    		// get the cached head links
 		    		writer.write(_cachedHeadLinks);
 		    		// write the user-specific JS
-		    		writeUserJS(writer, rapidRequest, application, user, download);
+		    		if (includeJS) writeUserJS(writer, rapidRequest, application, user, download);
 		    		// get the cached head js and css
 		    		writer.write(_cachedHeadCSS);
 		    		// open the script
-					writer.write("    <script type='text/javascript'>\n");
+		    		if (includeJS) writer.write("    <script type='text/javascript'>\n");
 					// write the ready JS
-					writer.write(_cachedHeadReadyJS);
+		    		if (includeJS) writer.write(_cachedHeadReadyJS);
 		    	}
 
 		    	// if there is a form
-				if (formAdapter != null) {
+				if (formAdapter != null && includeJS) {
 
 					// set no cache on this page
 					RapidFilter.noCache(response);
@@ -2236,7 +2251,7 @@ public class Page {
 							formValues.append("};\n\n");
 
 							// write the form values
-				    		writer.write(formValues.toString());
+							writer.write(formValues.toString());
 
 						} else {
 
@@ -2262,22 +2277,22 @@ public class Page {
 
 				if (rebuildPages) {
 					// write the ready JS
-		    		writer.write(getHeadJS(rapidRequest, application, !designerLink));
+					if (includeJS) writer.write(getHeadJS(rapidRequest, application, !designerLink));
 				} else {
 					// get the rest of the cached JS
 					if (_cachedHeadJS == null) _cachedHeadJS = getHeadJS(rapidRequest, application, !designerLink);
 					// write the ready JS
-		    		writer.write(_cachedHeadJS);
+					if (includeJS) writer.write(_cachedHeadJS);
 				}
 
 				// close the script
-				writer.write("\n    </script>\n");
+				if (includeJS) writer.write("\n    </script>\n");
 
 		    	// close the head
 		    	writer.write("  </head>\n");
 
 				// start the body
-		    	writer.write("  <body id='" + _id + "' style='visibility:hidden;'" + (_bodyStyleClasses == null ? "" : " class='" + _bodyStyleClasses + "'") + ">\n");
+		    	writer.write("  <body id='" + _id + "' " + (includeJS ? "style='visibility:hidden;'" : "") + (_bodyStyleClasses == null ? "" : " class='" + _bodyStyleClasses + "'") + ">\n");
 
 		    	// if there was a theme and we're not hiding the header / footer
 		    	if (theme != null && !_hideHeaderFooter) {
