@@ -1225,7 +1225,7 @@ if (data !== undefined && data !== "") {
 					// remember that we have at least one cell function
 					cellFunctions = true;
 					// if the cell function has not been added to the details object, do so now
-					if (!details.columns[i].f) details.columns[i].f = new Function(["id", "data", "field", "details", "value", "row"], details.columns[i].cellFunction);
+					if (!details.columns[i].f) details.columns[i].f = new Function(["id", "data", "field", "details", "value", "row", "index"], details.columns[i].cellFunction);
 				}
 			}
 			
@@ -1332,7 +1332,7 @@ if (data !== undefined && data !== "") {
 								// get it's value
 								var value = cellObject.html();
 								// apply the function to the cellObject!
-								details.columns[i].f.apply(cellObject,[id, data, details.columns[i].field, details, value, rowData]);
+								details.columns[i].f.apply(cellObject,[id, data, details.columns[i].field, details, value, rowData, rowIndex]);
 							}
 						}
 					}
