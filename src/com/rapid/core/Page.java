@@ -2101,10 +2101,12 @@ public class Page {
 		    		if (includeJS) writeUserJS(writer, rapidRequest, application, user, download);
 		    		// get fresh js and css
 		    		writer.write(getHeadCSS(rapidRequest, application, !designerLink));
-		    		// open the script
-		    		if (includeJS) writer.write("    <script type='text/javascript'>\n");
-		    		// write the ready JS
-		    		if (includeJS) writer.write(getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter));
+		    		if (includeJS) {
+			    		// open the script
+		    			writer.write("    <script type='text/javascript'>\n");
+			    		// write the ready JS
+			    		writer.write(getHeadReadyJS(rapidRequest, application, !designerLink, formAdapter));
+		    		}
 		    	} else {
 		    		// rebuild any uncached
 		    		if (_cachedHeadLinks == null) _cachedHeadLinks = getHeadLinks(rapidServlet, application, !designerLink, includeJS);
@@ -2116,10 +2118,12 @@ public class Page {
 		    		if (includeJS) writeUserJS(writer, rapidRequest, application, user, download);
 		    		// get the cached head js and css
 		    		writer.write(_cachedHeadCSS);
-		    		// open the script
-		    		if (includeJS) writer.write("    <script type='text/javascript'>\n");
-					// write the ready JS
-		    		if (includeJS) writer.write(_cachedHeadReadyJS);
+		    		if (includeJS) {
+			    		// open the script
+		    			writer.write("    <script type='text/javascript'>\n");
+						// write the ready JS
+			    		writer.write(_cachedHeadReadyJS);
+		    		}
 		    	}
 
 		    	// if there is a form

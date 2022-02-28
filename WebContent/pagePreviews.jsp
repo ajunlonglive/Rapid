@@ -24,7 +24,6 @@ header {
 	display: inline-block;
 	width: 350px;
 	height: 350px;
-	max-height: 90vh;
 	padding: 0 1em 1.5em;
 	box-sizing: border-box;
 	transition: width 0.25s ease-in-out, height 0.25s ease-in-out, padding 0.25s ease-in-out;
@@ -32,8 +31,7 @@ header {
 
 .singleView .pageView {
 	width: 100%;
-	height: 100%;
-	padding: 0;
+	height: 95%;
 }
 
 .pageView .pageContainer {
@@ -44,8 +42,7 @@ header {
 }
 
 .singleView .pageContainer {
-	height: calc(100% - 3em);
-	border-radius: 0;
+	height: calc(100% - 2em);
 }
 
 .pageView .page {
@@ -68,10 +65,6 @@ header {
 .pageView .label {
 	display: block;
 	margin-top: 0.5em;
-}
-
-.singleView .label {
-	padding: 0 0.5em;
 }
 
 .action {
@@ -168,5 +161,28 @@ addEventListener("resize", function(ev) {
 });
 
 setTimeout(setPageSize);
+
+addEventListener("storage", function(storageEvent) {
+	if (storageEvent.key === "rapidWindowBroadcast") {
+		var broadcast = JSON.parse(storageEvent.newValue);
+		switch (broadcast.message) {
+		case "pageSaved":
+			if (broadcast.a === <%=a%> && broadcast.v === <%=v%>) {
+				// reload the iframe with the page
+			}
+			break;
+		case "applicationReloaded":
+			if (broadcast.a === <%=a%> && broadcast.v === <%=v%>) {
+				location.reload();
+			}
+			break;
+		case "applicationsReloaded":
+			if (broadcast.a !== "rapid") {
+				location.reload();
+			}
+			break;
+		}
+	}
+});
 
 </script>

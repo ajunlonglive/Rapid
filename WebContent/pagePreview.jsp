@@ -13,23 +13,21 @@ String a = request.getParameter("a");
 String v = request.getParameter("v");
 Application app = applications.get(a, v);
 
-if (app != null) {
-	// retrieve the page we want
-	String p = request.getParameter("p");
-	Page rapidPage = app.getPages().getPage(servletContext, p);
-	
-	// create an anomyous RapidHttpServlet which returns the servletContext we got earlier - we need this to make a Rapid request
-	RapidHttpServlet rapidServlet = new RapidHttpServlet() {
-		@Override
-		public ServletContext getServletContext() {
-			return servletContext;
-		}
-	};
-	
-	// make a RapidRequest with the anomymous RapidHttpServlet and original http request to the .jsp
-	RapidRequest rapidRequest = new RapidRequest(rapidServlet, request);
-	
-	// use the page writeHtml with the .jsp out PrintWriter to print the page (could also make a StringWriter and print to that if we want to replace anything)
-	rapidPage.writeHtml(rapidServlet, response, rapidRequest, app, null, out, false, false, false);
-}
+// retrieve the page we want
+String p = request.getParameter("p");
+Page rapidPage = app.getPages().getPage(servletContext, p);
+
+// create an anomyous RapidHttpServlet which returns the servletContext we got earlier - we need this to make a Rapid request
+RapidHttpServlet rapidServlet = new RapidHttpServlet() {
+	@Override
+	public ServletContext getServletContext() {
+		return servletContext;
+	}
+};
+
+// make a RapidRequest with the anomymous RapidHttpServlet and original http request to the .jsp
+RapidRequest rapidRequest = new RapidRequest(rapidServlet, request);
+
+// use the page writeHtml with the .jsp out PrintWriter to print the page (could also make a StringWriter and print to that if we want to replace anything)
+rapidPage.writeHtml(rapidServlet, response, rapidRequest, app, null, out, false, false, false);
 %>
