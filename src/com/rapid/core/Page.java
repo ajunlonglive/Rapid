@@ -1330,7 +1330,7 @@ public class Page {
     public String getResourcesHtml(Application application, boolean allResources) {
     	return getResourcesHtml(application, allResources, true);
     }
-    
+
     public String getResourcesHtml(Application application, boolean allResources, boolean includeJS) {
 
     	StringBuilder stringBuilder = new StringBuilder();
@@ -1381,7 +1381,7 @@ public class Page {
 								// break here too if done
 								if (passedFilters) break;
 							}
-	
+
 						}
 						// if we passed filters
 						if (passedFilters) {
@@ -1395,7 +1395,7 @@ public class Page {
 								addedResources.add(resourceHtml);
 							}
 						}
-	
+
 					} // dependency check
 
 				} // optional JS-filter
@@ -1573,7 +1573,7 @@ public class Page {
 
 		// if you're looking for where the jquery link is added it's the first resource in the page.control.xml file
 		stringBuilder.append("    " + getResourcesHtml(application, false, includeJS).trim() + "\n");
-		
+
 		if (includeJS) {
 			// add a JavaScript block with important global variables - this is removed by the pagePanel loader and navigation action when showing dialogues, by matching to the various variables so be careful changing anything below
 			stringBuilder.append("    <script type='text/javascript'>\n");
@@ -2040,7 +2040,7 @@ public class Page {
 	public void writeHtml(RapidHttpServlet rapidServlet, HttpServletResponse response, RapidRequest rapidRequest,  Application application, User user, Writer writer, boolean designerLink, boolean download) throws JSONException, IOException, RapidLoadingException {
 		writeHtml(rapidServlet, response, rapidRequest,  application, user, writer, designerLink, download, true);
 	}
-	
+
 	public void writeHtml(RapidHttpServlet rapidServlet, HttpServletResponse response, RapidRequest rapidRequest,  Application application, User user, Writer writer, boolean designerLink, boolean download, boolean includeJS) throws JSONException, IOException, RapidLoadingException {
 
 		// get the servlet context

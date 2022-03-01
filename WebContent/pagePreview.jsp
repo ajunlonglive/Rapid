@@ -1,4 +1,4 @@
-<%@page import="com.rapid.core.Application"%><%@page import="com.rapid.core.Applications"%><%@page import="com.rapid.core.Page"%><%@page import="com.rapid.server.RapidRequest"%><%@page import="com.rapid.server.RapidHttpServlet"%><%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%><%
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%><%@page import="com.rapid.server.Rapid"%><%@page import="com.rapid.core.Application"%><%@page import="com.rapid.core.Applications"%><%@page import="com.rapid.core.Page"%><%@page import="com.rapid.server.RapidRequest"%><%@page import="com.rapid.server.RapidHttpServlet"%><%@page import="com.rapid.security.SecurityAdapter"%><%
 
 // retrieves a specified application page and returns it as the response to requesting this .jsp
 
@@ -28,6 +28,14 @@ RapidHttpServlet rapidServlet = new RapidHttpServlet() {
 // make a RapidRequest with the anomymous RapidHttpServlet and original http request to the .jsp
 RapidRequest rapidRequest = new RapidRequest(rapidServlet, request);
 
-// use the page writeHtml with the .jsp out PrintWriter to print the page (could also make a StringWriter and print to that if we want to replace anything)
-rapidPage.writeHtml(rapidServlet, response, rapidRequest, app, null, out, false, false, false);
+// get the security adapter
+SecurityAdapter security = app.getSecurityAdapter();
+
+// if the user has permission
+if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) {
+
+	// use the page writeHtml with the .jsp out PrintWriter to print the page (could also make a StringWriter and print to that if we want to replace anything)
+	rapidPage.writeHtml(rapidServlet, response, rapidRequest, app, security.getUser(rapidRequest), out, false, false, false);
+
+}
 %>

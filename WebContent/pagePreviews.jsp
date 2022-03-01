@@ -1,5 +1,6 @@
-<%@page import="com.rapid.server.Rapid"%><%@page import="com.rapid.core.Application"%><%@page import="com.rapid.core.Applications"%><%@page import="com.rapid.core.Page"%><%@page import="com.rapid.core.Pages"%><%@page import="com.rapid.server.RapidRequest"%><%@page import="com.rapid.server.RapidHttpServlet"%><%@page import="com.rapid.security.SecurityAdapter"%><%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html><%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%><%@page import="com.rapid.server.Rapid"%><%@page import="com.rapid.core.Application"%><%@page import="com.rapid.core.Applications"%><%@page import="com.rapid.core.Page"%><%@page import="com.rapid.core.Pages"%><%@page import="com.rapid.server.RapidRequest"%><%@page import="com.rapid.server.RapidHttpServlet"%><%@page import="com.rapid.security.SecurityAdapter"%>
 <head>
+<link rel="icon" href="favicon.ico"></link>
 <link rel="stylesheet" type="text/css" href="styles/fonts/fontawesome/css/font-awesome.css">
 <style>
 body {
@@ -115,8 +116,10 @@ if (app != null) {
 			return servletContext;
 		}
 	};
+	
 	RapidRequest rapidRequest = new RapidRequest(rapidServlet, request);
-		if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) {
+	
+	if (security.checkUserRole(rapidRequest, Rapid.DESIGN_ROLE)) {
 		
 		Pages pages = app.getPages();
 		Pages.PageHeaders sortedPagesHeaders = pages.getSortedPages();
