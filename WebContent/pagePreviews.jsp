@@ -122,7 +122,7 @@ if (app != null) {
 		Pages.PageHeaders sortedPagesHeaders = pages.getSortedPages();
 		out.write("<header>");
 		out.write("<h1>" + app.getTitle() + " - " + app.getVersion() + "</h1>");
-		out.write("<a href='/RapidCustom/~?a=rapid&appId=" + a + (v != null ? "&version=" + v : "") + "'><button type='button' class='action'><i class='fa fa-cog' aria-hidden='true'></i></button></a>");
+		out.write("<a href='~?a=rapid&appId=" + a + (v != null ? "&version=" + v : "") + "'><button type='button' class='action'><i class='fa fa-cog' aria-hidden='true'></i></button></a>");
 		out.write("</header>");
 		out.write("<div>");
 		for (Pages.PageHeader pageHeader : sortedPagesHeaders) {
@@ -131,12 +131,12 @@ if (app != null) {
 			String pageTitle = pageHeader.getTitle();
 			out.write("<div class='pageView'>");
 			out.write("<div class='pageContainer'>");
-			out.write("<iframe class='page' src='/RapidCustom/pagePreview.jsp?a=" + a + "&p=" + p + "'></iframe>");
+			out.write("<iframe class='page' src='pagePreview.jsp?a=" + a + "&p=" + p + "'></iframe>");
 			out.write("</div>");
 			out.write("<div class='label'>");
 			out.write("<p class='name'>" + pageTitle + "</p>");
-			out.write("<a href='/RapidCustom/~?a=" + a + (v != null ? "&v=" + v : "") + "&p=" + p + "' target='blank'><button type='button' class='action'><i class='fa fa-play' aria-hidden='true'></i></button></a>");
-			out.write("<a href='/RapidCustom/design.jsp?a=" + a + (v != null ? "&v=" + v : "") + "&p=" + p + "'><button type='button' class='action'><i class='fa fa-wrench' aria-hidden='true'></i></button></a>");
+			out.write("<a href='~?a=" + a + (v != null ? "&v=" + v : "") + "&p=" + p + "' target='blank'><button type='button' class='action'><i class='fa fa-play' aria-hidden='true'></i></button></a>");
+			out.write("<a href='design.jsp?a=" + a + (v != null ? "&v=" + v : "") + "&p=" + p + "'><button type='button' class='action'><i class='fa fa-wrench' aria-hidden='true'></i></button></a>");
 			out.write("</div>");
 			out.write("</div>");
 			out.flush();
