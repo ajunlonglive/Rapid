@@ -1238,7 +1238,7 @@ public class RapidServletContextListener implements ServletContextListener {
 			// get the process at this index
 			Process process = processes.get(i);
 			// if this process is the one we're (re)loading
-			if (process.getClassName().equals(newProcess.getClassName())) {
+			if (process.getName().equals(newProcess.getName())) {
 				// remove this process instance from the list
 				processes.remove(i);
 				// log
