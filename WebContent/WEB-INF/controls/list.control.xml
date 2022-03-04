@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -97,6 +97,42 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <refreshProperties>true</refreshProperties>
 	            <helpHtml>Makes the contents hide or show when tapped, similar to how a dropdown list functions.</helpHtml>
 	        </property>
+	        
+	        <property>
+	            <key>fixedHeight</key>
+	            <name>Fixed height</name>
+				<visibility>
+					<key>slide</key>
+					<value>true</value>
+				</visibility>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>The open list overlaps content below it.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>selectAway</key>
+	            <name>Select away</name>
+				<visibility>
+					<key>slide</key>
+					<value>true</value>
+				</visibility>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshHtml>false</refreshHtml>
+	            <helpHtml>Select an option from the open list to close it.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>clickAway</key>
+	            <name>Click away</name>
+				<visibility>
+					<key>slide</key>
+					<value>true</value>
+				</visibility>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshHtml>false</refreshHtml>
+	            <helpHtml>Click away from the open list to close it.</helpHtml>
+	        </property>
 	             
 	    </properties>
 	    
@@ -125,12 +161,20 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <type>css</type>
 	            <contents>
 	                <![CDATA[
-ul.list {
+ul.list, .list ul {
 	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+.list ul {
+	background: inherit;
+}
+
+.list {
 	display: inline-block;
-    padding: 0px;
-    margin: 0px;
-}	    
+	background: #FFF;
+}
 
 li.listOption {
 	cursor: pointer;
@@ -143,6 +187,7 @@ span.listSelectedCount {
 span.listSlider {
 	float: right;
 	font-family: FontAwesome-solid;
+	pointer-events: none;
 } 
 	                ]]>
 	            </contents>
@@ -196,7 +241,9 @@ if (this.header || this.slide) {
 	}
 }
 // place into the list
-var html = "<ul id='" + this.id + "' class='list" + getStyleClasses(this) + "'>" + options + "</ul>";
+var html = this.fixedHeight ? 
+	"<div id='" + this.id + "' class='list" + getStyleClasses(this) + "' style='display:inline-grid;height:2.2em;'><ul style='display:block;'>" + options + "</ul></div>" : 
+	"<ul id='" + this.id + "' class='list" + getStyleClasses(this) + "'>" + options + "</ul>";
 // return
 return html;
 	        ]]>
@@ -206,17 +253,18 @@ return html;
 	    
 	    <getDetailsFunction>
 	        <![CDATA[
-return {header: this.header, slide: this.slide, multi:this.multi};	        
+return {header: this.header, slide: this.slide && { selectAway: this.selectAway, clickAway: this.clickAway }, multi:this.multi};	        
 	        ]]>
 	    </getDetailsFunction>
 	    	    	    
 	    <setDataJavaScript>
 	        <![CDATA[
 if (data != null && data !== undefined) {
-	var list = $("#" + id);
+	var control = $("#" + id);
+	var list = control.is("ul") ? control : control.find("ul");
 	data = makeDataObject(data, field);
 	if (data.rows && data.fields) {
-		var hide = list.children("li.listOption").first().is(":hidden");
+		var hide = !list.is(".listVisible");
 		for (var i in data.rows) {
 			var row = data.rows[i];		
 			var text = "";
@@ -251,6 +299,13 @@ if (data != null && data !== undefined) {
 					}					
 					if (!details.multi) selectedCount.hide();									
 					header.html(text);		
+				}
+				if (details.slide && details.slide.selectAway) {
+					header.removeClass("listVisible");
+					list.removeClass("listVisible");
+					list.children("li.listOption").slideUp(250, function() {
+						list.children("span.listSlider").html("&#xf078;");
+					});
 				}
 				list.trigger("change");
 			});
@@ -321,13 +376,15 @@ return "#" + this.id + " span.listSlider";
 	    
 	    <initJavaScript>
 	        <![CDATA[
-var list = $("#" + id); 	        
+var control = $("#" + id);
+var list = control.is("ul") ? control : control.find("ul");
 if (details.slide) {
 	var header = list.children("li.listHeader");
 	var selectedCount = list.children("span.listSelectedCount");
 	header.click( function(ev) {
 		header.toggleClass("listVisible");
-		list.children("li.listOption").slideToggle(500, function() {
+		list.toggleClass("listVisible");
+		list.children("li.listOption").slideToggle(250, function() {
 			if (header.hasClass("listVisible")) {
 				list.children("span.listSlider").html("&#xf077;");
 			} else {
@@ -335,7 +392,21 @@ if (details.slide) {
 			}
 		});  				
 	});	
-}		
+	
+	// if clickAway, listen for clicks that don't originate from the list and close it
+	if (details.slide.clickAway) {
+		$("body").click(function(ev) {
+			if (!$.contains(control[0], ev.target)) {
+				header.removeClass("listVisible");
+				list.removeClass("listVisible");
+				list.children("li.listOption").slideUp(250, function() {
+					list.children("span.listSlider").html("&#xf078;");
+				});
+			}
+		});
+	}
+}
+
 list.children("li.listOption").click( details, function(ev) {
 	if (!ev.data.multi) list.children().removeClass("listSelected");
 	$(ev.target).toggleClass("listSelected");
@@ -355,6 +426,13 @@ list.children("li.listOption").click( details, function(ev) {
 		}
 		header.html(text);	
 	}
+	if (details.slide && details.slide.selectAway) {
+		header.removeClass("listVisible");
+		list.removeClass("listVisible");
+		list.children("li.listOption").slideUp(250, function() {
+			list.children("span.listSlider").html("&#xf078;");
+		});
+	}
 	list.trigger("change");	
 });
 	        
@@ -367,8 +445,10 @@ list.children("li.listOption").click( details, function(ev) {
 	   	        <name>Selected values</name>
 	   	        <getPropertyFunction>
 	   	            <![CDATA[
+var control = $("#" + id);
+var list = control.is("ul") ? control : control.find("ul");
 var value = "";
-$("#" + id).children("li.listSelected").each( function() { 
+list.children("li.listSelected").each( function() { 
 	value += $(this).attr("data-value") + ","; 
 });	        
 if (value) {
@@ -388,7 +468,8 @@ if (data != null && data !== undefined) {
 	} else {
 		values = null;
 	}
-	var list = $("#" + id);
+	var control = $("#" + id);
+	var list = control.is("ul") ? control : control.find("ul");
 	var header = list.children("li.listHeader");
 	var selectedCount = list.children("span.listSelectedCount");
 	if (!details.multi || values == null) list.children().removeClass("listSelected");
