@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -241,8 +241,8 @@ public class RapidFilter implements Filter {
 		// assume this request requires authentication
 		boolean requiresAuthentication = true;
 
-		// all webservice related requests got to the soa servelet
-		if (path.startsWith("/soa")) {
+		// all webservice related requests got to the soa servelet. Also allow application resources like theme fonts to be defined with a path from the root. 
+		if (path.startsWith("/soa") || path.startsWith("/applications/")) {
 
 			// if this is a get request
 			if ("GET".equals(req.getMethod())) {
