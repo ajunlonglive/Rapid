@@ -82,6 +82,39 @@
 			</property>
 
 			<property>
+				<key>pageSize</key>
+				<name>Page size</name>
+				<setConstructValueFunction>return "";</setConstructValueFunction>
+				<changeValueJavaScript>number</changeValueJavaScript>
+				<refreshHtml>true</refreshHtml>
+				<helpHtml>Limits the number of rows to be shown at any one time. (Optional)</helpHtml>
+			</property>
+
+			<property>
+				<key>resultsShow</key>
+				<name>Show results</name>
+				<setConstructValueFunction>return false;</setConstructValueFunction>
+				<changeValueJavaScript>checkbox</changeValueJavaScript>
+				<refreshHtml>true</refreshHtml>
+				<refreshProperties>true</refreshProperties>
+				<helpHtml>Show a row count and page count if page size is set.</helpHtml>
+			</property>
+
+			<property>
+				<key>resultsFunction</key>
+				<name>Results function</name>
+				<visibility>
+					<key>resultsShow</key>
+					<value>true</value>
+				</visibility>
+				<setConstructValueFunction>return '// Use JavaScript to return a string describing your results using rowCount, firstRowNumber, lastRowNumber, data is also available.\n\nreturn "Showing " \n  + firstRowNumber \n  + "-" \n  + lastRowNumber \n  + " of " \n  + rowCount \n  + " results";';</setConstructValueFunction>
+				<changeValueJavaScript>bigtext</changeValueJavaScript>
+				<refreshHtml>true</refreshHtml>
+				<refreshProperties>false</refreshProperties>
+				<helpHtml>Define a function of the row count and visible rows. (Optional)</helpHtml>
+			</property>
+
+			<property>
 				<key>dataStorageType</key>
 				<name>Data store type</name>
 				<setConstructValueFunction>return "";</setConstructValueFunction>
@@ -220,6 +253,15 @@ div.gridScrollBody table.grid tr:first-child {
 [disabled] table.grid tr td {
 	cursor: not-allowed;
 }
+
+.gridWrapper {
+	display: inline-block;
+}
+
+.gridWrapper > .grid,
+.gridWrapper > .gridScroll {
+	width: 100%;
+}
 	                ]]>
 				</contents>
 			</resource>
@@ -260,7 +302,7 @@ function saveGridDataStoreData(id, details, data) {
 	switch (details.dataStorageType) {
 		case "L" : case "B" :
 			// add the current time
-			data.time = new Date().getTime();
+			if (data) data.time = new Date().getTime();
 			// store data in local storage
 			localStorage[_appId + id] = JSON.stringify(data);
 			// if this is backend/server storage
@@ -648,6 +690,29 @@ function setGridHeaderMultiSelect(id, grid) {
 
 		<getHtmlFunction>
 	        <![CDATA[ 
+var wrapperStart = "";
+var wrapperEnd = "";
+var tableId = " id='" + this.id + "'";
+if (this.pageSize || this.resultsShow) {
+	wrapperStart = "<div id='" + this.id + "' class='grid gridWrapper'>";
+	wrapperEnd = "</div>";
+	tableId = "";
+}
+var pageSize = this.pageSize ? "<div class='pageSize'></div>" : "";
+var resultsFunction = this.resultsFunction ? 
+	new Function("rowCount", "firstRowNumber", "lastRowNumber", "data", this.resultsFunction) : 
+	function(n) { return n; };
+var mockColumns = this.columns.length ? this.columns : ["No columns"];
+var mockRow = this.columns.length ? this.columns.map(function(_, index) { return index % 2 ? "123.00" : "Data" }) : ["No columns"];
+var mockColumns = this.columns.length ? this.columns : ["No columns"];
+var mockData = { fields: mockColumns, rows: [mockRow, mockRow] };
+var resultsFunctionReturn = "";
+try {
+	resultsFunctionReturn = resultsFunction(2, 1, 2, mockData);
+} catch (ex) {
+	resultsFunctionReturn = ex.message || ex;
+}
+var resultsShow = this.resultsShow ? "<div class='resultsShow'>" + resultsFunctionReturn + "</div>" : "";
 var headerHtml = "<tr" + (this.columnHeadings ? "" : " style='display:none'") + ">";
 var rowHtml = "<tr>";
 if (this.multiSelect) {
@@ -683,10 +748,10 @@ headerHtml += "</tr>";
 // check for scrolling
 if (this.scrollH || this.scrollV) {
 	// return a container div with the table inside
-	return "<div id='" + this.id + "' style='display:inline-block;" + (this.scrollH ? "overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";" : "") + (this.scrollV && !this.fixedHeader ? "overflow-y:" + this.scrollV + ";max-height:" + this.scrollHeight + ";" : "") + "' class='gridScroll" + getStyleClasses(this) + "'><table class='grid" + (this.multiSelect ? " multiSelect" : "") + "' style='margin:0;'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table></div>";
+	return wrapperStart + "<div" + tableId + " style='display:inline-block;" + (this.scrollH ? "overflow-x:" + this.scrollH + ";max-width:" + this.scrollWidth + ";" : "") + (this.scrollV && !this.fixedHeader ? "overflow-y:" + this.scrollV + ";max-height:" + this.scrollHeight + ";" : "") + "' class='gridScroll" + getStyleClasses(this) + "'><table class='grid" + (this.multiSelect ? " multiSelect" : "") + "' style='margin:0;'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table></div>" + pageSize + resultsShow + wrapperEnd;
 } else {
 	// return a simple table
-	return "<table id='" + this.id + "' class='grid" + (this.multiSelect ? " multiSelect" : "") + getStyleClasses(this) + "'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table>";
+	return wrapperStart + "<table" + tableId + " class='grid" + (this.multiSelect ? " multiSelect" : "") + getStyleClasses(this) + "'>" + headerHtml + rowHtml.replace("<tr>","<tr class='rowStyle1'>") + rowHtml.replace("<tr>","<tr class='rowStyle2'>") + "</table>" + pageSize + resultsShow + wrapperEnd;
 }
 	        ]]>
 	    </getHtmlFunction>
@@ -713,7 +778,10 @@ if (this.styles && this.styles.length > 0) {
 	        <![CDATA[
 // get our object
 var table = this.object;
-if (!table.is("table")) table = table.find("table").last();
+if (!table.is("table")) {
+	table.find(".resultsShow, .pageSize").empty()
+	table = table.find("table").last();
+}
 // check if columns have been defined
 if (this.columns && this.columns.length > 0) {
 	// remove all sample rows, leaving the header row
@@ -772,6 +840,11 @@ if (this.scrollV) {
 	details.scrollV = this.scrollV;
 	details.scrollHeight = this.scrollHeight;
 	details.fixedHeader = this.fixedHeader;
+}
+if (this.pageSize) details.pageSize = this.pageSize;
+if (this.resultsShow) {
+	details.resultsShow = this.resultsShow;
+	if (this.resultsFunction) details.resultsFunction = this.resultsFunction;
 }
 return details;
 			]]>	        	        
@@ -963,6 +1036,8 @@ if (data !== undefined && data !== "") {
 	
 	// if we have some rows to load
 	if (data && data.rows) {
+	
+		if (!data.selectedPageIndex) data.selectedPageIndex = 0;
 		
 		// retain number of rows we're about to load
 		_gridLoaders[id].rows = data.rows.length;
@@ -1244,7 +1319,15 @@ if (data !== undefined && data !== "") {
 					// start the row object with the styling
 	 				var tr = document.createElement("tr");
 	 				tr.className = "rowStyle" + (rowIndex % 2 + 1) + (data.rowValidation && i < data.rowValidation.length && !data.rowValidation[i] ? " validation" : "");	 				
-	
+					
+					if (details.pageSize) {
+						var pageSize = parseInt(details.pageSize);
+						var pageFirstRowIndex = data.selectedPageIndex * pageSize;
+						if (!(pageFirstRowIndex <= rowIndex && rowIndex <= pageFirstRowIndex + pageSize)) {
+							$(tr).hide();
+						}
+					}
+					
 					// add multiselect
 					if (details.multiSelect) {
 						var td = document.createElement("td");
@@ -1401,7 +1484,15 @@ if (data !== undefined && data !== "") {
 		            // start the row object with the styling
 		            var tr = document.createElement("tr");
 		            tr.className = "rowStyle" + (rowIndex % 2 + 1);
-
+					
+					if (details.pageSize) {
+						var pageSize = parseInt(details.pageSize);
+						var pageFirstRowIndex = data.selectedPageIndex * pageSize;
+						if (!(pageFirstRowIndex <= rowIndex && rowIndex <= pageFirstRowIndex + pageSize)) {
+							$(tr).hide();
+						}
+					}
+					
 		            // add multiselect
 					if (details.multiSelect) {
 						var td = document.createElement("td");
@@ -1501,6 +1592,90 @@ if (data !== undefined && data !== "") {
 				grid.find("input.gridMultiSelect").prop("checked",select);
 			});
 		}
+	}
+	
+	if (details.pageSize || details.resultsShow) {
+		if (!grid.closest(".gridWrapper").length) {
+			grid.removeAttr("id");
+			var toWrap = grid.parent().is(".gridScroll") ? grid.parent() : grid;
+			toWrap.wrap("<div class='grid gridWrapper'>")
+				.parent().attr("id", id);
+		}
+	}
+	
+	var setResultsShow = function() {};
+	if (details.resultsShow) {
+		var wrapper = grid.closest(".gridWrapper");
+		var resultsShow = wrapper.find(".resultsShow");
+		if (!resultsShow.length) resultsShow = wrapper.append("<span class='resultsShow'>").find(".resultsShow");
+		var resultsFunction = details.resultsFunction ? 
+			new Function("rowCount", "firstRowNumber", "lastRowNumber", "data", details.resultsFunction) : 
+			function(n) { return n; };
+		setResultsShow = function() {
+			var pageFirstRowIndex = details.pageSize ? data.selectedPageIndex * details.pageSize : 0;
+			var firstRowNumber = pageFirstRowIndex + 1;
+			var lastRowNumber = details.pageSize ? Math.min(data.rows.length, firstRowNumber + parseInt(details.pageSize) - 1) : data.rows.length;
+			try {
+				resultsShow.text(resultsFunction(data.rows.length, firstRowNumber, lastRowNumber, data));
+			} catch (ex) {
+				alert(ex.message || ex);
+			}
+		};
+		setResultsShow();
+	}
+	
+	if (details.pageSize) {
+		var pageSize = parseInt(details.pageSize);
+		var wrapper = grid.closest(".gridWrapper");
+		var pageSizeElement = wrapper.find(".pageSize");
+		if (!pageSizeElement.length) pageSizeElement = wrapper.append("<span class='pageSize'>").find(".pageSize");
+		pageSizeElement.empty();
+		var pageCount = Math.ceil(data.rows.length / pageSize);
+		
+		var setSelectedPage = function(pageIndex) {
+			data.selectedPageIndex = pageIndex;
+			saveGridDataStoreData(id, details, data);
+			var pageFirstRowIndex = data.selectedPageIndex * pageSize;
+			grid.find("tr:not(:first-child)").hide()
+				.slice(pageFirstRowIndex, pageFirstRowIndex + pageSize).show();
+			var startOverflow = Math.max(0, 0 - (pageIndex - 2));
+			var endOverflow = Math.max(0, (pageIndex + 2) - (pageCount - 1));
+			var startIndex = Math.max(0, pageIndex - 2) - endOverflow;
+			var endIndex = Math.min(pageCount, pageIndex + 3) + startOverflow;
+			pageSizeElement.find(".page").hide()
+				.slice(startIndex, endIndex).show();
+			pageSizeElement.find(".page").removeClass("selected")
+				.slice(pageIndex, pageIndex + 1).addClass("selected");
+			wrapper.find(".gridScrollBody").scrollTop(0);
+			if (details.resultsShow) setResultsShow();
+		};
+		var pageIndexes = [];
+		for (var pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+			pageIndexes.push(pageIndex);
+		}
+		var goToPrevious = $("<span class='previous'>Previous</span>")
+			.click(function(ev) {
+			ev.stopPropagation();
+			setSelectedPage(Math.max(0, data.selectedPageIndex - 1));
+		});
+		pageSizeElement.append(goToPrevious);
+		pageIndexes.forEach(function(pageIndex) {
+			var pageNumber = pageIndex + 1;
+			var goToPage = $("<span>" + pageNumber + "</span>")
+				.addClass("page")
+				.click(function(ev) {
+				ev.stopPropagation();
+				setSelectedPage(pageIndex)
+			});
+			pageSizeElement.append(goToPage);
+		});
+		var goToNext = $("<span class='next'>Next</span>")
+			.click(function(ev) {
+			ev.stopPropagation();
+			setSelectedPage(Math.min(pageCount - 1, data.selectedPageIndex + 1));
+		});
+		pageSizeElement.append(goToNext);
+		setSelectedPage(data.selectedPageIndex);
 	}
 	
 } else {
