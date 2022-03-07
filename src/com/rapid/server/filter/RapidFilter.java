@@ -241,7 +241,7 @@ public class RapidFilter implements Filter {
 		// assume this request requires authentication
 		boolean requiresAuthentication = true;
 
-		// all webservice related requests got to the soa servelet. Also allow application resources like theme fonts to be defined with a path from the root. 
+		// all webservice related requests got to the soa servelet. Also allow application resources like theme fonts to be defined with a path from the root.
 		if (path.startsWith("/soa") || path.startsWith("/applications/")) {
 
 			// if this is a get request
@@ -341,8 +341,8 @@ public class RapidFilter implements Filter {
 					// forward to it in its folder
 					forwardRequest(filteredRequest, response, "/" + secondLastPathPart + "/" + lastPathPart);
 
-				// if user has provided at least 1 path part (i.e. part1/) and is requesting known resources like login.jsp or downloadCSV.jsp
-				} else if (pathPart.length > 1 && (lastPathPartLower.endsWith(".jsp"))) {
+				// if user has provided at least 1 path part (i.e. part1/) and is requesting known resources like login.jsp or downloadCSV.jsp for known application, if not known application we assume a child Rapid instance
+				} else if (pathPart.length > 1 && lastPathPartLower.endsWith(".jsp") && applications.get(pathPart[0]) != null) {
 
 					// check POST (or get)
 					if ("POST".equals(req.getMethod())) {
