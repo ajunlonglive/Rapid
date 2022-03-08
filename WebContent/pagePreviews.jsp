@@ -1,13 +1,18 @@
-<!DOCTYPE html><%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%><%@page import="com.rapid.server.Rapid"%><%@page import="com.rapid.core.Application"%><%@page import="com.rapid.core.Applications"%><%@page import="com.rapid.core.Page"%><%@page import="com.rapid.core.Pages"%><%@page import="com.rapid.server.RapidRequest"%><%@page import="com.rapid.server.RapidHttpServlet"%><%@page import="com.rapid.security.SecurityAdapter"%>
+<%@page import="com.rapid.server.Rapid"%><%@page import="com.rapid.core.Application"%><%@page import="com.rapid.core.Applications"%><%@page import="com.rapid.core.Page"%><%@page import="com.rapid.core.Pages"%><%@page import="com.rapid.server.RapidRequest"%><%@page import="com.rapid.server.RapidHttpServlet"%><%@page import="com.rapid.security.SecurityAdapter"%><%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <head>
-<link rel="icon" href="favicon.ico"></link>
 <link rel="stylesheet" type="text/css" href="styles/fonts/fontawesome/css/font-awesome.css">
 <style>
 body {
 	margin: 0;
-	background: #444;
+	background: #333;
 	font-family: sans-serif;
 	color: #DDD;
+	transition: background 0.25s ease-in-out, color 0.25s ease-in-out;
+}
+
+.nativeScale {
+	background: #111;
+	color: #AAA;
 }
 
 h1 {
@@ -15,6 +20,11 @@ h1 {
 	display: inline-block;
 	font-size: 2em;
 	color: #EEE;
+	transition: color 0.25s ease-in-out;
+}
+
+.nativeScale h1 {
+	color: #AAA;
 }
 
 header {
@@ -25,6 +35,7 @@ header {
 	display: inline-block;
 	width: 350px;
 	height: 350px;
+	max-height: 90vh;
 	padding: 0 1em 1.5em;
 	box-sizing: border-box;
 	transition: width 0.25s ease-in-out, height 0.25s ease-in-out, padding 0.25s ease-in-out;
@@ -71,7 +82,7 @@ header {
 .action {
 	float: right;
 	color: #DDD;
-	background: #555;
+	background: #444;
 	border: none;
 	margin-left: 0.2em;
 	margin-bottom: 0.2em;
@@ -84,7 +95,7 @@ header {
 
 .action:hover {
 	color: #FFF;
-	background: #666;
+	background: #555;
 }
 
 header .action {
@@ -152,6 +163,11 @@ if (app != null) {
 
 var setPageSize = function() {
 	document.body.style.fontSize = "calc(1em / " + window.devicePixelRatio + ")";
+	if (window.devicePixelRatio === 4) {
+		document.body.classList.add("nativeScale");
+	} else {
+		document.body.classList.remove("nativeScale");
+	}
 	if (window.devicePixelRatio >= 2.5) {
 		document.body.classList.add("singleView");
 	} else {
@@ -164,28 +180,5 @@ addEventListener("resize", function(ev) {
 });
 
 setTimeout(setPageSize);
-
-addEventListener("storage", function(storageEvent) {
-	if (storageEvent.key === "rapidWindowBroadcast") {
-		var broadcast = JSON.parse(storageEvent.newValue);
-		switch (broadcast.message) {
-		case "pageSaved":
-			if (broadcast.a === <%=a%> && broadcast.v === <%=v%>) {
-				// reload the iframe with the page
-			}
-			break;
-		case "applicationReloaded":
-			if (broadcast.a === <%=a%> && broadcast.v === <%=v%>) {
-				location.reload();
-			}
-			break;
-		case "applicationsReloaded":
-			if (broadcast.a !== "rapid") {
-				location.reload();
-			}
-			break;
-		}
-	}
-});
 
 </script>
