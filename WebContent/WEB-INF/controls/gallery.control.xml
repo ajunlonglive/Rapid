@@ -1191,7 +1191,7 @@ if (!details) details = window[id + "details"];
 // check we have some data 
 if (data) {
 	// if there is no image-limit or we haven't hit it
-	if (!details || details.maxImages == undefined || control.find(".galleryItem").length < details.maxImages) {
+	if (!details || !details.maxImages || control.find(".galleryItem").length < details.maxImages) {
 		// make a proper data object	
 		data = makeDataObject(data, field);
 		// if it has rows
