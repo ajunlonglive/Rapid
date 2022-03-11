@@ -349,6 +349,14 @@ return "#" + this.id + " li.listOption";
 	            </getAppliesToFunction>
 	        </style>
 	        <style>
+	            <name>List options hover</name>  
+	            <getAppliesToFunction>
+					<![CDATA[	      
+return "#" + this.id + " li.listOption:hover";
+	       			 ]]>	                
+	            </getAppliesToFunction>
+	        </style>
+	        <style>
 	            <name>Selected options</name>  
 	            <getAppliesToFunction>
 					<![CDATA[	      
