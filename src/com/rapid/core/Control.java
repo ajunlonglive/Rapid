@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -379,7 +379,8 @@ public class Control {
 				JSONObject jsonAction = jsonActions.getJSONObject(j);
 				// fetch the constructor for this type of object
 				Constructor actionConstructor = rapidServlet.getActionConstructor(jsonAction.getString("type"));
-				// instantiate the object
+				// instantiate the object - any server errors here, such as java.lang.reflect.InvocationTargetException: null  are usually caused by core abstract class method definitions changing
+				// and recompiled custom classes not being updated on the server after a core Rapid upgrade
 				Action action = (Action) actionConstructor.newInstance(rapidServlet, jsonAction);
 				// add action object to this event collection
 				actions.add(action);
@@ -632,12 +633,12 @@ public class Control {
 		}
 		return js;
 	}
-	
+
 	// this method returns JavaScript for retrieving a control's data, or runtime property value
 	public static String setDataJavaScript(ServletContext servletContext, Application application, Page page, String id, String field) {
 		return setDataJavaScript(servletContext, application, page, id, field, "true");
 	}
-	
+
 	public static String setDataJavaScript(ServletContext servletContext, Application application, Page page, String id, String field, String changeEvents) {
 
 		// assume an empty string
@@ -689,12 +690,12 @@ public class Control {
 						if ("clipboard".equals(idParts[1])) return "clipboardWriteValue(data)";
 					} else {
 						// get the runtime property
-						return "setProperty_" + control.getType() + "_" + idParts[1] + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ", data, " + changeEvents + ")";
+						return "setProperty_" + control.getType() + "_" + idParts[1] + "(ev, '" + control.getId() + "', " + fieldJS + detailsJS + ", data, " + changeEvents + ")";
 					}
 
 				} else {
 					// no other parts return getData call
-					return "setData_" + control.getType() + "(ev,'" + control.getId() + "'," + fieldJS + detailsJS + ", data, " + changeEvents + ")";
+					return "setData_" + control.getType() + "(ev, '" + control.getId() + "', " + fieldJS + detailsJS + ", data, " + changeEvents + ")";
 				}
 
 			} // control check
