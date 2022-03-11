@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -62,7 +62,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <name>Type</name>
 	            <setConstructValueFunction>return "P";</setConstructValueFunction>
 	            <changeValueJavaScript>select</changeValueJavaScript>
-	            <getValuesFunction>return [["P","Page"],["U","URL"],["R","Rapid"]];</getValuesFunction>
+	            <getValuesFunction>return [["P","Page"],["U","URL"],["T","Telephone"],["S","SMS"],["E","Email"],["R","Rapid"]];</getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
 	            <refreshProperties>true</refreshProperties>
 	            <helpHtml>Sets the type of link. Page links to other pages on your Rapid app, URL links to any webpage. Rapid links to pages like main menu, logout, and back.</helpHtml>
@@ -297,9 +297,21 @@ if (this.linkType == "P") {
 	
 	}
 
-} else {
+} else if (this.linkType == "T" || this.linkType == "S" || this.linkType == "E") {
+	
+	if (this.target) {
+		var type = this.linkType == "T" ? "tel:" :
+			this.linkType == "S" ? "sms:" :
+			this.linkType == "E" ? "mailto:" :
+			"";
+		
+		return "<a id='" + this.id + "' href='" + type + type + this.url + "'" + popup + " class='link" + getStyleClasses(this) + "'>" + text + "</a>";
+	} else {
+		return "<a id='" + this.id + "' href='#' class='link" + getStyleClasses(this) + "'>link target required</a>";
+	}
 
-	if (this.url) {		
+} else {
+	if (this.url) {
 		return "<a id='" + this.id + "' href='" + this.url + "'" + popup + " class='link" + getStyleClasses(this) + "'>" + text + "</a>";
 	} else {
     	return "<a id='" + this.id + "' href='#' class='link" + getStyleClasses(this) + "'>link url required</a>";
@@ -319,7 +331,7 @@ rebuildHtml(this);
 	     
 	    <getDetailsFunction>
 	        <![CDATA[
-return { dialogue: this.dialogue };	        
+return { dialogue: this.dialogue, linkType: this.linkType, target: this.target };
 	        ]]>	        
 	    </getDetailsFunction>
 	    
@@ -343,8 +355,14 @@ if (data != null && data !== undefined) {
 			} 			
 		}
 	} 
-} 
-control.attr("href",value);
+}
+
+var type = details.linkType == "T" ? "tel:" :
+	details.linkType == "S" ? "sms:" :
+	details.linkType == "E" ? "mailto:" :
+	"";
+
+control.attr("href",type + value);
 if (changeEvents) control.trigger("change");
 			]]>
 	    </setDataJavaScript>
