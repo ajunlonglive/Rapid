@@ -91,6 +91,7 @@ import com.rapid.data.DataFactory;
 import com.rapid.data.DataFactory.Parameters;
 import com.rapid.data.DatabaseConnection;
 import com.rapid.forms.FormAdapter;
+import com.rapid.security.RapidSecurityAdapter;
 import com.rapid.security.SecurityAdapter;
 import com.rapid.security.SecurityAdapter.Role;
 import com.rapid.security.SecurityAdapter.SecurityAdapaterException;
@@ -2688,26 +2689,47 @@ public class Designer extends RapidHttpServlet {
 													// get all current users of the new app
 													Users users = security.getUsers(rapidRequest);
 
-													// remove all current users
-													for (int i = 0; i < users.size(); i++) {
-														// get this user
-														User user = users.get(i);
-														// set their name in the delete Rapid request
-														deleteRequest.setUserName(user.getName());
-														// delete them
-														security.deleteUser(deleteRequest);
-														// one less to do
-														i--;
-													}
+													// if there are users
+													if (users != null && users.size() > 0) {
+
+														// remove all current users
+														for (int i = 0; i < users.size(); i++) {
+															// get this user
+															User user = users.get(i);
+															// set their name in the delete Rapid request
+															deleteRequest.setUserName(user.getName());
+															// delete them
+															security.deleteUser(deleteRequest);
+															// one less to do
+															i--;
+														}
+
+													} // users check
 
 													// get the old security adapter
 													SecurityAdapter securityOld = appOld.getSecurityAdapter();
 
-													// add old users to the new app
-													for (User user : securityOld.getUsers(rapidRequest)) {
+													// get any old users
+													users = securityOld.getUsers(rapidRequest);
 
-														// add the old user to the new app
-														security.addUser(rapidRequest, user);
+													// if there are users
+													if (users != null && users.size() > 0) {
+
+														// add old users to the new app
+														for (User user : users) {
+
+															// add the old user to the new app
+															security.addUser(rapidRequest, user);
+
+														}
+
+													} else {
+
+														// if we failed to get users using the specified security make the new "safe" Rapid security adapter for the new app
+														security = new RapidSecurityAdapter(context, appNew);
+
+														// add it to the new app
+														appNew.setSecurityAdapter(context, "rapid");
 
 													}
 
@@ -2723,7 +2745,7 @@ public class Designer extends RapidHttpServlet {
 
 												try {
 
-													// get the current users record from the adapter
+													// get the current user's record from the adapter
 													user = security.getUser(importRapidRequest);
 
 												} catch (SecurityAdapaterException ex) {
