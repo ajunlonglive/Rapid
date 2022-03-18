@@ -654,9 +654,9 @@ function showProperties(control) {
 				// if property has visibility
 				if (property.visibility) {
 					// get the key value
-					var value = control[property.visibility.key].toString();
-					var visible = property.visibility.value.toString().split(",")
-						.some(function(v) { return v.trim() == value; });
+					var value = control[property.visibility.key];
+					var visible = value && property.visibility.value.toString().split(",")
+						.some(function(v) { return v.trim() == value.toString(); });
 				}
 				// check that visible is not false
 				if (visible) {
