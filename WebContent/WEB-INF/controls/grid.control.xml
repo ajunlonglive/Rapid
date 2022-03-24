@@ -1026,6 +1026,12 @@ if (details.columns) {
 	// if there is data and fields map them to dynamic coumns collections
 	if (data && data.fields) details.dynamicColumns = data.fields.map(function(field) { return { visible: true, field: field }; });
 }
+
+// save any datastore data
+// dontStore comes from a storage event listener and should prevent a new storage event
+var shouldStore = details.dontStore !== true;
+if (details && details.dataStorageType && shouldStore) saveGridDataStoreData(id, details, data);
+
 // reset any sort indicators if not being used for sorting
 grid.find("span.sort").html("&#xf0dc");
 // if we have data
@@ -1634,7 +1640,7 @@ if (data !== undefined && data !== "") {
 		
 		var setSelectedPage = function(pageIndex) {
 			data.selectedPageIndex = pageIndex;
-			saveGridDataStoreData(id, details, data);
+			if (details && details.dataStorageType && shouldStore) saveGridDataStoreData(id, details, data);
 			var pageFirstRowIndex = data.selectedPageIndex * pageSize;
 			grid.find("tr:not(:first-child)").hide()
 				.slice(pageFirstRowIndex, pageFirstRowIndex + pageSize).show();
@@ -1684,11 +1690,6 @@ if (data !== undefined && data !== "") {
 	data = null;
 	
 }
-
-// save any datastore data
-// dontStore comes from a storage event listener and should prevent a new storage event
-var shouldStore = details.dontStore !== true;
-if (details && details.dataStorageType && shouldStore) saveGridDataStoreData(id, details, data);
 details.dontStore = undefined;
 			]]>
 	    </setDataJavaScript>
