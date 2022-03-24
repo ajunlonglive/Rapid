@@ -655,9 +655,15 @@ function showProperties(control) {
 				if (property.visibility) {
 					// get the key value
 					var value = control[property.visibility.key];
-					var visible = value && property.visibility.value.toString().split(",")
-						.some(function(v) { return v.trim() == value.toString(); });
-				}
+					// if there was a value to work with
+					if (value) {
+						// toString it in case number or boolean,etc
+						value = value.toString();
+						// toString and split possible values, return true if any one
+						var visible = property.visibility.value.toString().split(",")
+							.some(function(v) { return v.trim() == value; });
+					}
+				}				
 				// check that visible is not false
 				if (visible) {
 					// assume no help
