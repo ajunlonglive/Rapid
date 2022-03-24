@@ -6875,17 +6875,6 @@ function Property_dismissibleDialogue(cell, propertyObject, property, details) {
 	}
 }
 
-//allows a dialogue to be cancelled by clicking its background
-function Property_customOperation(cell, propertyObject, property, details) {
-	// only for dialouges
-	if (propertyObject.operation === "custom") {
-		Property_bigtext(cell, propertyObject, property, details);
-	} else {
-		// remove this row
-		cell.closest("tr").remove();
-	}
-}
-
 function Property_textLabel(cell, propertyObject, property, details) {
 	
 	Property_text(cell, propertyObject, property, details);

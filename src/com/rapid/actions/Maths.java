@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -148,6 +148,13 @@ public class Maths extends Action {
 		
 		// check if we have inputs
 		if (_inputs == null) _inputs = Collections.emptyList();
+ 		
+		// get the output control details
+		String outputId = getProperty("output");
+		String outputField = getProperty("outputField");
+		String changeEvents = getProperty("changeEvents");
+		if (changeEvents == null) changeEvents = "true";
+		boolean async = "true".equals(getProperty("async"));
 		
 		if ("custom".equals(operation)) {
 			String customOperation = getProperty("customOperation");
@@ -192,7 +199,12 @@ public class Maths extends Action {
 					parameters += "'" + inputField + "', '" + argName + "', ";
 				}
 			}
- 			
+			
+			if (!arguments.isEmpty()) arguments += ", ";
+			arguments += "output";
+			parameters += "'output', ";
+ 			js += "var output = function(data) { " + Control.setDataJavaScript(rapidRequest.getRequest().getServletContext(), application, page, outputId, outputField, changeEvents) + " } ;\n";
+			
 			String functionName = "window[\"customMaths" + getId() + "\"]";
 
 			// make the function on first request, throwing errors constructing/running it, and caching the function
@@ -227,15 +239,9 @@ public class Maths extends Action {
 				
 			}
 		}
- 		
-		// get the output control details
-		String outputId = getProperty("output");
-		String outputField = getProperty("outputField");
-		String changeEvents = getProperty("changeEvents");
-		if (changeEvents == null) changeEvents = "true";
 		
 		// send data into the output control
-		if (outputId != null) js += Control.setDataJavaScript(rapidRequest.getRequest().getServletContext(), application, page, outputId, outputField, changeEvents) + ";\n";
+		if (outputId != null && !("custom".equals(operation) && async)) js += "output(data);\n";
 		
 		return js;
 		
