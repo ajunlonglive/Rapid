@@ -241,7 +241,7 @@ public class Maths extends Action {
 		}
 		
 		// send data into the output control
-		if (outputId != null && !("custom".equals(operation) && async)) js += "output(data);\n";
+		if (outputId != null) js += Control.setDataJavaScript(rapidRequest.getRequest().getServletContext(), application, page, outputId, outputField, changeEvents) + ";\n";
 		
 		return js;
 		
