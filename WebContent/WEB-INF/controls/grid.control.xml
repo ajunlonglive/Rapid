@@ -345,15 +345,16 @@ function sortGridByColumn(ev, id, details, column, asc) {
 		// get the field
 		var field = details.columns[column].field;
 		
-		// adjust the column number to account for the removal of fieldless columns
-		var columnNumber = parseInt(column);
-		var columnsRemoved = details.columns.slice(0, columnNumber)
-			.filter(function(column) { return column.field == undefined; })
-			.length;
-		var column = columnNumber - columnsRemoved;
+		// ensure the column is an int
+		column = parseInt(column);
 		
-		// assume data and details columns are the same
-		var dataColumn = column;
+		// count the prior columns that don't have a field so won't contain data
+		var nofieldColumnsCount = details.columns.slice(0, column)
+			.filter(function(col) { return col.field == undefined; })
+			.length;
+		
+		// adjust the column number to account for the removal of fieldless columns
+		var dataColumn = column - nofieldColumnsCount;
 		
 		// check the column matches the field
 		if (data.fields[column] != field) {
