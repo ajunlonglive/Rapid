@@ -1645,12 +1645,17 @@ if (data !== undefined && data !== "") {
 			var pageFirstRowIndex = data.selectedPageIndex * pageSize;
 			grid.find("tr:not(:first-child)").hide()
 				.slice(pageFirstRowIndex, pageFirstRowIndex + pageSize).show();
-			var startOverflow = Math.max(0, 0 - (pageIndex - 2));
-			var endOverflow = Math.max(0, (pageIndex + 2) - (pageCount - 1));
-			var startIndex = Math.max(0, pageIndex - 2) - endOverflow;
-			var endIndex = Math.min(pageCount, pageIndex + 3) + startOverflow;
+			var lastPageIndex = pageCount - 1;
+			var startTarget = pageIndex - 2;
+			var endTarget = pageIndex + 2;
+			var startOverflow = Math.max(0, 0 - startTarget);
+			var endOverflow = Math.max(0, endTarget - lastPageIndex);
+			var startShifted = startTarget - endOverflow;
+			var endShifted = endTarget + startOverflow;
+			var startClamped = Math.max(0, startShifted);
+			var endClamped = Math.min(lastPageIndex, endShifted);
 			pageSizeElement.find(".page").hide()
-				.slice(startIndex, endIndex).show();
+				.slice(startClamped, endClamped + 1).show();
 			pageSizeElement.find(".page").removeClass("selected")
 				.slice(pageIndex, pageIndex + 1).addClass("selected");
 			wrapper.find(".gridScrollBody").scrollTop(0);
