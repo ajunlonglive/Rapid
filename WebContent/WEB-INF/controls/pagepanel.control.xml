@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -284,7 +284,7 @@ return "#" + this.id;
 	    	    
 	    <initJavaScript>
 	        <![CDATA[
-	        
+
 // if this page is not static reload it
 if (details.simple === undefined || !details.simple) {
 	        
@@ -367,6 +367,29 @@ if (details.simple === undefined || !details.simple) {
 	    }
 	});
 }
+
+window.addEventListener("storage", function(storageEvent) {
+	if (storageEvent.key === "rapidWindowBroadcast") {
+		var broadcast = JSON.parse(storageEvent.newValue);
+		switch (broadcast.message) {
+		case "pageSaved":
+			if (broadcast.a === _appId && broadcast.v === _appVersion && broadcast.p === details.pageId) {
+				location.reload();
+			}
+			break;
+		case "applicationReloaded":
+			if (broadcast.a === _appId && broadcast.v === _appVersion) {
+				location.reload();
+			}
+			break;
+		case "applicationsReloaded":
+			if (broadcast.a !== "rapid") {
+				location.reload();
+			}
+			break;
+		}
+	}
+});
 
 	        ]]>
 	    </initJavaScript>
