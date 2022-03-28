@@ -656,7 +656,7 @@ function showProperties(control) {
 					// get the key value
 					var value = control[property.visibility.key];
 					// if there was a value to work with
-					if (value) {
+					if (value != null && value != undefined) {
 						// toString it in case number or boolean,etc
 						value = value.toString();
 						// toString and split possible values, return true if any one
