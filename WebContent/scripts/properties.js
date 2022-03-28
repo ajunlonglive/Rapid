@@ -1671,10 +1671,9 @@ function Property_imageFile(cell, propertyObject, property, details) {
 	}
 	
 	// append the  form control and the submit button
-	table.append("<tr><td><form id='form_" + propertyObject.id + "' method='post' enctype='multipart/form-data' target='uploadIFrame' action='designer?action=uploadImage&a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id + "&c=" + propertyObject.id + "'><input id='file_" + propertyObject.id + "' name='file' type='file' accept='image/*'></input></form></td></tr><tr><td><input type='submit' value='Upload' /></td></tr>");
+	table.append("<tr><td><form id='form_" + propertyObject.id + "' method='post' enctype='multipart/form-data' target='uploadIFrame' action='designer?action=uploadImage&a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id + "&c=" + propertyObject.id + "' style='margin-top:10px'><label><input id='file_" + propertyObject.id + "' name='file' type='file' accept='image/*' hidden><button type='button' style='pointer-events:none;'>Upload image</button></label></form></td></tr>");
 	
-	// get a reference to the submit button
-	addListener( table.find("input[type=submit]").click( {id : propertyObject.id}, function (ev) {
+	addListener( $("#file_" + propertyObject.id).change( {id : propertyObject.id}, function (ev) {
 		// get the file value
 		var file = $("#file_" + ev.data.id).val();
 		// submit form if something provided
