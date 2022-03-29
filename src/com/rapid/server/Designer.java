@@ -2680,8 +2680,8 @@ public class Designer extends RapidHttpServlet {
 												// get the security for this application
 												SecurityAdapter security = appNew.getSecurityAdapter();
 
-												// if we're keeping settings and the security adapter allows users to be added
-												if (keepSettings && SecurityAdapter.hasManageUsers(context, appNew.getSecurityAdapterType())) {
+												// if we're keeping settings, and there is an old app, and the security adapter allows users to be added
+												if (keepSettings && appOld != null && SecurityAdapter.hasManageUsers(context, appNew.getSecurityAdapterType())) {
 
 													// a Rapid request we'll use to delete users from the new app
 													RapidRequest deleteRequest = new RapidRequest(this, request, appNew);
@@ -2733,7 +2733,7 @@ public class Designer extends RapidHttpServlet {
 
 													}
 
-												} // new app allows adding users
+												} // new app allows adding users and there is an old app to get them from
 
 												// make a rapid request in the name of the import application
 												RapidRequest importRapidRequest = new RapidRequest(this, request, appNew);
