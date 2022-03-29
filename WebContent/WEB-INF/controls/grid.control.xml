@@ -369,11 +369,17 @@ function sortGridByColumn(ev, id, details, column, asc) {
 	
 		// check there is data for the column
 		if (data && data.rows && data.fields[dataColumn]) {
-		
+			
+			// get the grid control
+			var grid = $("#" + id);
+			// make sure it's the tables
+			if (!grid.is("table")) grid = grid.find("table").last();
+			// get the existing tr elements
+			var elements = grid.find("tr:not(:first-child)");
 			// an array for all values in this column
 			var sortedValues = [];
 			// populate the array for each row with an object with the original index and value
-			for (var i in data.rows) sortedValues.push( {index:i, value:data.rows[i][dataColumn]} );
+			for (var i in data.rows) sortedValues.push( {originalIndex:i, element: elements[i] , value:data.rows[i][dataColumn]} );
 			
 			// if selected rows
 			if (data.selectedRowNumber) {
@@ -536,34 +542,42 @@ function sortGridByColumn(ev, id, details, column, asc) {
 			var rows = [];
 			// created a bew selectedRowNumber array
 			var selectedRowNumber = [];
-			// if ascending
-			if (asc) {
-				// loop the returned sorted column values
-				for (var i in sortedValues) {
+			var prevRow = grid.find("tr:first-child").first(); // initially header row
+			var rowContainer = prevRow.parent();
+			// loop the returned sorted column values
+			for (var i in sortedValues) {
+				// if ascending
+				if (asc) {
+					// loop the returned sorted column values in reverse
 					// add into the rows array from their original position
-					rows.push(data.rows[sortedValues[i].index]);
+					rows.push(data.rows[sortedValues[i].originalIndex]);
 					// if this value was selected add it's new position
 					if (sortedValues[i].selected) selectedRowNumber.push(i*1 + 1);
-				}
-			} else {
-				// loop the returned sorted column values in reverse
-				for (var i in sortedValues) {
+					var row = $(sortedValues[i].element);
+					prevRow.after(row);
+					prevRow = row;
+				} else {
+					// invert i
+					ii = sortedValues.length - i - 1;
 					// and add into the rows array from their original position
-					rows.push(data.rows[sortedValues[sortedValues.length - i - 1].index]);
+					rows.push(data.rows[sortedValues[ii].originalIndex]);
 					// if this value was selected add it's new position
 					if (sortedValues[i].selected) selectedRowNumber.push(sortedValues.length - i);
+					var row = $(sortedValues[ii].element);
+					prevRow.after(row);
+					prevRow = row;
 				}
 			}
 			// replace the data rows with the placed rows
 			data.rows = rows;
 			// replace the selectedRowNumber if need be
 			if (selectedRowNumber.length) data.selectedRowNumber = selectedRowNumber;
+			if (details && details.dataStorageType) saveGridDataStoreData(id, details, data);
 			// set the sorted data
 			details.sorting = true;
-			setData_grid(ev, id, null, details, data);
 		}
 	}
-} 
+}
 
 // get the index of the selected row, ignoring rows without rowStyle1 and rowStyle2 which can be introduced by custom code
 function getGridSelectedRowNumber(id, ev, details) {
@@ -1000,7 +1014,7 @@ if (_gridLoaders[id] && _gridLoaders[id].timeouts && _gridLoaders[id].timeouts.l
 // create an empty load
 _gridLoaders[id] = {timeouts:[]};
 
-// get the grid control	        
+// get the grid control
 var grid = $("#" + id);
 // make sure it's the tables
 if (!grid.is("table")) grid = grid.find("table");
