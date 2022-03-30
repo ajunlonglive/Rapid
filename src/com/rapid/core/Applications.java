@@ -195,20 +195,16 @@ public class Applications {
 	public Application getLatestVersion(String id, int status) {
 		// assume there are no applications
 		Application application = null;
-		// start with a very old date!
-		Date oldestDate = new Date(1);
 		// get the versions of this app
 		Versions versions = getVersions(id);
 		// if we got some
 		if (versions != null) {
 			// loop them and retain highest version
-			for (String appId : versions.keySet()) {
+			for (String versionId : versions.keySet()) {
 				// get the application version
-				Application applicationVersion = versions.get(appId);
+				Application applicationVersion = versions.get(versionId);
 				// if this application created date is later and the right status
-				if (applicationVersion.getCreatedDate().after(oldestDate) && (applicationVersion.getStatus() == status || status < 0)) {
-					// update oldest date
-					oldestDate = applicationVersion.getCreatedDate();
+				if (applicationVersion.getStatus() == status || status < 0) {
 					// retain version
 					application = applicationVersion;
 				}
