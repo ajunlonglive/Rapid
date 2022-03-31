@@ -1042,11 +1042,6 @@ if (details.columns) {
 	if (data && data.fields) details.dynamicColumns = data.fields.map(function(field) { return { visible: true, field: field }; });
 }
 
-// save any datastore data
-// dontStore comes from a storage event listener and should prevent a new storage event
-var shouldStore = details.dontStore !== true;
-if (details && details.dataStorageType && shouldStore) saveGridDataStoreData(id, details, data);
-
 // reset any sort indicators if not being used for sorting
 grid.find("span.sort").html("&#xf0dc");
 // if we have data
@@ -1057,7 +1052,12 @@ if (data !== undefined && data !== "") {
 	
 	// if we have some rows to load
 	if (data && data.rows) {
-	
+		
+		// save any datastore data
+		// dontStore comes from a storage event listener and should prevent a new storage event
+		var shouldStore = details.dontStore !== true;
+		if (details && details.dataStorageType && shouldStore) saveGridDataStoreData(id, details, data);
+		
 		if (!data.selectedPageIndex) data.selectedPageIndex = 0;
 		
 		// retain number of rows we're about to load
