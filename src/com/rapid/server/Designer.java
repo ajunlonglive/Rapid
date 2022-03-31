@@ -2674,8 +2674,23 @@ public class Designer extends RapidHttpServlet {
 
 												}
 
-												// now initialise with the new id but don't make the resource files (this reloads the pages and sets up the security adapter)
-												appNew.initialise(context, false);
+												try {
+
+													// now initialise with the new id but don't make the resource files (this reloads the pages and sets up the security adapter)
+													appNew.initialise(context, false);
+
+												} catch (Exception ex) {
+
+													// log
+													logger.error("Error initialising app on import : " + ex.getMessage(), ex);
+
+													// usually the security adapter so set back to Rapid
+													appNew.setSecurityAdapterType("rapid");
+
+													// try again
+													appNew.initialise(context, false);
+
+												}
 
 												// get the security for this application
 												SecurityAdapter security = appNew.getSecurityAdapter();
