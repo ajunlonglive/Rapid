@@ -4,11 +4,10 @@
 <style>
 body {
 	margin: 0;
-	padding: 0.5em;
 	background: #333;
 	font-family: sans-serif;
 	color: #DDD;
-	overflow: overlay;
+	overflow: hidden;
 }
 
 h1 {
@@ -22,6 +21,12 @@ header {
 	padding: 1em;
 }
 
+#pagesGroup {
+	overflow-y: overlay;
+	height: calc(100vh - 4.2rem);
+	scroll-snap-type: y proximity;
+}
+
 .pageView {
 	display: inline-block;
 	width: 20em;
@@ -31,11 +36,12 @@ header {
 	padding: 0 1rem 1.5rem;
 	box-sizing: border-box;
 	transition: width 0.25s linear, height 0.25s linear, padding 0.25s linear;
+	scroll-snap-align: start;
 }
 
 .pageView .pageContainer {
 	width: 100%;
-	height: calc(100% - 2em);
+	height: calc(100% - 5rem);
 	overflow: hidden;
 	box-shadow: 0 0 0 0.05rem #ffffff88;
 }
@@ -54,7 +60,7 @@ header {
 	margin: 0;
 	white-space: nowrap;
 	display: inline-block;
-	max-width: calc(100% - 4rem);
+	max-width: calc(100% - 4em);
 	overflow: hidden;
 }
 
@@ -89,10 +95,6 @@ header .action {
 
 .shiftKey iframe {
 	pointer-events: none;
-}
-
-body.shiftKey {
-	overflow: hidden;
 }
 
 </style>
@@ -162,6 +164,10 @@ addEventListener("keydown", function(keydown) {
 addEventListener("keyup", function(keyup) {
 	document.body.classList.remove("shiftKey");
 });
+
+setInterval(function() {
+	document.body.focus();
+}, 1000);
 
 var pages = document.querySelectorAll(".page");
 
