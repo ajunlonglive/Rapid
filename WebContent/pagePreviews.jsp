@@ -4,15 +4,11 @@
 <style>
 body {
 	margin: 0;
+	padding: 0.5em;
 	background: #333;
 	font-family: sans-serif;
 	color: #DDD;
-	transition: background 0.25s ease-in-out, color 0.25s ease-in-out;
-}
-
-.nativeScale {
-	background: #111;
-	color: #AAA;
+	overflow: overlay;
 }
 
 h1 {
@@ -20,11 +16,6 @@ h1 {
 	display: inline-block;
 	font-size: 2em;
 	color: #EEE;
-	transition: color 0.25s ease-in-out;
-}
-
-.nativeScale h1 {
-	color: #AAA;
 }
 
 header {
@@ -33,28 +24,20 @@ header {
 
 .pageView {
 	display: inline-block;
-	width: 350px;
-	height: 350px;
-	max-height: 90vh;
-	padding: 0 1em 1.5em;
+	width: 20em;
+	height: 25em;
+	max-height: 100%;
+	max-width: 100%;
+	padding: 0 1rem 1.5rem;
 	box-sizing: border-box;
-	transition: width 0.25s ease-in-out, height 0.25s ease-in-out, padding 0.25s ease-in-out;
-}
-
-.singleView .pageView {
-	width: 100%;
-	height: 95%;
+	transition: width 0.25s linear, height 0.25s linear, padding 0.25s linear;
 }
 
 .pageView .pageContainer {
 	width: 100%;
 	height: calc(100% - 2em);
 	overflow: hidden;
-	box-shadow: 0 0 0 0.05em #ffffff88;
-}
-
-.singleView .pageContainer {
-	height: calc(100% - 2em);
+	box-shadow: 0 0 0 0.05rem #ffffff88;
 }
 
 .pageView .page {
@@ -63,20 +46,21 @@ header {
 	transform: scale(0.25) translate(-150%, -150%);
 	border: none;
 	background: #FFF;
+	transition: width 0.25s linear, height 0.25s linear, transform 0.25s linear;
 }
 
 .pageView .name {
-	font-size: 1.1em;
+	font-size: 1.1rem;
 	margin: 0;
 	white-space: nowrap;
 	display: inline-block;
-	max-width: calc(100% - 4em);
+	max-width: calc(100% - 4rem);
 	overflow: hidden;
 }
 
 .pageView .label {
 	display: block;
-	margin-top: 0.5em;
+	margin-top: 0.5rem;
 }
 
 .action {
@@ -84,12 +68,12 @@ header {
 	color: #DDD;
 	background: #444;
 	border: none;
-	margin-left: 0.2em;
-	margin-bottom: 0.2em;
+	margin-left: 0.2rem;
+	margin-bottom: 0.2rem;
 	width: 2.5em;
 	height: 2em;
 	cursor: pointer;
-	font-size: 0.75em;
+	font-size: 0.75rem;
 	padding: 0;
 }
 
@@ -101,6 +85,14 @@ header {
 header .action {
 	font-size: 1em;
 	width: 2em;
+}
+
+.shiftKey iframe {
+	pointer-events: none;
+}
+
+body.shiftKey {
+	overflow: hidden;
 }
 
 </style>
@@ -138,7 +130,7 @@ if (app != null) {
 		out.write("<h1>" + app.getTitle() + " - " + app.getVersion() + "</h1>");
 		out.write("<a href='~?a=rapid&appId=" + a + (v != null ? "&version=" + v : "") + "'><button type='button' class='action'><i class='fa fa-cog' aria-hidden='true'></i></button></a>");
 		out.write("</header>");
-		out.write("<div>");
+		out.write("<div id='pagesGroup'>");
 		for (Pages.PageHeader pageHeader : sortedPagesHeaders) {
 			String p = pageHeader.getId();
 			String pageName = pageHeader.getName();
@@ -161,24 +153,38 @@ if (app != null) {
 %>
 <script>
 
-var setPageSize = function() {
-	document.body.style.fontSize = "calc(1em / " + window.devicePixelRatio + ")";
-	if (window.devicePixelRatio === 4) {
-		document.body.classList.add("nativeScale");
-	} else {
-		document.body.classList.remove("nativeScale");
+addEventListener("keydown", function(keydown) {
+	if (keydown.shiftKey) {
+		document.body.classList.add("shiftKey");
 	}
-	if (window.devicePixelRatio >= 2.5) {
-		document.body.classList.add("singleView");
-	} else {
-		document.body.classList.remove("singleView");
-	}
-};
-
-addEventListener("resize", function(ev) {
-	setTimeout(setPageSize);
 });
 
-setTimeout(setPageSize);
+addEventListener("keyup", function(keyup) {
+	document.body.classList.remove("shiftKey");
+});
+
+var pages = document.querySelectorAll(".page");
+
+var size = 0;
+document.body.addEventListener("wheel", function(scroll) {
+	if (scroll.shiftKey) {
+		var direction = -Math.sign(scroll.deltaY);
+		size = Math.min(1, Math.max(0, size + (direction * 0.1)));
+		console.log("size: " + size);
+		var scale = Math.pow(1 + size, 2);
+		pagesGroup.style.fontSize = scale + "em";
+		
+		var counterScale = 0.25 * scale;
+		var pc = (1 / counterScale) * 100;
+		var pageScale = pc + "%";
+		var trans = (pc - 100) / 2;
+		for (var i = 0; i < pages.length; i++) {
+			var style = pages[i].style;
+			style.width = pageScale;
+			style.height = pageScale;
+			style.transform = "scale(" + counterScale + ") translate(-" + trans + "%, -" + trans + "%)";
+		}
+	}
+});
 
 </script>
