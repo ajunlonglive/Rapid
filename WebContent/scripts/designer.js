@@ -3060,7 +3060,7 @@ $(document).ready( function() {
 				break;
 			}
 			// if we are looking for an action (note we lower-cased it above)
-			if (val.indexOf("_a") > 0) {
+			if (val.indexOf("_a") >= 0) {
 				// check control has events
 				if (c.events) {
 					// loop events
@@ -3074,7 +3074,7 @@ $(document).ready( function() {
 								// get the action
 								var a = e.actions[k];
 								// check the id or name
-								if (a.id.toLowerCase().indexOf(val)) {
+								if (actionHasValWithin(a, val)) {
 									// if control is different from currently selected, select this one
 									if (!_selectedControl || _selectedControl.id != c.id) selectControl(c);
 									// we're done!
@@ -3087,6 +3087,13 @@ $(document).ready( function() {
 			}
 		}
 	});
+	
+	// actionHasValWithin : (Action, String) => Boolean
+	// determine if the action or any of its descendents match the value
+	function actionHasValWithin(a, val) {
+		return a.id.toLowerCase().indexOf(val) >= 0
+			|| a.childActions && a.childActions.some(function(a) { return actionHasValWithin(a, val) });
+	}
 	
 	// control highlight
 	$("#pageMapHighlight").click( function(ev){
