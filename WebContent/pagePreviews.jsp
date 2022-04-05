@@ -17,6 +17,11 @@ h1 {
 	color: #EEE;
 }
 
+h1 .version {
+	font-weight:400;
+	color:#AAA;
+}
+
 header {
 	padding: 1em;
 }
@@ -24,35 +29,40 @@ header {
 #pagesGroup {
 	overflow-y: overlay;
 	height: calc(100vh - 4.2rem);
-	scroll-snap-type: y proximity;
+	scroll-snap-type: y mandatory;
+	font-size: 100vw;
+	transition-duration: 0.25s;
 }
 
 .pageView {
 	display: inline-block;
-	width: 20em;
-	height: 25em;
+	width: 1em;
+	height: 1em;
 	max-height: 100%;
-	max-width: 100%;
-	padding: 0 1rem 1.5rem;
+	padding: 1rem;
+	padding-top: 1px;
 	box-sizing: border-box;
-	transition: width 0.25s linear, height 0.25s linear, padding 0.25s linear;
+	transition: width linear, height linear, padding linear;
+	transition-duration: inherit;
 	scroll-snap-align: start;
 }
 
 .pageView .pageContainer {
 	width: 100%;
-	height: calc(100% - 5rem);
+	height: calc(100% - 3rem);
 	overflow: hidden;
 	box-shadow: 0 0 0 0.05rem #ffffff88;
+	transition-duration: inherit;
 }
 
 .pageView .page {
-	width: 400%;
-	height: 400%;
-	transform: scale(0.25) translate(-150%, -150%);
+	width: 100%;
+	height: 100%;
+	transform: scale(1) translate(0, 0);
 	border: none;
 	background: #FFF;
-	transition: width 0.25s linear, height 0.25s linear, transform 0.25s linear;
+	transition: width linear, height linear, transform linear;
+	transition-duration: inherit;
 }
 
 .pageView .name {
@@ -129,7 +139,7 @@ if (app != null) {
 		Pages pages = app.getPages();
 		Pages.PageHeaders sortedPagesHeaders = pages.getSortedPages();
 		out.write("<header>");
-		out.write("<h1>" + app.getTitle() + " - " + app.getVersion() + "</h1>");
+		out.write("<h1>" + app.getTitle() + " <span class='version'>" + app.getVersion() + "</span></h1>");
 		out.write("<a href='~?a=rapid&appId=" + a + (v != null ? "&version=" + v : "") + "'><button type='button' class='action'><i class='fa fa-cog' aria-hidden='true'></i></button></a>");
 		out.write("</header>");
 		out.write("<div id='pagesGroup'>");
@@ -171,24 +181,27 @@ setInterval(function() {
 
 var pages = document.querySelectorAll(".page");
 
-var size = 0;
-document.body.addEventListener("wheel", function(scroll) {
-	if (scroll.shiftKey) {
-		var direction = -Math.sign(scroll.deltaY);
-		size = Math.min(1, Math.max(0, size + (direction * 0.1)));
-		console.log("size: " + size);
-		var scale = Math.pow(1 + size, 2);
-		pagesGroup.style.fontSize = scale + "em";
-		
-		var counterScale = 0.25 * scale;
-		var pc = (1 / counterScale) * 100;
+var scale = 1;
+document.body.addEventListener("wheel", function(wheel) {
+	if (wheel.shiftKey) {
+		if (wheel.deltaY < 0) {
+			// in
+			scale = Math.min(1, scale * Math.pow(1.001, Math.abs(wheel.deltaY)));
+		} else {
+			// out
+			scale = Math.max(0.164, scale / Math.pow(1.001, Math.abs(wheel.deltaY)));
+		}
+		var rounded = Math.round(scale * 100) / 100;
+		//pagesGroup.style.transitionDuration = (Math.abs(scroll.deltaY) / 400) + "s";
+		pagesGroup.style.fontSize = (rounded * 100) + "vw";
+		var pc = (1 / rounded) * 100;
 		var pageScale = pc + "%";
 		var trans = (pc - 100) / 2;
 		for (var i = 0; i < pages.length; i++) {
 			var style = pages[i].style;
 			style.width = pageScale;
 			style.height = pageScale;
-			style.transform = "scale(" + counterScale + ") translate(-" + trans + "%, -" + trans + "%)";
+			style.transform = "scale(" + rounded + ") translate(-" + trans + "%, -" + trans + "%)";
 		}
 	}
 });
