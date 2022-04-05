@@ -3059,27 +3059,24 @@ $(document).ready( function() {
 				// we're done!
 				break;
 			}
-			// if we are looking for an action (note we lower-cased it above)
-			if (val.indexOf("_a") >= 0) {
-				// check control has events
-				if (c.events) {
-					// loop events
-					for (var j in c.events) {
-						// get event
-						var e = c.events[j];
-						// if event has actions
-						if (e.actions) {
-							// loop actions
-							for (var k in e.actions) {
-								// get the action
-								var a = e.actions[k];
-								// check the id or name
-								if (actionHasValWithin(a, val)) {
-									// if control is different from currently selected, select this one
-									if (!_selectedControl || _selectedControl.id != c.id) selectControl(c);
-									// we're done!
-									break;
-								}
+			// check control has events
+			if (c.events) {
+				// loop events
+				for (var j in c.events) {
+					// get event
+					var e = c.events[j];
+					// if event has actions
+					if (e.actions) {
+						// loop actions
+						for (var k in e.actions) {
+							// get the action
+							var a = e.actions[k];
+							// check the id or name
+							if (actionHasValWithin(a, val)) {
+								// if control is different from currently selected, select this one
+								if (!_selectedControl || _selectedControl.id != c.id) selectControl(c);
+								// we're done!
+								break;
 							}
 						}
 					}
