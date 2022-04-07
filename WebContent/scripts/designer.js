@@ -3046,6 +3046,9 @@ $(document).ready( function() {
 		var val = $(ev.target).val();
 		// lowercase it if we got one
 		if (val) val = val.toLowerCase();
+		
+		if (controlHasValWithin(_page, val)) selectControl(_page);
+		
 		// get the flat list of controls
 		var controls = getControls();
 		// loop the controls
@@ -3060,30 +3063,33 @@ $(document).ready( function() {
 				break;
 			}
 			// check control has events
-			if (c.events) {
-				// loop events
-				for (var j in c.events) {
-					// get event
-					var e = c.events[j];
-					// if event has actions
-					if (e.actions) {
-						// loop actions
-						for (var k in e.actions) {
-							// get the action
-							var a = e.actions[k];
-							// check the id or name
-							if (actionHasValWithin(a, val)) {
-								// if control is different from currently selected, select this one
-								if (!_selectedControl || _selectedControl.id != c.id) selectControl(c);
-								// we're done!
-								break;
-							}
-						}
+			if (c.events) controlHasValWithin(c.events, val);
+		}
+	});
+	
+	function controlHasValWithin(c, val) {
+		var events = c.events;
+		// loop events
+		for (var j in c.events) {
+			// get event
+			var e = events[j];
+			// if event has actions
+			if (e.actions) {
+				// loop actions
+				for (var k in e.actions) {
+					// get the action
+					var a = e.actions[k];
+					// check the id or name
+					if (actionHasValWithin(a, val)) {
+						// if control is different from currently selected, select this one
+						if (!_selectedControl || _selectedControl.id != c.id) return true;
+						// we're done!
+						break;
 					}
 				}
 			}
 		}
-	});
+	}
 	
 	// actionHasValWithin : (Action, String) => Boolean
 	// determine if the action or any of its descendents match the value
