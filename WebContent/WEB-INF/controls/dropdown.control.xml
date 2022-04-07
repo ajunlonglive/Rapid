@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -74,6 +74,15 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <refreshHtml>true</refreshHtml>
 	             <refreshProperties>true</refreshProperties>
 	            <helpHtml>Defines the list of options in the dropdown. If codes are used they will be the value for that row. You can paste text and codes from spreadsheets.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>filter</key>
+	            <name>Searching</name>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>Allows the user to search through the available options as they type.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -152,7 +161,11 @@ return html;
 		
 		<getDetailsFunction>
 			<![CDATA[
-return {codes:this.codes};
+if (this.filter) {
+	return {codes:this.codes, filter:this.filter};
+} else {
+	return {codes:this.codes};
+}
 			]]>
 		</getDetailsFunction>
 		
@@ -274,11 +287,168 @@ return "#" + this.id;
 	    
 	    <initJavaScript>
 	    	<![CDATA[
+// add the search / filter if required
+if (details && details.filter) {
+
+	// jQuery UI overrides to suport blank entries
+
+	$.ui.autocomplete.prototype._renderItem = function(e, i) {
+    	return $("<li>").append($("<div>").html(i.label)).appendTo(e);
+    };
+    
+	$.ui.menu.prototype._isDivider = function(t) {
+		return false;
+	};
+    
+    // custom combo box
+
+	$.widget( "custom.combobox", {
+
+      _create: function() {
+        this.wrapper = $("<span>").addClass("custom-combobox").insertAfter(this.element);
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ), value = selected.val() ? selected.text() : "";
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .attr( "maxLength", details.maxLength || "524288")
+          .addClass( "custom-combobox-input form-control" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          }).on( "click", function() {
+          	var input = $(this);
+            input.trigger( "focus" );
+            // Close if already visible
+            if ( input.autocomplete( "widget" ).is( ":visible" ) ) {
+              input.autocomplete( "widget" ).hide();
+              return;
+            }
+            // if showing placeholder empty
+            if (details.placeholder && details.placeholder == input.val()) input.val("").removeClass("placeholder");
+            // Pass empty string as value to search for, displaying all results
+            input.autocomplete( "search", "" );
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+            ui.item.option.selected = true;
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+            // fire the change event
+            $( "#" + id).trigger("change");
+          },
+          autocompletechange: "_changed"
+        });
+        
+        if (details.placeholder) this.input.val(details.placeholder).addClass("placeholder");
+        
+      },
+      
+      _createShowAllButton: function() {
+        var input = this.input, wasOpen = false;
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .appendTo( this.wrapper )
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle" )
+          .on( "mousedown", function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .on( "click", function() {
+            input.trigger( "focus" );
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+            // Pass empty string as value to search for, displaying all results
+            input.autocomplete( "search", "" );
+          });
+      },
+      
+      _source: function(request,response) {
+        var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+        response(this.element.children("option").map(function() {
+          var text = $(this).text();
+          var value = text;
+          if (!text) {
+            text = " ";
+            value = "";
+          }
+          if ((!request.term || matcher.test(text)) && !(details.placeholder && details.placeholder == text)) {
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+          }
+        }));
+      },
+      
+      _changed: function( event, ui ) {
+        // if there is no item selected
+        if (!ui.item) {
+	        // Search for a match (case-insensitive)
+	        var value = this.input.val(), valueLowerCase = value.toLowerCase(), valid = false;
+	        this.element.children( "option:not([disabled])" ).each( function() {
+	          if ( $(this).text().toLowerCase() === valueLowerCase ) {
+	            this.selected = valid = true;
+	            return false;
+	          }
+	        });
+	        // check valid
+			if (valid) {
+				// remove placeholder class
+				if (details.placeholder) this.input.removeClass("placeholder");
+			} else {
+				// if custom values are off
+				if (details.codes || !details.customValue) {
+					// if there is a placeholder
+					if (details.placeholder) {
+						// add placeholder back
+						this.input.val( details.placeholder );
+						this.input.addClass("placeholder");
+					} else {
+						this.input.val( "" );
+					}
+					// Remove invalid value
+					this.element.val( "" );
+					this.input.autocomplete( "instance" ).term = "";
+				}
+				// fire the change event for the cleanup, or custom value
+				$( "#" + id).trigger("change");
+			}
+	     }
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+      
+    });
+ 
+    $( "#" + id ).combobox();
+
+}
+
 // if there is a data-value attribute, update it on change
-$("#" + id).on("change", function(ev){
+$( "#" + id + "input" ).on("change", function(ev){
+
 	var i = $(this);
+	
 	if (i.is("[data-value]")) i.attr("data-value", i.val());
+
 });
+
 	    	]]>
 	    </initJavaScript>
 	    

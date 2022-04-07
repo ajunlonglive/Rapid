@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -865,7 +865,8 @@ input[type=checkbox]:focus:before, input[type=radio]:focus:before {
   background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(184, 1, 1, 0.5) 100%);
 }
 
-select {
+select,
+input.custom-combobox-input.ui-autocomplete-input {
   padding: 7px;
   display: inline-block;
   cursor: pointer;
@@ -877,23 +878,56 @@ select {
   transition: background 0.5s ease;
 }
 
-select option {
+input.custom-combobox-input.ui-autocomplete-input {
+	cursor: text;
+}
+
+select option,
+li.ui-menu-item {
   color: #000;
   background: #b2b2b2;
 }
 
-select:hover, select:focus-within {
+ul.ui-menu {
+	padding: 0;
+	z-index: 1;
+	display: inline-block;
+}
+
+li.ui-menu-item {
+	list-style-type: none;
+	cursor: default;
+	padding: 2px 7px !important;
+}
+
+ul.ui-menu li.ui-menu-item:hover {
+	color: #FFF;
+	background: #494949;
+}
+
+ul.ui-menu li.ui-menu-item .ui-menu-item-wrapper {
+	background: none !important;
+}
+
+select:hover, select:focus-within,
+input.custom-combobox-input.ui-autocomplete-input:hover,
+input.custom-combobox-input.ui-autocomplete-input:focus-within {
   color: #000;
   background: #b2b2b2;
   outline: 1px solid #b2b2b2;
 }
 
-select {
+select,
+input.custom-combobox-input.ui-autocomplete-input {
 	height: 30px;
 	-webkit-border-radius: 0;
 	border: 0;
 	outline: 1px solid #494949;
 	outline-offset: -1px;
+}
+
+.ui-helper-hidden-accessible div {
+	visibility: hidden;
 }
 
 .dropdown1 {
