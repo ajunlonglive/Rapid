@@ -379,7 +379,19 @@ function sortGridByColumn(ev, id, details, column, asc) {
 			// an array for all values in this column
 			var sortedValues = [];
 			// populate the array for each row with an object with the original index and value
-			for (var i in data.rows) sortedValues.push( {originalIndex:i, element: elements[i] , value:data.rows[i][dataColumn]} );
+			for (var i in data.rows) {
+				var row = {};
+				row.originalIndex = i;
+				row.element = elements[i];
+				row.value = data.rows[i][dataColumn]
+				for (var fieldIndex in data.fields) {
+					row[fieldIndex] = data.rows[i][fieldIndex];
+					if (data.fields[fieldIndex] !== "originalIndex" && data.fields[fieldIndex] !== "element" && data.fields[fieldIndex] !== "value") {
+						row[data.fields[fieldIndex]] = data.rows[i][fieldIndex];
+					}
+				}
+				sortedValues.push(row);
+			}
 			
 			// if selected rows
 			if (data.selectedRowNumber) {
