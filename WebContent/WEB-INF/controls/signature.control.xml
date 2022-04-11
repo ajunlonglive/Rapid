@@ -182,22 +182,9 @@ if (signature && signature.points && signature.points.length > 0) {
 	    
 	    <setDataJavaScript>
 	        <![CDATA[
-
-var isPageLoadEvent = function(f) {
-	if (f) {
-		return f.caller && /^Event_pageload/.test(f.caller.name) || isPageLoadEvent(f.caller);
-	} else {
-		return false;
-	}
-};
-
-var delayedCall = isPageLoadEvent(setData_signature) ?
-	function(f) { setTimeout(f, 300) } : 
-	function(f) { f() };
-
-delayedCall(function() {
-	var signature = _signatureControls[id];
-	if (signature) {
+var signature = _signatureControls[id];
+if (signature) {
+	setTimeout(function() {
 		data = makeDataObject(data, field);
 		if (data && data.rows) {
 			// call signature from data url method
@@ -207,8 +194,9 @@ delayedCall(function() {
 		} else {
 			signature.clear();
 		}
-	}
-});
+		signature.setBefore = true;
+	}, signature.setBefore ? 0 : 300);
+}
 	        ]]>
 	    </setDataJavaScript>
 	    
