@@ -1351,7 +1351,8 @@ function selectItem(galleryControlId, size, mediums, message, quality, allowMult
 	$(window).resize();
 	
 	$("#closeInputPage, .inputImagePage.dialogueCover").on("click", function() {
-		$("body").css({"overflow":"unset"});
+		// allow page scrolling again
+		$("body").css({"overflow":"unset", "touch-action":"auto"});
 		$(".inputImagePage").remove();
 	});
 	
@@ -1383,7 +1384,8 @@ function selectItem(galleryControlId, size, mediums, message, quality, allowMult
 					// call gallery set data to display image
 					setData_gallery(loadEvent, galleryControlId, "url", galleryDetails, dataURL);
 
-					$("body").css({"overflow":"unset"});
+					// allow page scrolling again
+					$("body").css({"overflow":"unset", "touch-action":"auto"});
 					$(".inputImagePage").remove();
 
 				});
