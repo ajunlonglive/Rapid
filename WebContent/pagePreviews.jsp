@@ -31,7 +31,6 @@ header {
 	height: calc(100vh - 4.2rem);
 	scroll-snap-type: y mandatory;
 	font-size: 100vw;
-	transition-duration: 0.25s;
 }
 
 .pageView {
@@ -40,10 +39,8 @@ header {
 	height: 1em;
 	max-height: 100%;
 	padding: 1rem;
-	padding-top: 1px;
+	padding-top: 0;
 	box-sizing: border-box;
-	transition: width linear, height linear, padding linear;
-	transition-duration: inherit;
 	scroll-snap-align: start;
 }
 
@@ -51,8 +48,6 @@ header {
 	width: 100%;
 	height: calc(100% - 3rem);
 	overflow: hidden;
-	box-shadow: 0 0 0 0.05rem #ffffff88;
-	transition-duration: inherit;
 }
 
 .pageView .page {
@@ -61,8 +56,6 @@ header {
 	transform: scale(1) translate(0, 0);
 	border: none;
 	background: #FFF;
-	transition: width linear, height linear, transform linear;
-	transition-duration: inherit;
 }
 
 .pageView .name {
@@ -180,6 +173,8 @@ setInterval(function() {
 }, 1000);
 
 var pages = document.querySelectorAll(".page");
+var pagesArray = [];
+for (var i = 0; i < pages.length; i++) pagesArray.push(pages[i]);
 
 var scale = 1;
 document.body.addEventListener("wheel", function(wheel) {
@@ -189,21 +184,28 @@ document.body.addEventListener("wheel", function(wheel) {
 			scale = Math.min(1, scale * Math.pow(1.001, Math.abs(wheel.deltaY)));
 		} else {
 			// out
-			scale = Math.max(0.164, scale / Math.pow(1.001, Math.abs(wheel.deltaY)));
+			scale = Math.max(0.1, scale / Math.pow(1.001, Math.abs(wheel.deltaY)));
 		}
 		var rounded = Math.round(scale * 100) / 100;
-		//pagesGroup.style.transitionDuration = (Math.abs(scroll.deltaY) / 400) + "s";
 		pagesGroup.style.fontSize = (rounded * 100) + "vw";
 		var pc = (1 / rounded) * 100;
 		var pageScale = pc + "%";
 		var trans = (pc - 100) / 2;
-		for (var i = 0; i < pages.length; i++) {
-			var style = pages[i].style;
+		pagesArray.forEach(function(page) {
+			var style = page.style;
 			style.width = pageScale;
 			style.height = pageScale;
 			style.transform = "scale(" + rounded + ") translate(-" + trans + "%, -" + trans + "%)";
-		}
+		});
 	}
+});
+
+pagesArray.forEach(function(page) {
+	page.addEventListener("load", function() {
+		page.contentWindow.document.body.addEventListener("click", function() {
+			window.focus();
+		});
+	});
 });
 
 </script>
