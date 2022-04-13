@@ -186,7 +186,7 @@ document.body.addEventListener("wheel", function(wheel) {
 			// out
 			scale = Math.max(0.1, scale / Math.pow(1.001, Math.abs(wheel.deltaY)));
 		}
-		var rounded = Math.round(scale * 100) / 100;
+		var rounded = Math.round(scale * 10e3) / 10e3;
 		pagesGroup.style.fontSize = (rounded * 100) + "vw";
 		var pc = (1 / rounded) * 100;
 		var pageScale = pc + "%";
