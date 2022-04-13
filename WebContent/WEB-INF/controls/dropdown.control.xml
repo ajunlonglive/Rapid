@@ -117,6 +117,53 @@ function getProperty_dropdown_value(ev, id, field, details) {
 				</contents>
 			</resource>
 	    
+	    	<resource>
+				<type>css</type>
+				<contents>
+.custom-combobox {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.custom-combobox-toggle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  padding: 0;
+  width: 25px;
+  background: url(../../../images/triangleDownWhite_8x8.png) no-repeat center;
+}
+
+.ui-autocomplete {
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.ui-autocomplete .ui-menu-item {
+  padding: 0 10px;
+}
+
+.ui-menu-item > div {
+	border: 1px solid rgba(0,0,0,0);
+}
+
+.ui-helper-hidden-accessible {
+  display:none;
+}
+
+.ui-menu-item-wrapper {
+  min-height: 1.5em;
+}
+
+.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front {
+  z-index: 1005;
+}
+				</contents>
+			</resource>
+	    
 	    </resources>
 	    
 	    <getHtmlFunction>
