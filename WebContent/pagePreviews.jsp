@@ -27,10 +27,15 @@ header {
 }
 
 #pagesGroup {
-	overflow-y: overlay;
+	overflow-y: scroll;
+	overflow-x: hidden;
 	height: calc(100vh - 4.2rem);
 	scroll-snap-type: y mandatory;
 	font-size: 100vw;
+}
+
+.shiftKey #pagesGroup {
+	overflow-y: hidden;
 }
 
 .pageView {
@@ -48,6 +53,20 @@ header {
 	width: 100%;
 	height: calc(100% - 3rem);
 	overflow: hidden;
+}
+
+.overlayContainer {
+	position: relative;
+	height: 100%;
+}
+
+.overlay {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	pointer-events: none;
+	box-shadow: inset 0 0 0 1px #ffffff44;
 }
 
 .pageView .page {
@@ -142,7 +161,10 @@ if (app != null) {
 			String pageTitle = pageHeader.getTitle();
 			out.write("<div class='pageView'>");
 			out.write("<div class='pageContainer'>");
+			out.write("<div class='overlayContainer'>");
 			out.write("<iframe class='page' src='pagePreview.jsp?a=" + a + "&p=" + p + "'></iframe>");
+			out.write("<div class='overlay'></div>");
+			out.write("</div>");
 			out.write("</div>");
 			out.write("<div class='label'>");
 			out.write("<p class='name'>" + pageTitle + "</p>");
@@ -158,14 +180,29 @@ if (app != null) {
 %>
 <script>
 
+var shiftDown = false;
+
 addEventListener("keydown", function(keydown) {
 	if (keydown.shiftKey) {
-		document.body.classList.add("shiftKey");
+		if (!shiftDown) {
+			var widthScrollbar = pagesGroup.clientWidth;
+			document.body.classList.add("shiftKey");
+			requestAnimationFrame(function() {
+				var width = pagesGroup.clientWidth;
+				var d = width - widthScrollbar;
+				pagesGroup.style.paddingRight = d + "px";
+			});
+		shiftDown = true;
+		}
 	}
 });
 
 addEventListener("keyup", function(keyup) {
-	document.body.classList.remove("shiftKey");
+	if (keyup.key === "Shift") {
+		shiftDown = false;
+		document.body.classList.remove("shiftKey");
+		pagesGroup.style.paddingRight = "0";
+	}
 });
 
 setInterval(function() {
@@ -202,7 +239,7 @@ document.body.addEventListener("wheel", function(wheel) {
 
 pagesArray.forEach(function(page) {
 	page.addEventListener("load", function() {
-		page.contentWindow.document.body.addEventListener("click", function() {
+		page.contentWindow.document.addEventListener("click", function() {
 			window.focus();
 		});
 	});
