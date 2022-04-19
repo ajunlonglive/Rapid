@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -145,8 +145,8 @@ function getDatabaseActionMaxSequence(actionId) {
 function getDatabaseActionInputData(multiRow, inputs, sourceId, sourceData) {
 	// start data object
 	var data = {};
-	// check multirow
-	if (multiRow) {
+	// check multirow and inputs, otherwise use default
+	if (multiRow && inputs) {
 		// turn any json objects into Rapid data object
 		sourceData = makeDataObject(sourceData);
 		// check there is sourceData and rows
