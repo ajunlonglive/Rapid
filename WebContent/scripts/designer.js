@@ -1981,15 +1981,6 @@ function doPaste(control, _parent, avoidNameCheck) {
 	// get a string from the cleaned controls
 	var pasteString = JSON.stringify(cleanControl);
 	
-	// loop the control ids in the paste string
-	for (var i = 0; i < _pasteControls.length; i++) {
-		// replace all occurrences of the ids in the paste string with a prefix so they don't conflict with ids in the page
-		pasteString = pasteString.replaceAll(_pasteControls[i].id, "p_" + _pasteControls[i].id);
-	}
-	
-	// parse the updated paste string back into a control object
-	control = JSON.parse(pasteString);
-	
 	// reset the paste map
 	_pasteMap = {};
 	
@@ -1998,6 +1989,14 @@ function doPaste(control, _parent, avoidNameCheck) {
 	
 	// it's a little different for the page (we can identify it as it doesn't have a parent)
 	if (_parent) {
+		
+		for (var i = 0; i < _pasteControls.length; i++) {
+			// replace all occurrences of the ids in the paste string with a prefix so they don't conflict with ids in the page
+			pasteString = pasteString.replaceAll(_pasteControls[i].id, "p_" + _pasteControls[i].id);
+		}
+	
+		// parse the updated paste string back into a control object
+		control = JSON.parse(pasteString);
 		
 		// create the new control
 		newControl = loadControl(control, _parent, true, true, false);
@@ -2054,7 +2053,7 @@ function doPaste(control, _parent, avoidNameCheck) {
 		}
 		
 		// for some reason we've seen p_'s remain in new ids so remove them here
-		newControlString = newControlString.replaceAll('"p_' + _page.id + '_',_page.id + '_');
+		newControlString = newControlString.replaceAll('"(p_)+' + _page.id + '_',_page.id + '_');
 		
 		// turn the replaced string back into an object
 		var mappedControl = JSON.parse(newControlString);
@@ -2073,12 +2072,14 @@ function doPaste(control, _parent, avoidNameCheck) {
 		
 		// fire window resize in case scroll bars need adjusting, etc. (this will re-select)
 		windowResize("paste");
-								
-				
+		
 	} else {
+	
+		// parse the updated paste string back into a control object
+		control = JSON.parse(pasteString);
 			
 		// remove all children
-		_page.object.children().remove();																				
+		_page.object.children().remove();
 		// reset the next id at this point
 		_nextId = 1;
 		// reset the control numbers at this point
