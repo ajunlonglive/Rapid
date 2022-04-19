@@ -642,7 +642,6 @@ if (details && details.filter) {
             source: $.proxy( this, "_source" )
           }).on( "click", function() {
           	var input = $(this);
-            input.trigger( "focus" );
             // Close if already visible
             if ( input.autocomplete( "widget" ).is( ":visible" ) ) {
               input.autocomplete( "widget" ).hide();
@@ -652,6 +651,8 @@ if (details && details.filter) {
             if (details.placeholder && details.placeholder == input.val()) input.val("").removeClass("placeholder");
             // Pass empty string as value to search for, displaying all results
             input.autocomplete( "search", "" );
+          }).on("focus", function(focus) {
+            $(this).select();
           });
  
         this._on( this.input, {
@@ -681,7 +682,6 @@ if (details && details.filter) {
             wasOpen = input.autocomplete( "widget" ).is( ":visible" );
           })
           .on( "click", function() {
-            input.trigger( "focus" );
             // Close if already visible
             if ( wasOpen ) {
               return;
