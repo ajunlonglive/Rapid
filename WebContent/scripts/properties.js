@@ -177,6 +177,8 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 			var controlClass = _controlTypes[control.type];
 			// if we're not ignoring the control and it has a name
 			if (controlClass && control.id != ignoreId && control.name) {
+				// get any run time properties
+				var properties = controlClass.runtimeProperties;
 				// if it has a get data function (for input), or a setDataJavaScript
 				if ((input && controlClass.getDataFunction) || (!input && controlClass.setDataJavaScript)) {
 					if (control.id == selectId && !gotSelected) {
@@ -187,16 +189,35 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 					}
 					if (_selectedControl && control.id == _selectedControl.id && _selectedControl.name && _selectedControl.type !== "page") {	
 						selectedOption = "<optgroup label='Selected control'>";
-						selectedOption += "<option value='" + control.id + "'>" + control.name + "</option>";
+						if (!properties) properties = [];
+						// promote if array
+						if (Array.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+						// loop them
+						for (var i in properties) {
+							// get the property
+							var property = properties[i];
+							// if we want inputs and there is a get function, or outputs and there is a set javascript
+							if ((input && property.getPropertyFunction) || (!input && property.setPropertyJavaScript)) {
+								// derive the key
+								var key = control.id + "." + property.type;
+								// is this an advanced property and this is off for the control?
+								var propertyTooAdvanced = control.advancedProperties != true && property.advanced == true;
+								// is this property selected?
+								var propertyIsSelected = (key == selectId && !gotSelected) ;
+								// don't show advanced properties unless the control allows or if the advanced property is already selected
+								if (!propertyTooAdvanced || propertyIsSelected) {
+									// add the option
+									selectedOption += "<option value='" + key + "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
+								}
+							}
+						}
 						selectedOption += "</optgroup>";
 					}
-				}				
-				// get any run time properties
-				var properties = controlClass.runtimeProperties;
+				}
 				// if there are runtimeProperties in the class
-				if (properties) {
+				if (properties && control.name) {
 					// promote if array
-					if ($.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+					if (Array.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
 					// loop them
 					for (var i in properties) {
 						// get the property
