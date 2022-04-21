@@ -110,6 +110,8 @@ var _pageOrderReset = false;
 
 // retain the currenty selected object
 var _selectedControl = null;
+// retain the control selected when clicking a control button to add a new one
+var _controlSelectedWhenControlButtonClicked = null;
 // the div which we use a border around the selected object
 var _selectionBorder;
 // the div which we cover the selected object with whilst we are moving it around
@@ -1401,6 +1403,8 @@ function loadVersion(forceLoad) {
     	
     	// when the mouse moves down on any control button
     	designControls.find("li").on("mousedown", function(ev) {		
+			
+			_controlSelectedWhenControlButtonClicked = _selectedControl;
 			
 			// clear down property dialogues for good measure
 			hideDialogues();
@@ -4303,6 +4307,15 @@ $(document).on("mouseup", function(ev) {
 			}				
 			// rebuild the page map
 			buildPageMap();
+		} else if (_controlSelectedWhenControlButtonClicked && _controlSelectedWhenControlButtonClicked._parent) {
+			// if a control was selected when control button was clicked, insert after it
+			// retain the same parent control as the moved over control
+			_selectedControl._parent = _controlSelectedWhenControlButtonClicked._parent;
+			// move the markup object after the moved over object
+			_selectedControl.object.insertAfter(_controlSelectedWhenControlButtonClicked.object);
+			// add to childControls at correct position
+			_controlSelectedWhenControlButtonClicked._parent.childControls.splice(_controlSelectedWhenControlButtonClicked.object.index()+1,0,_selectedControl);
+			_controlSelectedWhenControlButtonClicked = null;
 		}
 		
 		// remember we have only selected (no longer moving)
