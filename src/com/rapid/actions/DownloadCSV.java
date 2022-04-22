@@ -63,7 +63,8 @@ public class DownloadCSV extends Action{
 		String outputFile = getProperty("outputFilename");
 
 		String includeHiddenColumns = getProperty("includeHiddenColumns");
-		String includeColumns = getProperty("includeColumns");
+		String includeFields = getProperty("includeFields");
+		if (includeFields == null) includeFields = "";
 
 		Control dataControl = application.getControl(rapidRequest.getRapidServlet().getServletContext(), controlId);
 
@@ -94,7 +95,7 @@ public class DownloadCSV extends Action{
 		if(outputFile == null || "".equals(outputFile)) outputFile = "filename.csv";
 		if(!outputFile.endsWith(".csv")) outputFile += ".csv";
 
-		js += "Action_downloadCSV(ev, '" + this.getId() + "', '" + controlId + "', '" + outputFile + "', " + includeHiddenColumns + ", '" + includeColumns + "', details)";
+		js += "Action_downloadCSV(ev, '" + this.getId() + "', '" + controlId + "', '" + outputFile + "', " + includeHiddenColumns + ", '" + includeFields + "', details)";
 
 		return js;
 	}

@@ -42,7 +42,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 				<changeValueJavaScript>select</changeValueJavaScript>
 				<getValuesFunction>
 <![CDATA[
-return "<option value=''>Please select...</option>" + getControlOptions(this.gridId, null, "grid", true) + getControlOptions(this.gridId, null, "dataStore", true);
+return "<option value=''>Please select...</option>" + getControlOptions(this.gridId, null, "grid,dataStore", true);
 ]]>
 				</getValuesFunction>
 				<helpHtml>Select a grid or datastore control to produce a CSV file from.</helpHtml>
@@ -57,8 +57,8 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gri
 			</property>
 
 			<property>
-				<key>includeColumns</key>
-				<name>Include columns</name>
+				<key>includeFields</key>
+				<name>Include fields</name>
 				<changeValueJavaScript>text</changeValueJavaScript>
 				<getValuesFunction>return "";</getValuesFunction>
 				<helpHtml>If supplied, filter to comma separated columns.</helpHtml>
@@ -89,7 +89,7 @@ $(document).ready( function() {
 	}
 });
 
-function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColumns, includeColumns, details) {
+function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColumns, includeFields, details) {
 
 	// set the output filename of the form
 	$('#downloadFileName').attr({"value": fileName});
@@ -100,6 +100,13 @@ function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColu
 	// get the control
 	var control = $("#" + controlId);
 	
+	includeFields = includeFields.trim();
+	var outputFields = includeFields && includeFields.split(",").map(function(column) {
+		return column.trim();
+	}).filter(function(column) {
+		return column !== "";
+	});
+	
 	// if the control is a grid in the page
 	if (control.is(".grid") || control.is(".gridScroll")) {
 		
@@ -109,23 +116,16 @@ function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColu
 		var table = grid.is("table") ? grid : grid.find('table').last();
 		var columns = details.columns || details.dynamicColumns;
 		
-		includeColumns = includeColumns.trim();
-		var outputColumns = includeColumns && includeColumns.split(",").map(function(column) {
-			return column.trim();
-		}).filter(function(column) {
-			return column !== "";
-		});
-		
 		// loop the rows
 		table.find('tr').each(function(rowIndex) {
 			// add a rows collection if not header row
 			if (rowIndex > 0) data.rows.push([]);
 			var row = rowIndex == 0 ? data.headers : data.rows[rowIndex-1];
 			var cells = $(this).find('td');
-			if (includeColumns && columns) {
-				outputColumns.forEach(function(outputColumn) {
+			if (includeFields && columns) {
+				outputFields.forEach(function(outputField) {
 					var columnIndex = columns.findIndex(function(column) {
-						return column.field.toLowerCase() === outputColumn.toLowerCase();
+						return column.field.toLowerCase() === outputField.toLowerCase();
 					});
 					var c = $(cells[columnIndex]);
 					row.push(c.text());
@@ -147,31 +147,16 @@ function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColu
 	
 		// if we have details
 		if (details) {
-		
-			// if we're a grid (that's not in the page)
-			if (details.type == "grid") {
 			
-				// get the grid datastore date
-				var gridData = getGridDataStoreData(controlId, details);
-				
-				// if we got some use it's rows and fields
-				if (gridData && gridData.fields && gridData.rows) {			
-					data.rows = gridData.rows;
-					data.headers = gridData.fields;
-				}
+			var getData = details.type === "grid" ? getGridDataStoreData : getDataStoreData;
+			var controlData = getData(controlId, details)
+			var controlFields = controlData.fields.map(function(field) { return field.toLowerCase(); });
+			var indexes = outputFields.map(function(outputField) {
+				return controlFields.indexOf(outputField.toLowerCase());
+			});
 			
-			} else {
-	
-				// must be a datastore so get its data
-				var dataStoreData = getDataStoreData(controlId, details);
-				
-				// if we got some use it's rows and fields
-				if (dataStoreData && dataStoreData.fields && dataStoreData.rows) {			
-					data.rows = dataStoreData.rows;
-					data.headers = dataStoreData.fields;
-				}
-				
-			}
+			data.headers = indexes.map(function(index) { return controlData.fields[index] });
+			data.rows = controlData.rows.map(function(row) { return indexes.map(function(index) { return row[index] }) });
 			
 		}
 	

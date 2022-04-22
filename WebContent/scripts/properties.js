@@ -53,12 +53,13 @@ function getPageOptions(selectId, ignoreId) {
 
 // this function returns a set of options for a dropdown of controls
 function getControlOptions(selectId, ignoreId, type, noGroup) {
+	var types = type ? type.split(",") : { includes: function() { return true; } };
 	var controls = getControls();
 	var options = "";
 	for (var i in controls) {
 		var control = controls[i];
 		// note how only controls with names are included, and type is only matched if included
-		if (control.id != ignoreId && control.name && (!type || type == control.type)) options += "<option value='" + control.id + "' " + (control.id == selectId ? "selected='selected'" : "") + ">" + control.name + "</option>"; 
+		if (control.id != ignoreId && control.name && types.includes(control.type)) options += "<option value='" + control.id + "' " + (control.id == selectId ? "selected='selected'" : "") + ">" + control.name + "</option>"; 
 	}
 	// wrap if we had some and we're allowing groups
 	if (options && !noGroup) options = "<optgroup label='Page controls'>" + options + "</optgroup>";
@@ -71,7 +72,7 @@ function getControlOptions(selectId, ignoreId, type, noGroup) {
 				var pageControlOptions = "";												
 				for (var j in _pages[i].controls) {
 					var otherPageControl = _pages[i].controls[j];					
-					if (otherPageControl.otherPages && (!type || type == otherPageControl.type)) {
+					if (otherPageControl.otherPages && types.includes(otherPageControl.type)) {
 						pageControlOptions +=  "<option value='" + otherPageControl.id + "' " + (otherPageControl.id == selectId ? "selected='selected'" : "") + ">" + otherPageControl.name + "</option>"; 
 					}
 				}
