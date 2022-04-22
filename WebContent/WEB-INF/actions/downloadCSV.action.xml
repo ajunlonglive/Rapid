@@ -4,7 +4,7 @@
 
 <!-- 
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -57,6 +57,14 @@ return "<option value=''>Please select...</option>" + getControlOptions(this.gri
 			</property>
 
 			<property>
+				<key>includeColumns</key>
+				<name>Include columns</name>
+				<changeValueJavaScript>text</changeValueJavaScript>
+				<getValuesFunction>return "";</getValuesFunction>
+				<helpHtml>If supplied, filter to comma separated columns.</helpHtml>
+			</property>
+
+			<property>
 				<key>outputFilename</key>
 				<name>Output file name</name>
 				<changeValueJavaScript>text</changeValueJavaScript>
@@ -81,86 +89,100 @@ $(document).ready( function() {
 	}
 });
 
-function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColumns, details) {
+function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColumns, includeColumns, details) {
 
 	// set the output filename of the form
 	$('#downloadFileName').attr({"value": fileName});
 	
 	// create an object for the data with rows and headers
-    var data = {rows:[],headers:[]};
-    
-    // get the control
-    var control = $("#" + controlId);
-    
-    // if the control is a grid in the page
-    if (control.is(".grid") || control.is(".gridScroll")) {
-    	
-    	// use the control as the grid
-	    var grid = control;
-	    // find the table
-	    var table = grid.is("table") ? grid : grid.find('table').last();
-	    var columns = details.columns || details.dynamicColumns;
-	    // loop the rows
-	    table.find('tr').each( function(idx) {
-		    // add a rows collection if not header row
-		    if (idx > 0) data.rows.push([]);
-			    // loop the cells
-			    $(this).find('td').each( function(columnIndex) {
-			    // get a ref to the cell
-			    var c = $(this);
-			     // ignore hidden columns
-			    if (includeHiddenColumns || (columns && columns[columnIndex].visible)) {
-				    // if this the header row
-				    if (idx == 0) {
-					    // add to headers
-					    data.headers.push(c.text());
-				    } else {
-				    	data.rows[idx-1].push(c.text());
-	    			} 
-	    		} 
-	    	}); 
-	    });
-    
-    } else {
-    
-    	// if we have details
-    	if (details) {
-    	
-    		// if we're a grid (that's not in the page)
-    		if (details.type == "grid") {
-    		
-    			// get the grid datastore date
-    			var gridData = getGridDataStoreData(controlId, details);
-    			
-    			// if we got some use it's rows and fields
-		    	if (gridData && gridData.fields && gridData.rows) {    		
-		    		data.rows = gridData.rows;
-		    		data.headers = gridData.fields;
-		    	}
-    		
-    		} else {
-    
-		    	// must be a datastore so get its data
-		    	var dataStoreData = getDataStoreData(controlId, details);
-		    	
-		    	// if we got some use it's rows and fields
-		    	if (dataStoreData && dataStoreData.fields && dataStoreData.rows) {    		
-		    		data.rows = dataStoreData.rows;
-		    		data.headers = dataStoreData.fields;
-		    	}
-		    	
-		    }
-	    	
-	    }
-    
-    }
-    
-    // stringify it so it can be sent in the form
-    data =  JSON.stringify(data);
-    // put it in the form input
-    $('#downloadData').val(data);
-    // submit the form
-    $('#downloadForm').submit();
+	var data = {rows:[],headers:[]};
+	
+	// get the control
+	var control = $("#" + controlId);
+	
+	// if the control is a grid in the page
+	if (control.is(".grid") || control.is(".gridScroll")) {
+		
+		// use the control as the grid
+		var grid = control;
+		// find the table
+		var table = grid.is("table") ? grid : grid.find('table').last();
+		var columns = details.columns || details.dynamicColumns;
+		
+		includeColumns = includeColumns.trim();
+		var outputColumns = includeColumns && includeColumns.split(",").map(function(column) {
+			return column.trim();
+		}).filter(function(column) {
+			return column !== "";
+		});
+		
+		// loop the rows
+		table.find('tr').each(function(rowIndex) {
+			// add a rows collection if not header row
+			if (rowIndex > 0) data.rows.push([]);
+			var row = rowIndex == 0 ? data.headers : data.rows[rowIndex-1];
+			var cells = $(this).find('td');
+			if (includeColumns && columns) {
+				outputColumns.forEach(function(outputColumn) {
+					var columnIndex = columns.findIndex(function(column) {
+						return column.field.toLowerCase() === outputColumn.toLowerCase();
+					});
+					var c = $(cells[columnIndex]);
+					row.push(c.text());
+				});
+			} else {
+				// loop the cells
+				cells.each(function(columnIndex) {
+					// get a ref to the cell
+					var c = $(this);
+					 // ignore hidden columns
+					if (includeHiddenColumns || (columns && columns[columnIndex].visible)) {
+						row.push(c.text());
+					}
+				});
+			}
+		});
+	
+	} else {
+	
+		// if we have details
+		if (details) {
+		
+			// if we're a grid (that's not in the page)
+			if (details.type == "grid") {
+			
+				// get the grid datastore date
+				var gridData = getGridDataStoreData(controlId, details);
+				
+				// if we got some use it's rows and fields
+				if (gridData && gridData.fields && gridData.rows) {			
+					data.rows = gridData.rows;
+					data.headers = gridData.fields;
+				}
+			
+			} else {
+	
+				// must be a datastore so get its data
+				var dataStoreData = getDataStoreData(controlId, details);
+				
+				// if we got some use it's rows and fields
+				if (dataStoreData && dataStoreData.fields && dataStoreData.rows) {			
+					data.rows = dataStoreData.rows;
+					data.headers = dataStoreData.fields;
+				}
+				
+			}
+			
+		}
+	
+	}
+	
+	// stringify it so it can be sent in the form
+	data =  JSON.stringify(data);
+	// put it in the form input
+	$('#downloadData').val(data);
+	// submit the form
+	$('#downloadForm').submit();
 
 }
 

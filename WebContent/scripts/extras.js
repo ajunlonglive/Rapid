@@ -31,8 +31,22 @@ if (typeof String.prototype.trim !== 'function') {
 }
 
 // extend String to have a replaceAll function
-String.prototype.replaceAll = function( find, replace ) {
-    return this.split( find ).join( replace );        
+if (typeof String.prototype.replaceAll !== 'function') String.prototype.replaceAll = function(find, replace) {
+	return this.split(find).join(replace);
+};
+
+if (typeof Array.prototype.includes !== 'function') Array.prototype.includes = function(element) {
+	return this.indexOf(element) > -1;
+};
+
+if (typeof Array.prototype.findIndex !== 'function') Array.prototype.findIndex = function(predicate) {
+	for (var i = 0; i < this.length; i++) {
+		if (predicate(this[i])) return i;
+	}
+};
+
+if (typeof Array.prototype.find !== 'function') Array.prototype.find = function(predicate) {
+	return this[this.findIndex(predicate)];
 };
 
 // trigger attached show and hide functions when control is shown or hidden
