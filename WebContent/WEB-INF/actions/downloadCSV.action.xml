@@ -124,9 +124,9 @@ function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColu
 			var cells = $(this).find('td');
 			if (includeFields && columns) {
 				outputFields.forEach(function(outputField) {
-					var columnIndex = columns.findIndex(function(column) {
-						return column.field.toLowerCase() === outputField.toLowerCase();
-					});
+					var columnIndex = columns.map(function(column) {
+						return column.field.toLowerCase();
+					}).indexOf(outputField.toLowerCase());
 					var c = $(cells[columnIndex]);
 					row.push(c.text());
 				});

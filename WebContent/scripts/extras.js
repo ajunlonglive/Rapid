@@ -35,19 +35,23 @@ if (typeof String.prototype.replaceAll !== 'function') String.prototype.replaceA
 	return this.split(find).join(replace);
 };
 
-if (typeof Array.prototype.includes !== 'function') Array.prototype.includes = function(element) {
-	return this.indexOf(element) > -1;
-};
+if (!String.prototype.startsWith) {
+	Object.defineProperty(String.prototype, 'startsWith', {
+		value: function(search, rawPos) {
+			var pos = rawPos > 0 ? rawPos|0 : 0;
+			return this.substring(pos, pos + search.length) === search;
+		}
+	});
+}
 
-if (typeof Array.prototype.findIndex !== 'function') Array.prototype.findIndex = function(predicate) {
-	for (var i = 0; i < this.length; i++) {
-		if (predicate(this[i])) return i;
-	}
-};
-
-if (typeof Array.prototype.find !== 'function') Array.prototype.find = function(predicate) {
-	return this[this.findIndex(predicate)];
-};
+if (!String.prototype.endsWith) {
+	String.prototype.endsWith = function(search, this_len) {
+		if (this_len === undefined || this_len > this.length) {
+			this_len = this.length;
+		}
+		return this.substring(this_len - search.length, this_len) === search;
+	};
+}
 
 // trigger attached show and hide functions when control is shown or hidden
 // http://stackoverflow.com/questions/15232688/jquery-how-to-call-function-when-element-shows
