@@ -111,7 +111,7 @@ var _pageOrderReset = false;
 // retain the currenty selected object
 var _selectedControl = null;
 // retain the control selected when clicking a control button to add a new one
-var _controlSelectedWhenControlButtonClicked = null;
+var _controlSelectedBeforeControlButtonClicked = null;
 // the div which we use a border around the selected object
 var _selectionBorder;
 // the div which we cover the selected object with whilst we are moving it around
@@ -1404,8 +1404,8 @@ function loadVersion(forceLoad) {
     	// when the mouse moves down on any control button
     	designControls.find("li").on("mousedown", function(ev) {		
 			
-    		// remember the control we're clicking down on, if we mouseup without moving we'll add the new control after the currently selected one
-			_controlSelectedWhenControlButtonClicked = _selectedControl;
+    		// remember the control that's already selected when clicking a new control button', if we mouseup without moving we'll add the new control after this one
+			_controlSelectedBeforeControlButtonClicked = _selectedControl;
 			
 			// clear down property dialogues for good measure
 			hideDialogues();
@@ -3361,7 +3361,7 @@ $(document).ready( function() {
 	
 	// paste
 	$("#paste").click( function(ev) {
-		// retrieve the control we previously placed on our clipboard object 
+		// retreive the control we previously placed on our clipboard object 
 		var copiedControl = _controlClipboard.get();
 		// see the enable/disable rules for the past button to see all the rules but basically we're working out whether we can insert into the selected control, into the parent, or not at all
 		if (copiedControl) {
@@ -4310,19 +4310,19 @@ $(document).on("mouseup", function(ev) {
 			// rebuild the page map
 			buildPageMap();
 		// if a control was selected when control button was clicked, insert after it
-		} else if (_controlSelectedWhenControlButtonClicked && _controlSelectedWhenControlButtonClicked._parent) {
+		} else if (_controlSelectedBeforeControlButtonClicked && _controlSelectedBeforeControlButtonClicked._parent) {
 			// add an undo snapshot for the whole page 
 			addUndo(true);
 			// remove the object from it's current parent
 			removeControlFromParent(_selectedControl);
 			// retain the same parent control as the moved over control
-			_selectedControl._parent = _controlSelectedWhenControlButtonClicked._parent;
+			_selectedControl._parent = _controlSelectedBeforeControlButtonClicked._parent;
 			// move the markup object after the moved over object
-			_selectedControl.object.insertAfter(_controlSelectedWhenControlButtonClicked.object);
+			_selectedControl.object.insertAfter(_controlSelectedBeforeControlButtonClicked.object);
 			// add to childControls at correct position
-			_controlSelectedWhenControlButtonClicked._parent.childControls.splice(_controlSelectedWhenControlButtonClicked.object.index()+1,0,_selectedControl);
+			_controlSelectedBeforeControlButtonClicked._parent.childControls.splice(_controlSelectedBeforeControlButtonClicked.object.index()+1,0,_selectedControl);
 			// empty this now we're done to stop it accidentally happening again - it will be re-populated correctly on the next control click for next use 
-			_controlSelectedWhenControlButtonClicked = null;
+			_controlSelectedBeforeControlButtonClicked = null;
 			// rebuild the page map
 			buildPageMap();
 		}
