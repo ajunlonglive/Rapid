@@ -4316,6 +4316,8 @@ $(document).on("mouseup", function(ev) {
 			// add to childControls at correct position
 			_controlSelectedWhenControlButtonClicked._parent.childControls.splice(_controlSelectedWhenControlButtonClicked.object.index()+1,0,_selectedControl);
 			_controlSelectedWhenControlButtonClicked = null;
+			// rebuild the page map
+			buildPageMap();
 		}
 		
 		// remember we have only selected (no longer moving)
