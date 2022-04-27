@@ -1404,6 +1404,7 @@ function loadVersion(forceLoad) {
     	// when the mouse moves down on any control button
     	designControls.find("li").on("mousedown", function(ev) {		
 			
+    		// remember the control we're clicking down on, if we mouseup without moving we'll add the new control after the currently selected one
 			_controlSelectedWhenControlButtonClicked = _selectedControl;
 			
 			// clear down property dialogues for good measure
@@ -3360,8 +3361,7 @@ $(document).ready( function() {
 	
 	// paste
 	$("#paste").click( function(ev) {
-		// stop control click add happening
-		_controlSelectedWhenControlButtonClicked = null;
+		// retrieve the control we previously placed on our clipboard object 
 		var copiedControl = _controlClipboard.get();
 		// see the enable/disable rules for the past button to see all the rules but basically we're working out whether we can insert into the selected control, into the parent, or not at all
 		if (copiedControl) {
