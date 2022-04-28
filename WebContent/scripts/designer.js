@@ -2269,6 +2269,11 @@ function updatePrevNext() {
 	if (i < pages.children().length - 1) $("#pageNext").removeClass("pageNavDisabled"); 
 }
 
+// set the window title based on selected app and page
+function setWindowTitle() {
+	document.title = "Rapid Design - " + _rapid.version + " / " + _version.title + " - " + _version.version + " / " + _page.title;
+}
+
 // JQuery is ready! 
 $(document).ready( function() {
 	
@@ -2566,7 +2571,9 @@ $(document).ready( function() {
 			    		
 			    		// empty it
 			    		_page.object.children().remove();
-    				    					    		
+			    		
+			    		setWindowTitle();
+    				    
 			    		// make sure the app styling is correct (this can go wrong if the back button was clicked which loads the current page but the previous styling)
 			    		head.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + _version.webFolder + "/rapid.css\">");
 			    		// make sure the page styling is correct (this can go wrong if the back button was clicked which loads the current page but the previous styling)
@@ -2896,6 +2903,7 @@ $(document).ready( function() {
 			// revert the drop down on cancel
 			$("#pageSelect").val(_page.id);
 		}
+		setWindowTitle();
 	});
 	
 	// previous page

@@ -3,7 +3,7 @@
 /*
 
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -100,6 +100,11 @@ if (security.checkUserPassword(rapidRequest, rapidRequest.getUserName(), rapidRe
 	<script src="scripts/controls/codeMirror/addon/hint/css-hint.js"></script>
 	<script src="scripts/controls/codeMirror/addon/hint/sql-hint.js"></script>
 	<script src="scripts/controls/codeMirror/addon/hint/xml-hint.js"></script>
+	<script>
+		var _rapid = {
+			version: "<%=com.rapid.server.Rapid.VERSION %>"
+		};
+	</script>
 	
 <%
 	} else {
