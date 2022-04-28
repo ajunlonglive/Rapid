@@ -111,7 +111,7 @@ var _pageOrderReset = false;
 // retain the currenty selected object
 var _selectedControl = null;
 // retain the control selected when clicking a control button to add a new one
-var _controlSelectedBeforeControlButtonClicked = null;
+var _controlSelectedWhenControlButtonClicked = null;
 // the div which we use a border around the selected object
 var _selectionBorder;
 // the div which we cover the selected object with whilst we are moving it around
@@ -1402,10 +1402,7 @@ function loadVersion(forceLoad) {
     	} // app control loop  
     	
     	// when the mouse moves down on any control button
-    	designControls.find("li").on("mousedown", function(ev) {		
-			
-    		// remember the control that's already selected when clicking a new control button', if we mouseup without moving we'll add the new control after this one
-			_controlSelectedBeforeControlButtonClicked = _selectedControl;
+    	designControls.find("li").on("mousedown", function(ev) {
 			
 			// clear down property dialogues for good measure
 			hideDialogues();
@@ -1458,23 +1455,36 @@ function loadVersion(forceLoad) {
 				
 				// assume there are no non-visual controls and control will go at the end
 				var firstNonVisualControlPos = -1;
-				// if this is not a nonVisualControl and there are currently page controls
-				if (controlClass.getHtmlFunction.indexOf("nonVisibleControl") < 0 && _page.childControls && _page.childControls.length > 0) {
-					// loop all page controls looking for first non-visual controls
-					for (var i in _page.childControls) {
-						// get the child control
-						var childControl = _page.childControls[i];
-						// get the class
-						var childControlClass = _controlTypes[childControl.type];
-						// if it is nonVisible
-						if (childControlClass.getHtmlFunction.indexOf("nonVisibleControl") > 0) {
-							// retain this position
-							firstNonVisualControlPos = i*1;
-							// we're done
-							break;
-						}
-					}
-				}
+				// if this is not a nonVisualControl
+				if (controlClass.getHtmlFunction.indexOf("nonVisibleControl") < 0) {
+					
+					// remember the control that's already selected when clicking a new control button', if we mouseup without moving we'll add the new control after this one
+					_controlSelectedWhenControlButtonClicked = _selectedControl;
+					
+					// there are currently page controls (we want to add this visibleControl before any nonVisibleControls)
+					if (_page.childControls && _page.childControls.length > 0) {
+					
+						// loop all page controls looking for first non-visual controls
+						for (var i in _page.childControls) {
+	
+							// get the child control
+							var childControl = _page.childControls[i];
+							// get the class
+							var childControlClass = _controlTypes[childControl.type];
+	
+							// if it is nonVisible
+							if (childControlClass.getHtmlFunction.indexOf("nonVisibleControl") > 0) {
+								// retain this position
+								firstNonVisualControlPos = i*1;
+								// we're done
+								break;
+							}
+							
+						} // loop page controls looking for nonVisibleControl
+						
+					} // controls on page check position of first nonVisibleControl
+					
+				} // is not nonVisibleControl
 				
 				// if there is a firstNonVisualControlPos
 				if (firstNonVisualControlPos > -1) {
@@ -3361,7 +3371,7 @@ $(document).ready( function() {
 	
 	// paste
 	$("#paste").click( function(ev) {
-		// retreive the control we previously placed on our clipboard object 
+		// retrieve the control we previously placed on our clipboard object 
 		var copiedControl = _controlClipboard.get();
 		// see the enable/disable rules for the past button to see all the rules but basically we're working out whether we can insert into the selected control, into the parent, or not at all
 		if (copiedControl) {
@@ -4310,19 +4320,19 @@ $(document).on("mouseup", function(ev) {
 			// rebuild the page map
 			buildPageMap();
 		// if a control was selected when control button was clicked, insert after it
-		} else if (_controlSelectedBeforeControlButtonClicked && _controlSelectedBeforeControlButtonClicked._parent) {
+		} else if (_controlSelectedWhenControlButtonClicked && _controlSelectedWhenControlButtonClicked._parent) {
 			// add an undo snapshot for the whole page 
 			addUndo(true);
 			// remove the object from it's current parent
 			removeControlFromParent(_selectedControl);
 			// retain the same parent control as the moved over control
-			_selectedControl._parent = _controlSelectedBeforeControlButtonClicked._parent;
+			_selectedControl._parent = _controlSelectedWhenControlButtonClicked._parent;
 			// move the markup object after the moved over object
-			_selectedControl.object.insertAfter(_controlSelectedBeforeControlButtonClicked.object);
+			_selectedControl.object.insertAfter(_controlSelectedWhenControlButtonClicked.object);
 			// add to childControls at correct position
-			_controlSelectedBeforeControlButtonClicked._parent.childControls.splice(_controlSelectedBeforeControlButtonClicked.object.index()+1,0,_selectedControl);
+			_controlSelectedWhenControlButtonClicked._parent.childControls.splice(_controlSelectedWhenControlButtonClicked.object.index()+1,0,_selectedControl);
 			// empty this now we're done to stop it accidentally happening again - it will be re-populated correctly on the next control click for next use 
-			_controlSelectedBeforeControlButtonClicked = null;
+			_controlSelectedWhenControlButtonClicked = null;
 			// rebuild the page map
 			buildPageMap();
 		}
