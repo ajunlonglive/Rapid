@@ -484,8 +484,8 @@ public class Control {
 							// send the null if not
 							return value;
 						} else {
-							// wrap the parameter in quotes
-							return "'" + value.replace("'", "\\'")  + "'";
+							// wrap the parameter in quotes, escaping any containing quotes and line breaks
+							return "'" + value.replace("'", "\\'").replace("\n", "\\n")  + "'";
 						}
 
 					} else if ("page id".equals(type)) {
