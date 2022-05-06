@@ -416,11 +416,42 @@ if (dzs) {
 
 }
 		
-return data;		
-					]]>		
-	            </getPropertyFunction>		
-	        </runtimeProperty>		
-	        		
+return data;
+					]]>
+	            </getPropertyFunction>
+	        </runtimeProperty>
+
+	        <runtimeProperty>
+	            <type>fileCount</type>
+	            <name>File count</name>
+	            <getPropertyFunction>
+	                <![CDATA[
+// get the dropzones map
+var dzs = window["dropzones"];
+// if it's there
+if (dzs) {
+	// get this dropzone object
+	var dz = dzs[id];
+	// if it's there
+	if (dz) {
+		return dz.getAcceptedFiles().length;
+	}
+}
+return 0;
+					]]>
+	            </getPropertyFunction>
+	        </runtimeProperty>
+
+	        <runtimeProperty>
+	            <type>filesUploadedCount</type>
+	            <name>Files uploaded count</name>
+	            <getPropertyFunction>
+	                <![CDATA[
+return $("#" + id + "files").val().split(",").filter(function(name) { return name !== "" }).length;
+					]]>
+	            </getPropertyFunction>
+	        </runtimeProperty>
+	        
 		</runtimeProperties>
 	    
 	</control>
