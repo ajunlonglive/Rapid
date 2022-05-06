@@ -1572,7 +1572,7 @@ function uploadImages(controlIds, ev, successCallback, errorCallback, progressOu
 			var progress = {totalUploads:images.length, totalUploaded:0, totalErrored:0};
 			
 			// assume no progress callback
-			var progressCallback = null;
+			var callback = {};
 			
 			// loop images to upload
 			images.forEach(function(image) {
@@ -1582,15 +1582,25 @@ function uploadImages(controlIds, ev, successCallback, errorCallback, progressOu
 					// assume no progress for this image
 					image.progress = 0;
 					// create the callback for upload progress updates
-					progressCallback = function(ev) {
+					callback.progress = function(ev) {
 						image.progress = ev.loaded / ev.total;
-						var totalProgressPercentage = Math.round((images.reduce(function(sum, i) { return sum + i.progress; }, 0) / images.length) * 100);
+						var totalProgressPercentage = Math.floor((images.reduce(function(sum, image) { return sum + image.progress; }, 0) / images.length) * 100);
+						totalProgressPercentage = Math.min(99, totalProgressPercentage);
 						window["setData_" + progressOutput.type](ev, progressOutput.id, progressOutput.field, progressOutput.details, totalProgressPercentage, true);
+					};
+					callback.load = function(ev) {
+						image.load = true;
+					};
+					callback.loadend = function(ev) {
+						image.loadend = true;
+						if (images.every(function(image) { return image.load && image.loadend; })) {
+							window["setData_" + progressOutput.type](ev, progressOutput.id, progressOutput.field, progressOutput.details, 100, true);
+						}
 					};
 				}
 				
 				// send it for uploading
-				uploadImage(image.url, image.dataURL, progress, ev, successCallback, errorCallback, progressCallback);
+				uploadImage(image.url, image.dataURL, progress, ev, successCallback, errorCallback, callback);
 
 			});
 			
@@ -1600,7 +1610,7 @@ function uploadImages(controlIds, ev, successCallback, errorCallback, progressOu
 	
 }
 
-function uploadImage(url, dataSource, progress, ev, successCallback, errorCallback, progressCallback) {
+function uploadImage(url, dataSource, progress, ev, successCallback, errorCallback, callback) {
 
 	try {
 
@@ -1681,13 +1691,15 @@ function uploadImage(url, dataSource, progress, ev, successCallback, errorCallba
 		};
 		
 		// if there is a progress callback and the browser supports the override we add for it
-		if (progressCallback && window.XMLHttpRequest) {
+		if (callback.progress && window.XMLHttpRequest) {
 			// add an entry to the xhr key on the ajax object
 			ajax.xhr = function() {
 				// make a XMLHttpRequest ourselves
 				var xhr = new window.XMLHttpRequest();
 				// add a progress listener
-				xhr.upload.addEventListener("progress", progressCallback);
+				xhr.upload.addEventListener("progress", callback.progress);
+				xhr.upload.addEventListener("load", callback.load);
+				xhr.upload.addEventListener("loadend", callback.loadend);
 				// return it
 				return xhr;
 			}
