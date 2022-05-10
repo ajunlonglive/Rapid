@@ -159,14 +159,14 @@ public class Mobile extends Action {
 
 		// if it's online
 		if ("online".equals(type)) {
-			
+
 			// if there was one record that we have a working page in the details
 			if (workingPage != null && workingPage.trim().length() > 0) jsonDetails.put("workingPage", id);
 			// get the offline dialogue
 			String offlinePage = getProperty("onlineFail");
 			// record that we have an offline page
 			if (offlinePage != null && !offlinePage.equals("")) jsonDetails.put("offlinePage", offlinePage);
-			
+
 			// see if we have any online success or error actions - this starts the success check for this action tree
 			if (hasSuccessActions() || hasErrorActions()) {
 
@@ -177,7 +177,7 @@ public class Mobile extends Action {
 				if (!jsonDetails.has("successCheck")) jsonDetails.put("successCheck", id);
 
 			}
-			
+
 		}
 
 		// reference to these success and fail actions are sent as callbacks to the on-mobile device file upload function, uploadImages always has at least an error
@@ -187,10 +187,10 @@ public class Mobile extends Action {
 
 			// start the js
 			String js = "";
-			
+
 			// get any success check
 			String successCheck = getSuccesCheck(jsonDetails);
-			
+
 			// if for this action we add the successCheck to the the details in the getJavaScript (and empty it again each time before it runs), only for first in the tree, see above
 			if (id.equals(successCheck)) js += "var _" + id + "successChecks = {};\n\n";
 
@@ -1062,10 +1062,10 @@ public class Mobile extends Action {
 
 					// set it to empty
 					js += "_" + id + "successChecks = {};\n";
-					
+
 					// ensure we have a details object
 					if (jsonDetails == null) jsonDetails = new JSONObject();
-					
+
 					// retain on the details that we have a success check, but only if there isn't one already on this tree
 					if (!jsonDetails.has("successCheck")) jsonDetails.put("successCheck", id);
 
@@ -1087,8 +1087,8 @@ public class Mobile extends Action {
 						// if there was one
 						if (workingPage != null && !workingPage.equals("")) {
 							// show working page as a dialogue
-							js += "  if (Action_navigate) Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + workingPage + "&action=dialogue', true, '" + id + "');\n";
-							// record that we have a working page in the details
+							js += "  if (Action_navigate) Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + workingPage + "&action=dialogue', true, '" + workingPage + "');\n";
+							// record that we have a working page on this action in the details
 							jsonDetails.put("workingPage", id);
 						}
 
@@ -1110,7 +1110,7 @@ public class Mobile extends Action {
 						js += "} else {\n";
 
 						// if we have an offline page one show it
-						if (offlinePage != null) js += "  if (Action_navigate) Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue', true, '" + id + "');\n";
+						if (offlinePage != null) js += "  if (Action_navigate) Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + offlinePage + "&action=dialogue', true, '" + offlinePage + "');\n";
 
 						// close online check
 						js += "}\n";
