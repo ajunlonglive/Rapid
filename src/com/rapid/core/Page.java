@@ -262,8 +262,7 @@ public class Page {
 	private List<Condition> _visibilityConditions;
 	private String _conditionsType;
 	private Lock _lock;
-	private List<String> _formControlValues;
-	private List<String> _dialoguePageIds;
+	private List<String> _formControlValues, _dialoguePageIds, _pagePanelPageIds;
 
 	// this array is used to collect all of the lines needed in the pageload before sorting them
 	private List<String> _pageloadLines;
@@ -814,6 +813,28 @@ public class Page {
 			}
 		}
 		return _dialoguePageIds;
+	}
+
+	// get the pages inside page panels on this page
+	public List<String> getPagePanelPageIds() {
+		// if the internal variable has not been initialised yet
+		if (_pagePanelPageIds == null) _pagePanelPageIds = new ArrayList<>();
+		// get all page panels on this page
+		List<Control> controls = getAllControls();
+		// loop them
+		for (Control control : controls) {
+			// if this is a panel panel
+			if ("pagePanel".equals(control.getType())) {
+				// get the page id
+				String pageId = control.getProperty("pageId");
+				// if we got one
+				if (pageId != null) {
+					// add if it is something not there already
+					if (pageId.length() > 0 && !_pagePanelPageIds.contains(pageId)) _pagePanelPageIds.add(pageId);
+				}
+			}
+		}
+		return _pagePanelPageIds;
 	}
 
 	private JSONArray getEventsJSON(List<Event> events) throws JSONException {

@@ -82,6 +82,7 @@ import com.rapid.core.Page.Lock;
 import com.rapid.core.Page.RoleControlHtml;
 import com.rapid.core.Page.Variable;
 import com.rapid.core.Page.Variables;
+import com.rapid.core.Pages;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
 import com.rapid.core.Theme;
@@ -945,8 +946,12 @@ public class Designer extends RapidHttpServlet {
 
 								// create an other pages object
 								JSONObject jsonOtherPages = new JSONObject();
+								// get the pages
+								Pages pages = application.getPages();
+								// get the pages headers
+								PageHeaders pageHeaders = pages.getSortedPages();
 								// loop the page headers
-								for (PageHeader pageHeader : application.getPages().getSortedPages()) {
+								for (PageHeader pageHeader : pageHeaders) {
 									// get this page id
 									String pageId = page.getId();
 									// if we are loading a specific page and need to know any other components for it and this is not the destination page itself
@@ -955,9 +960,9 @@ public class Designer extends RapidHttpServlet {
 										Page otherPage = application.getPages().getPage(context, pageHeader.getId());
 										// get the list of pages we can open a dialogue to on this page
 										List<String> dialoguePageIds = otherPage.getDialoguePageIds();
-										// if designerPageId is provided and this page is different from the one we're loading in the designer
+										// if we can open dialogues on this page
 										if (dialoguePageIds != null) {
-											// if the pagein the designer is one this page navigates to on a dialogue
+											// if the page id the designer is one this page navigates to on a dialogue
 											if (dialoguePageIds.contains(pageId)) {
 												// get other page components for this page
 												JSONArray jsonControls = otherPage.getOtherPageComponents(this, false, true);
@@ -974,9 +979,36 @@ public class Designer extends RapidHttpServlet {
 													}
 												}
 											}
-										}
+										} // dialoguePageIds check
 									}
 								}
+
+								// get the list of pages that appear in a page panel on this page
+								List<String> pagePanelPageIds = page.getPagePanelPageIds();
+								// if designerPageId is provided and this page is different from the one we're loading in the designer
+								if (pagePanelPageIds != null) {
+									// loop them
+									for (String pagePanelPageId : pagePanelPageIds) {
+										// get this page
+										Page pagePanelPage = pages.getPage(context, pagePanelPageId);
+										// get other page components for this page
+										JSONArray jsonControls = pagePanelPage.getOtherPageComponents(this, false, true);
+										// if we got some
+										if (jsonControls != null) {
+											// if we got some
+											if (jsonControls.length() > 0) {
+												// create an other page object
+												JSONObject jsonOtherPage = new JSONObject();
+												// add the controls to the page
+												jsonOtherPage.put("controls", jsonControls);
+												// add the other page to the page collection
+												jsonOtherPages.put(pagePanelPageId, jsonOtherPage);
+											}
+										}
+									}
+								} // pagePanelPageIds check
+
+
 								// if other pages objects add to page
 								if (jsonOtherPages.length() > 0) jsonPage.put("otherPages", jsonOtherPages);
 
