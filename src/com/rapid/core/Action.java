@@ -252,7 +252,7 @@ public abstract class Action {
 
 	protected String getDefaultErrorJavaScript(Application application, Page page, Control control, String offlinePage) {
 		// prepare a default error hander we'll show if no error actions, or pass to child actions for them to use
-		String defaultErrorHandler = "alert('Error with " + getErrorSource(application, control) + "\\n\\n' + (server.getResponseHeader('Content-Type').startsWith('text/html') ? server.status + ' - ' + $(server.responseText).filter('title').text() : server.responseText||message));";
+		String defaultErrorHandler = "alert('Error with " + getErrorSource(application, control) + "\\n\\n' + (server.getResponseHeader('Content-Type') && server.getResponseHeader('Content-Type').startsWith('text/html') ? server.status + ' - ' + $(server.responseText).filter('title').text() : server.responseText||message));";
 		// if we have an offline page wrap the default above with the offline check and dialogue show
 		if (offlinePage != null) {
 			// update defaultErrorHandler to navigate to offline page, if we have the navigate action, and we know we're offline, or it looks like we must be
