@@ -73,6 +73,7 @@ import com.rapid.actions.Logic;
 import com.rapid.actions.Logic.Condition;
 import com.rapid.core.Action;
 import com.rapid.core.Application;
+import com.rapid.core.Application.Parameter;
 import com.rapid.core.Application.ValueList;
 import com.rapid.core.Applications.Versions;
 import com.rapid.core.Control;
@@ -1223,7 +1224,10 @@ public class Designer extends RapidHttpServlet {
 
 							// app details
 							if ("summary".equals(actionName) || "detail".equals(actionName)) {
-
+								
+								int statusId = application.getStatus();
+								String status = statusId == 0 ? "In development" : statusId == 1 ? "Live" : statusId == 2 ? "Under maintenance" : null;
+								if (status != null) out.print("Status:\t" + status + "\r\n");
 								// safe created date
 								if (application.getCreatedDate() != null) out.print("Created date:\t" + df.format(application.getCreatedDate()) + "\r\n");
 								// safe created by
@@ -1232,14 +1236,75 @@ public class Designer extends RapidHttpServlet {
 								if (application.getModifiedDate() != null) out.print("Modified date:\t" + df.format(application.getModifiedDate()) + "\r\n");
 								// safe modified by
 								if (application.getModifiedBy() != null) out.print("Modified by:\t" + application.getModifiedBy() + "\r\n");
-
+								
+								if (application.getStartPageId() != null) out.print("Start page:\t" + application.getStartPageId() + "\r\n");
+								
 								// description
 								if (application.getDescription() != null && application.getDescription().trim().length() > 0) out.print("Description:\t" + application.getDescription() + "\r\n");
-								// form
-								if (application.getIsForm()) out.print("Form adapter:\t" + application.getFormAdapterType() + "\r\n");
+								
+								out.print("Form settings:\t" + application.getIsForm() + "\r\n");
+								if (application.getIsForm()) {
+									// form
+									if (application.getIsForm()) out.print("Form adapter:\t" + application.getFormAdapterType() + "\r\n");
+									out.print("Show form summary:\t" + application.getFormShowSummary() + "\r\n");
+									out.print("Disable autocomplete:\t" + application.getFormDisableAutoComplete() + "\r\n");
+								}
+								out.print("Email form:\t" + application.getFormEmail() + "\r\n");
+								if (application.getFormEmail()) {
+									if (application.getFormEmailFrom() != null) out.print("From address:\t" + application.getFormEmailFrom() + "\r\n");
+									if (application.getFormEmailTo() != null) out.print("To address:\t" + application.getFormEmailTo() + "\r\n");
+									if (application.getFormEmailAttachmentType() != null) out.print("Attachment type:\t" + application.getFormEmailAttachmentType() + "\r\n");
+								}
+								out.print("Email customer:\t" + application.getFormEmailCustomer() + "\r\n");
+								if (application.getFormEmailCustomer()) {
+									if (application.getFormEmailCustomerControlId() != null) out.print("Customer address:\t" + application.getFormEmailCustomerControlId() + "\r\n");
+									String emailTypeCode = application.getFormEmailCustomerType();
+									String emailType = "T".equals(emailTypeCode) ? "Text" : "H".equals(emailTypeCode) ? "HTML" : null;
+									if (emailType != null) out.print("Email type:\t" + emailType + "\r\n");
+									if (application.getFormEmailCustomerSubject() != null) out.print("Email subject:\t" + application.getFormEmailCustomerSubject() + "\r\n");
+									if (application.getFormEmailCustomerBody() != null) out.print("Email body:\t" + application.getFormEmailCustomerBody() + "\r\n");
+									String attachmentTypeCode = application.getFormEmailCustomerAttachmentType();
+									String attachmentType = "csv".equals(attachmentTypeCode) ? "CSV" : "xml".equals(attachmentTypeCode) ? "XML" : "pdf".equals(attachmentTypeCode) ? "PDF" : null;
+									if (attachmentType != null) out.print("Attachment type:\t" + attachmentType + "\r\n");
+									out.print("Form details file:\t" + application.getFormFile() + "\r\n");
+									String typeCode = application.getFormFileType();
+									String type = "pdf".equals(typeCode) ? "PDF" : "xml".equals(typeCode) ? "XML" : "CSV";
+									out.print("File type:\t" + type + "\r\n");
+									if (application.getFormFilePath() != null) out.print("Path:\t" + application.getFormFilePath() + "\r\n");
+									if (application.getFormFileUserName() != null) out.print("Username:\t" + application.getFormFileUserName() + "\r\n");
+								}
+								out.print("Form webservice:\t" + application.getFormWebservice() + "\r\n");
+								if (application.getFormWebservice()) {
+									if (application.getFormWebserviceURL() != null) out.print("URL:\t" + application.getFormWebserviceURL() + "\r\n");
+									String webserviceTypeCode = application.getFormWebserviceType();
+									String webserviceType = "restful".equals(webserviceTypeCode) ? "Restful XML" : "json".equals(webserviceTypeCode) ? "JSON" : "SOAP";
+									out.print("Data type:\t" + webserviceType + "\r\n");
+									if (application.getFormWebserviceSOAPAction() != null) out.print("SOAP action:\t" + application.getFormWebserviceSOAPAction() + "\r\n");
+								}
 								// theme
 								out.print("Theme:\t" + application.getThemeType() + "\r\n");
 							}
+							
+							// App parameters
+							List<Parameter> parameters = application.getParameters();
+							out.print("\r\nApplication parameters:\t" + parameters.size() + "\r\n");
+							for (Parameter parameter : parameters) {
+								out.print("Name:\t" + parameter.getName() + "\r\n");
+								out.print("\tDescription:\t" + parameter.getDescription() + "\r\n");
+								out.print("\tValue:\t" + parameter.getValue() + "\r\n");
+							}
+							out.print("\r\n");
+							
+							// DB connections
+							List<DatabaseConnection> connections = application.getDatabaseConnections();
+							out.print("\r\nDatabase connections:\t" + connections.size() + "\r\n");
+							for (DatabaseConnection connection : connections) {
+								out.print("Name:\t" + connection.getName() + "\r\n");
+								out.print("\tDriver:\t" + connection.getDriverClass() + "\r\n");
+								out.print("\tConnection string:\t" + connection.getConnectionString() + "\r\n");
+								out.print("\tUsername:\t" + connection.getUserName() + "\r\n");
+							}
+							out.print("\r\n");
 
 							// pages
 							out.print("Pages:\t" + pageHeaders.size() + "\r\n");
