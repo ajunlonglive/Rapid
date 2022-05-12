@@ -213,8 +213,8 @@ public abstract class Action {
 		// look for a successCheck in the jsonDetail
 		String successCheck = jsonDetails.optString("successCheck", null);
 
-		// if there is a success check the working page dialigue hide will be done when they all complete successfully, not here
-		if (successCheck == null) {
+		// if there is a success check the working page dialogue hide will be done when they all complete successfully, not here, but do hide if error i.e. not success
+		if (successCheck == null || !success) {
 
 			// look for a working page in the jsonDetails
 			String workingPage = jsonDetails.optString("workingPage", null);

@@ -161,7 +161,7 @@ public class Mobile extends Action {
 		if ("online".equals(type)) {
 
 			// if there was one record that we have a working page in the details
-			if (workingPage != null && workingPage.trim().length() > 0) jsonDetails.put("workingPage", id);
+			if (workingPage != null && workingPage.trim().length() > 0) jsonDetails.put("workingPage", workingPage);
 			// get the offline dialogue
 			String offlinePage = getProperty("onlineFail");
 			// record that we have an offline page
@@ -204,10 +204,15 @@ public class Mobile extends Action {
 				js += getWorkingPageHideJavaScript(workingPage, "  ");
 				// if there are success actions
 				if (hasSuccessActions()) {
+
+					// if we've just made the success handler for the successCheck, remove it from the details to stop child success actions calling it and causing infinite loops
+					if (id.equals(successCheck)) jsonDetails.remove("successCheck");
+
 					// the success actions
 					for (Action action : _successActions) {
 						js += "  " + action.getJavaScriptWithHeader(rapidRequest, application, page, control, jsonDetails).trim().replace("\n", "\n  ") + "\n";
 					}
+
 					// add any success check for actions further down the tree
 					if ("uploadImages".equals(type)) js += getSuccessCheckSuccess(successCheck, "  ");
 				}
@@ -1089,7 +1094,7 @@ public class Mobile extends Action {
 							// show working page as a dialogue
 							js += "  if (Action_navigate) Action_navigate('~?a=" + application.getId() + "&v=" + application.getVersion() + "&p=" + workingPage + "&action=dialogue', true, '" + workingPage + "');\n";
 							// record that we have a working page on this action in the details
-							jsonDetails.put("workingPage", id);
+							jsonDetails.put("workingPage", workingPage);
 						}
 
 						// get the offline dialogue
