@@ -100,10 +100,20 @@ function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColu
 	// get the control
 	var control = $("#" + controlId);
 	
+	// get any control details
+	var controlDetails = window[controlId + "details"];
+	
+	// look for multiSelect, set false if not
+	var multiSelect = (controlDetails && controlDetails.multiSelect);
+	
+	// trim any include fields to remove spaces
 	includeFields = includeFields.trim();
-	var outputFields = includeFields && includeFields.split(",").map(function(column) {
-		return column.trim();
+	// create a "clean" array of field names by splitting and trimming
+	var outputFieldsLowerCase = includeFields && includeFields.split(",").map(function(column) {
+		// trim this field and lowercase it for case-insensitive matching later
+		return column.trim().toLowerCase();
 	}).filter(function(column) {
+		// avoid empty strings in the array, also takes care of any double commas from the orginal string
 		return column !== "";
 	});
 	
@@ -114,20 +124,36 @@ function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColu
 		var grid = control;
 		// find the table
 		var table = grid.is("table") ? grid : grid.find('table').last();
+		// get the columns from the details
 		var columns = details.columns || details.dynamicColumns;
-		
+		// get the column fields in lower case for case-insensitive matching
+		var columnFields = columns.map(function(column) {
+			return column.field.toLowerCase();
+		});
+
 		// loop the rows
 		table.find('tr').each(function(rowIndex) {
 			// add a rows collection if not header row
 			if (rowIndex > 0) data.rows.push([]);
+			// for the first row use the header otherwise the data
 			var row = rowIndex == 0 ? data.headers : data.rows[rowIndex-1];
-			var cells = $(this).find('td');
-			if (includeFields && columns) {
-				outputFields.forEach(function(outputField) {
-					var columnIndex = columns.map(function(column) {
-						return column.field.toLowerCase();
-					}).indexOf(outputField.toLowerCase());
+			// get the cells
+			var cells = null;
+			// if multiSelect ignore first cell 
+			if (multiSelect) {
+				cells = $(this).find('td:not(:first-child)');
+			} else {
+				cells = $(this).find('td');
+			}
+			// if fields to include have been provided
+			if (outputFieldsLowerCase && outputFieldsLowerCase.length > 0 && columns) {
+				// loop the outputFields to find the cell value for each in the order specified
+				outputFieldsLowerCase.forEach(function(outputField) {
+					// get the index of the field from the columns
+					var columnIndex = columnFields.indexOf(outputField);
+					// get the cell at the position of the column we matched on
 					var c = $(cells[columnIndex]);
+					// add the text into our row of data
 					row.push(c.text());
 				});
 			} else {
@@ -135,8 +161,9 @@ function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColu
 				cells.each(function(columnIndex) {
 					// get a ref to the cell
 					var c = $(this);
-					 // ignore hidden columns
+					 // ignore hidden columns unless explicity requested
 					if (includeHiddenColumns || (columns && columns[columnIndex].visible)) {
+						// add the text into our row of data
 						row.push(c.text());
 					}
 				});
@@ -148,15 +175,23 @@ function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColu
 		// if we have details
 		if (details) {
 			
+			// derive the datasource, grid or datastore
 			var getData = details.type === "grid" ? getGridDataStoreData : getDataStoreData;
+			// get the data from the control
 			var controlData = getData(controlId, details)
-			var controlFields = controlData.fields.map(function(field) { return field.toLowerCase(); });
-			var indexes = outputFields.map(function(outputField) {
-				return controlFields.indexOf(outputField.toLowerCase());
+			// get a lower-case array of the control fields for case-insensitve matching
+			var controlFieldsLowercase = controlData.fields.map(function(field) { return field.toLowerCase(); });
+			// an array of outputs which are contol field indexes produced by lowe-case matching 
+			var indexes = outputFieldsLowerCase.map(function(outputField) {
+				return controlFields.indexOf(outputField);
 			});
-			
+			// use the indexes to produce the headers from the source data fields
 			data.headers = indexes.map(function(index) { return controlData.fields[index] });
-			data.rows = controlData.rows.map(function(row) { return indexes.map(function(index) { return row[index] }) });
+			// loop each row of source data 
+			data.rows = controlData.rows.map(function(row) {
+				// loop the indexes to retrieve the value at the specified position 
+				return indexes.map(function(index) { return row[index] }) 
+			});
 			
 		}
 	
