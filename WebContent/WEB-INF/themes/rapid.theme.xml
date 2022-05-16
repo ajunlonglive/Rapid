@@ -939,6 +939,10 @@ input.custom-combobox-input.ui-autocomplete-input {
   background: transparent linear-gradient(#C00, #980202);
 }
 
+.custom-combobox-toggle {
+  background: url(../../../images/triangleDownWhite_8x8.png) no-repeat center;
+}
+
 .header {
   margin: 0px auto 10px;
   width: 100%;

@@ -133,7 +133,7 @@ function getProperty_dropdown_value(ev, id, field, details) {
   right: 0;
   padding: 0;
   width: 25px;
-  background: url(../../../images/triangleDownWhite_8x8.png) no-repeat center;
+  background: url(../../../images/triangleDown_8x8.png) no-repeat center;
 }
 
 .ui-autocomplete {
