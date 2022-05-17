@@ -315,6 +315,34 @@ public class Files {
 
 	}
 
+	// reads bytes from a file specified by the filePath
+	public static byte[] getBytes(String filePath) throws Exception {
+		return getBytes(new File(filePath));
+	}	
+	
+	// reads bytes from a file 
+	public static byte[] getBytes(File file) throws Exception {
+	
+		// set up input stream and array to store the bytes
+		FileInputStream fileInputStream = null;
+		byte[] bytes = new byte[(int) file.length()];
+
+		try
+		{
+			// open the input stream, read the bytes and close the stream
+			fileInputStream = new FileInputStream(file);
+			fileInputStream.read(bytes);
+			fileInputStream.close();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			throw(e);
+		}
+		
+		return bytes;
+	}	
+	
 	// a file watcher on it's own thread to copy new files from one location to another - use with new Files.Watcher(from, to).start();
 	public static class Watcher extends Thread {
 
