@@ -4339,11 +4339,12 @@ $(document).on("mouseup", function(ev) {
 			_selectedControl.object.insertAfter(_controlSelectedWhenControlButtonClicked.object);
 			// add to childControls at correct position
 			_controlSelectedWhenControlButtonClicked._parent.childControls.splice(_controlSelectedWhenControlButtonClicked.object.index()+1,0,_selectedControl);
-			// empty this now we're done to stop it accidentally happening again - it will be re-populated correctly on the next control click for next use 
-			_controlSelectedWhenControlButtonClicked = null;
 			// rebuild the page map
 			buildPageMap();
 		}
+		
+		// empty this now we're done to stop it accidentally happening again - it will be re-populated correctly on the next control click for next use 
+		_controlSelectedWhenControlButtonClicked = null;
 		
 		// remember we have only selected (no longer moving)
 		selectedState = 1;
