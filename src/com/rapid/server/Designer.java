@@ -74,6 +74,8 @@ import com.rapid.actions.Logic.Condition;
 import com.rapid.core.Action;
 import com.rapid.core.Application;
 import com.rapid.core.Application.Parameter;
+import com.rapid.core.Application.Resource;
+import com.rapid.core.Application.Resources;
 import com.rapid.core.Application.ValueList;
 import com.rapid.core.Applications.Versions;
 import com.rapid.core.Control;
@@ -1293,7 +1295,7 @@ public class Designer extends RapidHttpServlet {
 								out.print("\tDescription:\t" + parameter.getDescription() + "\r\n");
 								out.print("\tValue:\t" + parameter.getValue() + "\r\n");
 							}
-							out.print("\r\n");
+							out.println();
 							
 							// DB connections
 							List<DatabaseConnection> connections = application.getDatabaseConnections();
@@ -1304,7 +1306,12 @@ public class Designer extends RapidHttpServlet {
 								out.print("\tConnection string:\t" + connection.getConnectionString() + "\r\n");
 								out.print("\tUsername:\t" + connection.getUserName() + "\r\n");
 							}
-							out.print("\r\n");
+							out.println();
+							
+							// App settings
+							String settings = application.getSettingsId();
+							if (settings != null && !settings.isEmpty()) out.print("Settings:\t" + settings + "\r\n");
+							out.println();
 
 							// pages
 							out.print("Pages:\t" + pageHeaders.size() + "\r\n");
@@ -1629,7 +1636,21 @@ public class Designer extends RapidHttpServlet {
 								out.print("\r\n");
 
 							} // page loop
-
+							
+							// App Resources
+							Resources resources = application.getAppResources();
+							out.println("\r\nResources:\t" + resources.size() + "\r\n");
+							for (Resource resource : resources) {
+								if (resource.getName() != null) out.print("Name:\t" + resource.getName() + "\r\n");
+								if (resource.getContent() != null) out.print("Content:\t" + resource.getContent() + "\r\n");
+							}
+							out.println();
+							
+							// App CSS
+							String styles = application.getStyles();
+							out.print("Styles:\t\r\n");
+							out.print(styles + "\r\n");
+							
 							// close the writer
 							out.close();
 
