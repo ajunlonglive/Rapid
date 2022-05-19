@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -46,8 +46,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,7 +84,6 @@ import com.rapid.security.SecurityAdapter.User;
 import com.rapid.server.Rapid;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
-import com.rapid.server.filter.RapidFilter;
 import com.rapid.soa.Webservice;
 import com.rapid.utils.Files;
 import com.rapid.utils.JSON;
@@ -1011,10 +1012,38 @@ public class Application {
 					if (parameters != null) {
 						// loop them
 						for (Parameter parameter : parameters) {
-							// define the match string
-							String matchString = "[[" + parameter.getName() + "]]";
-							// if the match string is present replace it with the value
-							if (string.contains(matchString)) string = string.replace(matchString, parameter.getValue());
+							String header = parameter.getName();
+							String expression = parameter.getValue();
+							int openBracketIndex = header.indexOf('(');
+							// if parameter takes a variable, Eg. parameter(parName)
+							if (openBracketIndex > 0 && header.endsWith(")")) {
+								// the rapid parameter's parameter name
+								String parName = header.substring(openBracketIndex + 1, header.length() - 1);
+								// the pattern of all applications of this parameter, eg. [[parameter(.+)]]
+								Pattern pattern = Pattern.compile("\\[\\[" + header.replaceAll("\\(.+\\)", "\\\\(\\.\\+\\\\)") + "\\]\\]");
+								Matcher matcher = pattern.matcher(string);
+								// optimisation: avoid trying to expand the same applications twice
+								Set<String> replacedApplications = new HashSet<>();
+								while (matcher.find()) {
+									String application = matcher.group();
+									// if an application is yet to be expanded
+									if (!replacedApplications.contains(application)) {
+										// the string that this rapid parameter is being applied to
+										String argument = application.substring(application.indexOf("(") + 1, application.indexOf(")"));
+										// the rapid parameter's value with parName substituted for the given argument
+										String expandedExpression = expression.replace(parName, argument);
+										// replace all instances of this application with this expanded expression
+										string = string.replace(application, expandedExpression);
+										// remember all cases of this application are gone
+										replacedApplications.add(application);
+									}
+								}
+							} else {
+								// define the match string
+								String matchString = "[[" + parameter.getName() + "]]";
+								// if the match string is present replace it with the value
+								if (string.contains(matchString)) string = string.replace(matchString, expression);
+							}
 						}
 					}
 					// get any theme
