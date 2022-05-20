@@ -1017,10 +1017,12 @@ public class Application {
 							int openBracketIndex = header.indexOf('(');
 							// if parameter takes a variable, Eg. parameter(parName)
 							if (openBracketIndex > 0 && header.endsWith(")")) {
-								// the rapid parameter's parameter name
-								String parName = header.substring(openBracketIndex + 1, header.length() - 1);
-								// the pattern of all applications of this parameter, eg. [[parameter(.+)]]
-								Pattern pattern = Pattern.compile("\\[\\[" + header.replaceAll("\\(.+\\)", "\\\\(\\.\\+\\\\)") + "\\]\\]");
+								// the app parameter's name
+								String parName = header.substring(0, openBracketIndex);
+								// the app parameter's parameter's name
+								String parParName = header.substring(openBracketIndex + 1, header.length() - 1);
+								// the pattern of all applications of this parameter: [[parName(.+)]]
+								Pattern pattern = Pattern.compile("\\[\\[" + parName + "\\(.+\\)\\]\\]");
 								Matcher matcher = pattern.matcher(string);
 								// optimisation: avoid trying to expand the same applications twice
 								Set<String> replacedApplications = new HashSet<>();
@@ -1031,7 +1033,7 @@ public class Application {
 										// the string that this rapid parameter is being applied to
 										String argument = application.substring(application.indexOf("(") + 1, application.indexOf(")"));
 										// the rapid parameter's value with parName substituted for the given argument
-										String expandedExpression = expression.replace(parName, argument);
+										String expandedExpression = expression.replace(parParName, argument);
 										// replace all instances of this application with this expanded expression
 										string = string.replace(application, expandedExpression);
 										// remember all cases of this application are gone
