@@ -46,10 +46,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Stack;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1010,43 +1010,72 @@ public class Application {
 					List<Parameter> parameters = this.getParameters();
 					// if we have parameters
 					if (parameters != null) {
-						// loop them
+
+						Map<String, String> staticParameters = new HashMap<>();
+						Map<String, Function<String, String>> dynamicParameters = new HashMap<>();
+						
 						for (Parameter parameter : parameters) {
 							String header = parameter.getName();
 							String expression = parameter.getValue();
 							int openBracketIndex = header.indexOf('(');
-							// if parameter takes a variable, Eg. parameter(parName)
+							// if dynamic
 							if (openBracketIndex > 0 && header.endsWith(")")) {
-								// the app parameter's name
 								String parName = header.substring(0, openBracketIndex);
-								// the app parameter's parameter's name
 								String parParName = header.substring(openBracketIndex + 1, header.length() - 1);
-								// the pattern of all applications of this parameter: [[parName(.+)]]
-								Pattern pattern = Pattern.compile("\\[\\[" + parName + "\\(.+\\)\\]\\]");
-								Matcher matcher = pattern.matcher(string);
-								// optimisation: avoid trying to expand the same applications twice
-								Set<String> replacedApplications = new HashSet<>();
-								while (matcher.find()) {
-									String application = matcher.group();
-									// if an application is yet to be expanded
-									if (!replacedApplications.contains(application)) {
-										// the string that this rapid parameter is being applied to
-										String argument = application.substring(application.indexOf("(") + 1, application.indexOf(")"));
-										// the rapid parameter's value with parName substituted for the given argument
-										String expandedExpression = expression.replace(parParName, argument);
-										// replace all instances of this application with this expanded expression
-										string = string.replace(application, expandedExpression);
-										// remember all cases of this application are gone
-										replacedApplications.add(application);
-									}
-								}
+								Function<String, String> dynamicParameter = (String s) -> expression.replace(parParName, s);
+								dynamicParameters.put(parName, dynamicParameter);
 							} else {
-								// define the match string
-								String matchString = "[[" + parameter.getName() + "]]";
-								// if the match string is present replace it with the value
-								if (string.contains(matchString)) string = string.replace(matchString, expression);
+								staticParameters.put(header, expression);
 							}
 						}
+						
+						// text alone is a scope. An escaped parameter reference is a higher scope on the stack
+						Stack<StringBuilder> scopes = new Stack<>();
+						scopes.add(new StringBuilder());
+						
+						// scan string...
+						// appending to stack head, and climbing stack on '[['
+						// applying parameter substitutions, popping, and appending to new stack head on ']]'
+						// appending to stack head otherwise.
+						// Allows for nested dynamic parameters, eg. '[[toString([[field(type)]])]]' 
+						for (int charIndex = 0; charIndex < string.length();) {
+							int startOfEscape = string.indexOf("[[", charIndex);
+							int endOfEscape = string.indexOf("]]", charIndex);
+							
+							if (startOfEscape != -1 && startOfEscape < endOfEscape) {
+								// if new escape, add to scopes stack
+								scopes.peek().append(string.substring(charIndex, startOfEscape));
+								scopes.add(new StringBuilder());
+								charIndex = startOfEscape + "[[".length();
+							} else if (endOfEscape != -1) {
+								// if ending escape, apply parameter substitution
+								// if (scopes.size() == 1) throw new Exception("Found ']]' without corresponding '[['.");
+								scopes.peek().append(string.substring(charIndex, endOfEscape));
+								String escape = scopes.pop().toString();
+								String substitution = "";
+								int openBracketIndex = escape.indexOf('(');
+								if (openBracketIndex > 0 && escape.endsWith(")")) {
+									// if dynamic, apply parameter's parameter substitution, then parameter substitution
+									String parName = escape.substring(0, openBracketIndex);
+									String parParName = escape.substring(openBracketIndex + 1, escape.length() - 1);
+									Function<String, String> parameter = dynamicParameters.get(parName);
+									substitution = parameter.apply(parParName);
+								} else {
+									// non-dynamic, substitute
+									substitution = staticParameters.get(escape);
+								}
+								// append the substituted string to the new lower scope
+								scopes.peek().append(substitution);
+								charIndex = endOfEscape + "]]".length();
+							} else {
+								// if end of string, eat string tail
+								scopes.peek().append(string.substring(charIndex));
+								charIndex = string.length();
+							}
+							
+						}
+						// if (scopes.size() > 1) throw new Exception("Missing " + (scopes.size() - 1) + " sets of ']]'.");
+						string = scopes.get(0).toString();
 					}
 					// get any theme
 					Theme theme = getTheme(servletContext);
