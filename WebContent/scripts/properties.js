@@ -2777,6 +2777,8 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	// add a listener for the database connection
 	addListener( testSQL.click( {query: query}, function(ev) {
 		
+		testSQL.disable();
+		ok.hide();
 		var query = JSON.stringify(ev.data.query);
 		
 		$.ajax({
@@ -2786,10 +2788,12 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 		    dataType: "json",  
 	    	data: query,
 	        error: function(server, status, error) { 
-	        	alert(error + " : " + server.responseText); 
+	        	alert(error + " : " + server.responseText);
+				testSQL.enable();
 	        },
 	        success: function(response) {
-	        	ok.show();
+	        	testSQL.enable();
+				ok.show();
 	        	clearTimeout(okTimeout);
 				okTimeout = setTimeout(() => {
 					ok.fadeOut(2000);
