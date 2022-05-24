@@ -632,6 +632,17 @@ td.paddingLeft5 {
 	background-color: #aaa;
 }
 
+.propertyDialogue .ok {
+	font-size: 1em;
+	font-weight: 700;
+	color: #FFF;
+	background: #280;
+	padding: 1px 5px;
+	float:right;
+	margin-right: 5px;
+	display:none;
+}
+
 .titleButton {
   	padding: 2px 5px;
   	margin-left:5px;

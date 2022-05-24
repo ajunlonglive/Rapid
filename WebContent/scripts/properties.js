@@ -2739,7 +2739,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	
 	// add the multi-row, database connection, and test button
 	table.append("<tr><td>Multi-row input data?&nbsp;<input class='multi' type='checkbox'" + (query.multiRow ? "checked='checked'" : "" ) + " style='vertical-align: middle;margin-top: -3px;'/></td>" +
-			"<td style='text-align: left;overflow:inherit;padding:0 10px;'>" + databaseConnection + "<button style='float:right;'>Test SQL</button></td>" +
+			"<td style='text-align: left;overflow:inherit;padding:0 10px;'>" + databaseConnection + "<button style='float:right;'>Test SQL</button><span class='ok'>OK</span></td>" +
 			"<td style='text-align: right;'>Avoid XSS?&nbsp;<input class='avoidXSS' type='checkbox'" + (query.avoidXSS ? "checked='checked'" : "" ) + " style='vertical-align: middle;margin-top: -3px;'/></td></tr>");
 	
 	// get a reference to the multi-data check box
@@ -2772,6 +2772,8 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	
 	// get a reference to the test button
 	var testSQL = table.find("tr").last().find("button");
+	var ok = table.find("tr").last().find(".ok");
+	var okTimeout;
 	// add a listener for the database connection
 	addListener( testSQL.click( {query: query}, function(ev) {
 		
@@ -2787,7 +2789,11 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	        	alert(error + " : " + server.responseText); 
 	        },
 	        success: function(response) {
-	        	alert(response.message); 		       		        	
+	        	ok.show();
+	        	clearTimeout(okTimeout);
+				okTimeout = setTimeout(() => {
+					ok.fadeOut(2000);
+				}, 4000);
 	        }
 		});
 		
