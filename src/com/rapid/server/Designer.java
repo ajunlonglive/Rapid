@@ -88,6 +88,7 @@ import com.rapid.core.Page.Variables;
 import com.rapid.core.Pages;
 import com.rapid.core.Pages.PageHeader;
 import com.rapid.core.Pages.PageHeaders;
+import com.rapid.core.Settings;
 import com.rapid.core.Theme;
 import com.rapid.core.Workflow;
 import com.rapid.core.Workflows;
@@ -2610,6 +2611,11 @@ public class Designer extends RapidHttpServlet {
 
 														// update parameters from old version
 														appNew.setParameters(appOld.getParameters());
+														
+														// update settings from old version
+														Application latestVersion = getApplications().get(appId);
+														Settings oldSettings = Settings.load(context, latestVersion);
+														appNew.setSettings(oldSettings);
 
 													} // old version check
 
