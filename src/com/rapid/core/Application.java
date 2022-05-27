@@ -1027,7 +1027,7 @@ public class Application {
 									String[] parParNames = parParName.split(",");
 									Function<String[], String> dynamicParameter = (parPars) -> {
 										String substitution = expression;
-										for (int i = 0; i < parPars.length; i++) substitution = substitution.replace(parParNames[i].trim(), parPars[i].trim());
+										for (int i = 0; i < parParNames.length; i++) substitution = substitution.replace(parParNames[i].trim(), parPars[i].trim());
 										return substitution;
 									};
 									dynamicParameters.put(parName, dynamicParameter);
