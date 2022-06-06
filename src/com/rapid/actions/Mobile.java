@@ -600,11 +600,9 @@ public class Mobile extends Action {
 					Integer quality = null;
 					try { quality = Integer.parseInt(getProperty("imageQuality")); } catch (NumberFormatException ex) {}
 					int maxDuration = 0;
-					if(getProperty("videoMaxDuration") != null && !getProperty("videoMaxDuration").isEmpty())
-						maxDuration = Integer.parseInt(getProperty("videoMaxDuration"));
+					if (getProperty("videoMaxDuration") != null && !getProperty("videoMaxDuration").isEmpty()) maxDuration = Integer.parseInt(getProperty("videoMaxDuration"));
 					Boolean cameraSelectImage = false;
-					if(getProperty("cameraSelectImage")!=null)
-						cameraSelectImage = Boolean.parseBoolean(getProperty("cameraSelectImage"));
+					if (getProperty("cameraSelectImage") != null) cameraSelectImage = Boolean.parseBoolean(getProperty("cameraSelectImage"));
 					String remoteSource = getProperty("remoteSource");
 					String captureMode = getProperty("captureMode");
 					String includeAudio = getProperty("includeAudio");
@@ -618,11 +616,16 @@ public class Mobile extends Action {
 
 					// mobile check, use
 					js += "if (typeof _rapidmobile == 'undefined') {\n"
-						+ "  turnOnCamera('" + galleryControlId + "'," + maxSize + "," + quality + "," + maxDuration + "," + cameraSelectImage + ", " + mediums + ", " + remoteSource + ", " + includeAudio + ", '" + captureMode + "', " + imageMultiple + ");\n"
-						+ "} else {\n";
-					js += "  _rapidmobile.addImage('" + galleryControlId + "'," + maxSize + "," + quality + ");\n";
-					// close mobile check
-					js += "}\n";
+						+ "  turnOnCamera('" + galleryControlId + "', " + maxSize + ", " + quality + ", " + maxDuration + ", " + cameraSelectImage + ", " + mediums + ", " + remoteSource + ", " + includeAudio + ", '" + captureMode + "', " + imageMultiple + ");\n"
+						+ "} else {\n"
+						// check the Rapid mobile version to stop method not found error
+						+ "  if (_rapidmobile.getVersion() >= 3) {\n"
+						+ "    _rapidmobile.addImage('" + galleryControlId + "', " + maxSize + ", " + quality + ", " + imageMultiple + ");\n"
+						+ "  } else {\n"
+						+ "    _rapidmobile.addImage('" + galleryControlId + "', " + maxSize + ", " + quality + ");\n"
+						+ "  }\n"
+						// close mobile check
+						+ "}\n";
 				}
 
 			} else if ("selectImage".equals(type)) {
