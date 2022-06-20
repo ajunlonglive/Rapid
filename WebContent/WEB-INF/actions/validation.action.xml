@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -164,7 +164,8 @@ function Action_validation(ev, validations, showMessages, scrollToFirst) {
 				if (validation.validationType == "javascript" || validation.validationType == "logic") {
 					var validationFunction = new Function(["ev","id","value"], validation.javaScript);
 					var failMessage = validationFunction.apply(this, [ev,validation.controlId,value]);
-					if (failMessage != null && failMessage !== false && failMessage !== undefined) {
+					if (failMessage != null && failMessage !== false && failMessage !== undefined
+						 && !(validationControl.is(":disabled") || (validationControl.is(":hidden") && validation.passHidden))) {
 						if (showMessages) showControlValidation(validation.controlId, failMessage);
 						valid = false;
 					} else {
