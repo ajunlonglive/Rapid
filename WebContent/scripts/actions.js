@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -271,6 +271,8 @@ function showEvents(control) {
 	var actionsPanel = $("#actionsPanelDiv");	
 	// remove any listeners
 	removeListeners("actionsPanel");
+	// remember scroll position
+	var scrollTop = propertiesPanel.scrollTop;
 	// empty the panel
 	actionsPanel.html("");
 	
@@ -399,6 +401,8 @@ function showEvents(control) {
 		
 	} // page simple check
 	
+	// reset scroll position
+	propertiesPanel.scrollTop = scrollTop;
 	// check size and if need be resize property panel
 	if ($("#controlPanel").offset().left <= 0) {
 		windowResize("Show events");
