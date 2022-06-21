@@ -50,6 +50,7 @@ return [
  ["GETDBCONN","Get database connection details"],
  ["GETSOA","Get soa webservice details"],
  ["GETSEC","Get security details"],  
+ ["GETSETTINGSDETAILS","Get settings details"],
  ["GETUSERS","Get users"],
  ["GETUSER","Get user details"],
  ["GETSESSIONS","Get session details"],
@@ -204,7 +205,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			var appId = $("#rapid_P0_C43").val();
 			var version = $("#rapid_P0_C1044_").val();
 			if (appId && version) {
-				data = { actionType: actionType, appId: appId, version: version };	
+				data = { actionType: actionType, appId: appId, version: version, settingsId: $("#rapid_P0_C3612_").val() };	
 				callback = function(data) {
 					setData_dataStore(ev, 'rapid_P0_C1072_', null, {storageType:"S"}, data);
 				};
@@ -224,7 +225,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			}
 		break;	
 		case "GETDBCONN" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C311").find("tr.rowSelect").index()-1 };	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C311").find("tr.rowSelect").index()-1, settingsId: $("#rapid_P0_C3612_").val() };	
 			callback = function(data) {
 				setData_dataStore(ev, 'rapid_P0_C361', "databaseConnection", {storageType:"S"}, data);
 			};
@@ -236,8 +237,28 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				loadSOA(data.webservice);
 			};
 		break;
+		case "GETSETTINGSDETAILS" :
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), settingsId: $("#rapid_P0_C3612_").val() };
+			callback = function(data) {
+				// securityType
+				var outputs = [{id: 'rapid_P0_C81.value', type: 'dropdown', field: '', details: null}];
+				Action_datacopy(ev, data.securityType, outputs, false, 'replace');
+				// theme
+				$("#rapid_P0_C1570_").val(data.theme);
+				// styles
+				_codeEditors["rapid_P0_C2809_"].setValue(data.styles);
+				// statusBarColour
+				$("#rapid_P0_C1414_").val(data.statusBarColour);
+				// statusBarHighlightColour
+				$("#rapid_P0_C1418_").val(data.statusBarHighlightColour);
+				// statusBarTextColour
+				$("#rapid_P0_C1415_").val(data.statusBarTextColour);
+				// statusBarIconColour
+				$("#rapid_P0_C1416_").val(data.statusBarIconColour);
+			};
+		break;
 		case "GETSEC" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), securityAdapter: $("#rapid_P0_C81").val() };	
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), securityAdapter: $("#rapid_P0_C81").val(), settingsId: $("#rapid_P0_C3612_").val() };	
 			callback = function(data) {
 				setData_dataStore(ev, 'rapid_P0_C469_', "security", {storageType:"S"}, data);
 			};
@@ -297,7 +318,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			};
 		break;	
 		case "GETPARAM" :	
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1 };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1, settingsId: $("#rapid_P0_C3612_").val() };
 			callback = function(data) {
 				setData_dataStore(ev, 'rapid_P0_C1145_', "parameter", {storageType:"S"}, data);
 			};
@@ -605,7 +626,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				statusBarColour: $("#rapid_P0_C1414_").val(), 
 				statusBarHighlightColour: $("#rapid_P0_C1418_").val(), 
 				statusBarTextColour: $("#rapid_P0_C1415_").val(), 
-				statusBarIconColour: $("#rapid_P0_C1416_").val() 
+				statusBarIconColour: $("#rapid_P0_C1416_").val(),
+				settingsId: $("#rapid_P0_C3612_").val()
 			};	
 		break;		
 		case "SAVEFUNCTIONS" :		
@@ -622,7 +644,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				connectionString: $("#rapid_P0_C374").val(),
 				connectionAdapter: $("#rapid_P0_C339").val(),
 				userName: $("#rapid_P0_C340").val(),
-				password: $("#rapid_P0_C341").val()
+				password: $("#rapid_P0_C341").val(),
+				settingsId: $("#rapid_P0_C3612_").val()
 			};	
 			callback = function() {
 				Event_click_rapid_P0_C311({target: $("#rapid_P0_C311").find("tr.rowSelect").children().first()[0] });
@@ -658,7 +681,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				version: $("#rapid_P0_C1044_").val(),
 				securityAdapter: $("#rapid_P0_C81").val(),
 				deviceSecurity: getData_checkbox(ev, "rapid_P0_C1591_"),
-				storePasswordDuration: $("#rapid_P0_C1621_").val()
+				storePasswordDuration: $("#rapid_P0_C1621_").val(),
+				settingsId: $("#rapid_P0_C3612_").val()
 			};	
 		break;
 		case "SAVEACTIONS" :
@@ -801,7 +825,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				connectionString: $("#rapid_P7_C44").val(),
 				connectionAdapter: $("#rapid_P7_C38").val(),  
 				userName: $("#rapid_P7_C30").val(),
-				password: $("#rapid_P7_C35").val()
+				password: $("#rapid_P7_C35").val(),
+				settingsId: $("#rapid_P0_C3612_").val()
 			};	
 			callback = function() {
 				// reload version
@@ -809,7 +834,7 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			};	
 		break;
 		case "DELDBCONN" :		
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $(ev.target).parent().parent().index()-1 };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $(ev.target).parent().parent().index()-1, settingsId: $("#rapid_P0_C3612_").val() };
 			callback = function() {
 				// reload everything
 				Event_change_rapid_P0_C1044_(ev);
@@ -1018,13 +1043,13 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 			}
 		break;
 		case "NEWPARAM" :
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val() };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), settingsId: $("#rapid_P0_C3612_").val() };
 		break;
 		case "DELPARAM" :
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $(ev.target).closest("tr").index()-1 };
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $(ev.target).closest("tr").index()-1, settingsId: $("#rapid_P0_C3612_").val() };
 		break;
 		case "SAVEPARAM" :
-			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1, name: $("#rapid_P0_C1134_").val(), description: $("#rapid_P0_C2802_").val(), value: $("#rapid_P0_C1123_").val()};
+			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val(), index: $("#rapid_P0_C1108_").find("tr.rowSelect").index()-1, name: $("#rapid_P0_C1134_").val(), description: $("#rapid_P0_C2802_").val(), value: $("#rapid_P0_C1123_").val(), settingsId: $("#rapid_P0_C3612_").val() };
 		break;
 		case "NEWRESOURCE" :
 			data = { actionType: actionType, appId: $("#rapid_P0_C43").val(), version: $("#rapid_P0_C1044_").val() };
@@ -1070,7 +1095,8 @@ function Action_rapid(ev, appId, pageId, controlId, actionId, actionType, rapidA
 				connectionString: $("#rapid_P0_C374").val(),
 				connectionAdapter: $("#rapid_P0_C339").val(),
 				userName: $("#rapid_P0_C340").val(),
-				password: $("#rapid_P0_C341").val()
+				password: $("#rapid_P0_C341").val(),
+				settingsId: $("#rapid_P0_C3612_").val()
 			};	
 			callback = function(data) {
 				alert(data.message);

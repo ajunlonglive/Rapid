@@ -1267,8 +1267,12 @@ public class Rapid extends Action {
 					result.put("statusBarTextColour", app.getStatusBarTextColour());
 					result.put("statusBarIconColour", app.getStatusBarIconColour());
 
+
+					String settingsId = jsonAction.optString("settingsId", null);
+					Settings settings = Settings.load(servletContext, app, settingsId);
+					String securityAdapterType = settings == null ? app.getSecurityAdapterType() : settings.getSecurityAdapterType();
 					// add the security adapter
-					result.put("securityAdapter", app.getSecurityAdapterType());
+					result.put("securityAdapter", securityAdapterType);
 					// add whether there is device security
 					result.put("deviceSecurity", app.getDeviceSecurity());
 					// add whether password is retained on Rapid Mobile
@@ -2271,8 +2275,11 @@ public class Rapid extends Action {
 									// get the index
 									int index = jsonAction.getInt("index");
 
+									String settingsId = jsonAction.optString("settingsId", null);
+									Settings settings = Settings.load(servletContext, app, settingsId);
+
 									// get the database connections
-									List<DatabaseConnection> dbConns = app.getDatabaseConnections();
+									List<DatabaseConnection> dbConns = settings == null ? app.getDatabaseConnections() : settings.getDatabaseConnections();
 
 									// check we have database connections
 									if (dbConns != null) {
@@ -2338,11 +2345,15 @@ public class Rapid extends Action {
 								// check the parameters
 								if (app.getParameters() != null) {
 
+									String settingsId = jsonAction.optString("settingsId", null);
+									Settings settings = Settings.load(servletContext, app, settingsId);
+									List<Parameter> parameters = settings == null ? app.getParameters() : settings.getParameters();
+
 									// check we have the one requested
-									if (index >= 0 && index < app.getParameters().size()) {
+									if (index >= 0 && index < parameters.size()) {
 
 										// get the parameter
-										Parameter parameter = app.getParameters().get(index);
+										Parameter parameter = parameters.get(index);
 
 										// add the name and value
 										jsonParameter.put("name", parameter.getName());
@@ -2521,16 +2532,28 @@ public class Rapid extends Action {
 								String statusBarTextColour = jsonAction.optString("statusBarTextColour");
 								String statusBarIconColour = jsonAction.optString("statusBarIconColour");
 
-								// put the values on the app (which will apply to the settings object if in use)
-								app.setThemeType(themeType);
-								app.setStyles(styles);
-								app.setStatusBarColour(statusBarColour);
-								app.setStatusBarHighlightColour(statusBarHighlightColour);
-								app.setStatusBarTextColour(statusBarTextColour);
-								app.setStatusBarIconColour(statusBarIconColour);
+								String settingsId = jsonAction.optString("settingsId", null);
+								Settings settings = Settings.load(servletContext, app, settingsId);
 
-								// save the app (also saves the settings object if in use)
-								app.save(rapidServlet, rapidActionRequest, true);
+								// put the values on the app (which will apply to the settings object if in use)
+								if (settings == null || app.getSettingsId().equals(settingsId)) {
+									app.setThemeType(themeType);
+									app.setStyles(styles);
+									app.setStatusBarColour(statusBarColour);
+									app.setStatusBarHighlightColour(statusBarHighlightColour);
+									app.setStatusBarTextColour(statusBarTextColour);
+									app.setStatusBarIconColour(statusBarIconColour);
+									// save the app (also saves the settings object if in use)
+									app.save(rapidServlet, rapidActionRequest, true);
+								} else {
+									settings.setThemeType(themeType);
+									settings.setStyles(styles);
+									settings.setStatusBarColour(statusBarColour);
+									settings.setStatusBarHighlightColour(statusBarHighlightColour);
+									settings.setStatusBarTextColour(statusBarTextColour);
+									settings.setStatusBarIconColour(statusBarIconColour);
+									settings.save(servletContext, app);
+								}
 
 								// add the application to the response
 								result.put("message", "Styles saved");
@@ -2540,8 +2563,11 @@ public class Rapid extends Action {
 								// get the index
 								int index = jsonAction.getInt("index");
 
+								String settingsId = jsonAction.optString("settingsId", null);
+								Settings settings = Settings.load(servletContext, app, settingsId);
+
 								// get the database connections
-								List<DatabaseConnection> dbConns = app.getDatabaseConnections();
+								List<DatabaseConnection> dbConns = settings == null ? app.getDatabaseConnections() : settings.getDatabaseConnections();
 
 								// if there weren't any
 								if (dbConns == null) {
@@ -2754,13 +2780,18 @@ public class Rapid extends Action {
 
 								String storePasswordDuration = jsonAction.optString("storePasswordDuration");
 
-								app.setSecurityAdapterType(securityAdapter);
+								String settingsId = jsonAction.optString("settingsId", null);
+								Settings settings = Settings.load(servletContext, app, settingsId);
+
+								if (settings == null) app.setSecurityAdapterType(securityAdapter);
+								else settings.setSecurityAdapterType(securityAdapter);
 
 								app.setDeviceSecurity(deviceSecurity);
 
 								app.setStorePasswordDuration(storePasswordDuration);
 
-								app.save(rapidServlet, rapidActionRequest, true);
+								if (settings == null) app.save(rapidServlet, rapidActionRequest, true);
+								else settings.save(servletContext, app);
 
 								// add the application to the response
 								result.put("message", "Security adapter saved");
@@ -2936,8 +2967,11 @@ public class Rapid extends Action {
 
 							} else if ("NEWDBCONN".equals(action)) {
 
+								String settingsId = jsonAction.optString("settingsId", null);
+								Settings settings = Settings.load(servletContext, app, settingsId);
+
 								// get the database connections
-								List<DatabaseConnection> dbConns = app.getDatabaseConnections();
+								List<DatabaseConnection> dbConns = settings == null ? app.getDatabaseConnections() : settings.getDatabaseConnections();
 								// instantiate if null
 								if (dbConns == null) dbConns = new ArrayList<>();
 
@@ -2967,8 +3001,11 @@ public class Rapid extends Action {
 								// get the index
 								int index = jsonAction.getInt("index");
 
+								String settingsId = jsonAction.optString("settingsId", null);
+								Settings settings = Settings.load(servletContext, app, settingsId);
+
 								// get the database connections
-								List<DatabaseConnection> dbConns = app.getDatabaseConnections();
+								List<DatabaseConnection> dbConns = settings == null ? app.getDatabaseConnections() : settings.getDatabaseConnections();
 
 								// remeber whether we found the connection
 								boolean foundConnection = false;
@@ -3094,8 +3131,11 @@ public class Rapid extends Action {
 
 							} else if ("NEWPARAM".equals(action)) {
 
+								String settingsId = jsonAction.optString("settingsId", null);
+								Settings settings = Settings.load(servletContext, app, settingsId);
+
 								// get the parameters
-								List<Parameter> parameters = app.getParameters();
+								List<Parameter> parameters = settings == null ? app.getParameters() : settings.getParameters();
 
 								// if there weren't any
 								if (parameters == null) {
@@ -3113,11 +3153,16 @@ public class Rapid extends Action {
 								// get the index
 								int index = jsonAction.getInt("index");
 
+								String settingsId = jsonAction.optString("settingsId", null);
+								Settings settings = Settings.load(servletContext, app, settingsId);
+								List<Parameter> parameters = settings == null ? app.getParameters() : settings.getParameters();
+
 								// remove the parameter
-								app.getParameters().remove(index);
+								parameters.remove(index);
 
 								// save the app
-								app.save(rapidServlet, rapidActionRequest, true);
+								if (settings == null) app.save(rapidServlet, rapidActionRequest, true);
+								else settings.save(servletContext, app);
 
 								// set the result message
 								result.put("message", "Parameter deleted");
@@ -3129,8 +3174,12 @@ public class Rapid extends Action {
 								String description = jsonAction.getString("description");
 								String value = jsonAction.getString("value");
 
+								String settingsId = jsonAction.optString("settingsId", null);
+								Settings settings = Settings.load(servletContext, app, settingsId);
+								List<Parameter> parameters = settings == null ? app.getParameters() : settings.getParameters();
+
 								// fetch the parameter
-								Parameter parameter = app.getParameters().get(index);
+								Parameter parameter = parameters.get(index);
 
 								// update it
 								parameter.setName(name);
@@ -3138,7 +3187,8 @@ public class Rapid extends Action {
 								parameter.setValue(value);
 
 								// save the app
-								app.save(rapidServlet, rapidActionRequest, true);
+								if (settings == null) app.save(rapidServlet, rapidActionRequest, true);
+								else settings.save(servletContext, app);
 
 								// set the result message
 								result.put("message", "Parameter details saved");
@@ -3198,8 +3248,11 @@ public class Rapid extends Action {
 								// get the index
 								int index = jsonAction.getInt("index");
 
+								String settingsId = jsonAction.optString("settingsId", null);
+								Settings settings = Settings.load(servletContext, app, settingsId);
+
 								// get the database connections
-								List<DatabaseConnection> dbConns = app.getDatabaseConnections();
+								List<DatabaseConnection> dbConns = settings == null ? app.getDatabaseConnections() : settings.getDatabaseConnections();
 
 								// remember whether we found the connection
 								boolean foundConnection = false;
@@ -3563,6 +3616,45 @@ public class Rapid extends Action {
 									}
 								}
 
+							}
+
+							if ("GETSETTINGSDETAILS".equals(action)) {
+								
+								String settingsId = jsonAction.optString("settingsId", null);
+								Settings settings = Settings.load(servletContext, app, settingsId);
+
+								if (settings == null) {
+									String securityType = app.getSecurityAdapterType();
+									result.put("securityType", securityType);
+									Theme theme = app.getTheme(servletContext);
+									String themeName = theme == null ? "" : theme.getName();
+									result.put("theme", themeName);
+									String styles = app.getStyles();
+									result.put("styles", styles);
+									String statusBarColour = app.getStatusBarColour();
+									result.put("statusBarColour", statusBarColour);
+									String statusBarHighlightColour = app.getStatusBarHighlightColour();
+									result.put("statusBarHighlightColour", statusBarHighlightColour);
+									String setStatusBarTextColour = app.getStatusBarTextColour();
+									result.put("setStatusBarTextColour", setStatusBarTextColour);
+									String statusBarIconColour = app.getStatusBarIconColour();
+									result.put("statusBarIconColour", statusBarIconColour);
+								} else {
+									String securityType = settings.getSecurityAdapterType();
+									result.put("securityType", securityType);
+									String themeName = settings.getThemeType();
+									result.put("theme", themeName);
+									String styles = settings.getStyles();
+									result.put("styles", styles);
+									String statusBarColour = settings.getStatusBarColour();
+									result.put("statusBarColour", statusBarColour);
+									String statusBarHighlightColour = settings.getStatusBarHighlightColour();
+									result.put("statusBarHighlightColour", statusBarHighlightColour);
+									String setStatusBarTextColour = settings.getStatusBarTextColour();
+									result.put("setStatusBarTextColour", setStatusBarTextColour);
+									String statusBarIconColour = settings.getStatusBarIconColour();
+									result.put("statusBarIconColour", statusBarIconColour);
+								}
 							}
 
 							if ("GETSEC".equals(action)) {
