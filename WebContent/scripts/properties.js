@@ -5708,8 +5708,8 @@ function Property_guidelines(cell, propertyObject, property, details) {
 
 //this function controls whether the panel scroll bar is visible
 function Property_scrollbars(cell, propertyObject, property, details) {
-	// assume we want them
-	var showScrollbars = true;
+	// assume we don't want the scrollbar
+	var showScrollbars = false;
 	// if we have local storage
 	if (typeof(localStorage) !== "undefined") {
 		// if we have a local storage item for this
