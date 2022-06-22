@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2019 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -110,6 +110,7 @@ public class Logic extends Action {
 		// private instance variables
 		private Value _value1, _value2;
 		private String _operation;
+		private String _caseInsensitive = "";
 
 		// properties
 
@@ -129,6 +130,10 @@ public class Logic extends Action {
 			JSONObject jsonValue1 = jsonCondition.optJSONObject("value1");
 			if (jsonValue1 != null) _value1 = new Value(jsonValue1);
 			_operation = jsonCondition.optString("operation");
+			if ("text".equals(_operation)) {
+				_operation = "===";
+				_caseInsensitive = ".toLowerCase()";
+			}
 			JSONObject jsonValue2 = jsonCondition.optJSONObject("value2");
 			if (jsonValue2 != null) _value2 = new Value(jsonValue2);
 		}
@@ -139,9 +144,9 @@ public class Logic extends Action {
 			// check we have everything we need to make a condition
 			if (_value1 != null && _operation != null && _value2 != null) {
 				// get the left side
-				String leftSide = _value1.getArgument(rapidRequest, application, page);
+				String leftSide = _value1.getArgument(rapidRequest, application, page) + _caseInsensitive;
 				// get the right side
-				String rightSide = _value2.getArgument(rapidRequest, application, page);
+				String rightSide = _value2.getArgument(rapidRequest, application, page) + _caseInsensitive;
 				// get the leftId
 				String leftId = _value1.getId();
 				// get the rightId

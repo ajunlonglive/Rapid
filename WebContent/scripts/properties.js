@@ -3663,7 +3663,7 @@ function Property_radiobuttons(cell, control, property, details) {
 }
 
 //possible system values used by the Logic property
-var _logicOperations = [["==","= equals"],["!=","!= doesn't equal"],[">","> greater than"],[">=",">= greater than or equal to"],["<","< less than"],["<=","<= less than or equal to"]];
+var _logicOperations = [["==","= equals"],["text","= equals (case-insensitive)"],["!=","!= doesn't equal"],[">","> greater than"],[">=",">= greater than or equal to"],["<","< less than"],["<=","<= less than or equal to"]];
 
 function logicConditionText(condition) {
 	// make some text
