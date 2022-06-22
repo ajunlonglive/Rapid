@@ -4978,10 +4978,9 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 		var text = "";
 		
 		// add a header
-		table.append("<tr><td><b>Source</b><button class='titleButton setSources' title='Set all sources to the same as the top one'><span class='fas'>&#xf358;</span></button><button class='titleButton sources' title='Add all page controls as sources'><span class='fas'>&#xf055;</span></button><button class='titleButton pageSort' title='Sort sources according to their order on the page'><span class='fas'>&#xf160;</span></button></td><td><b>Source field</b><button class='titleButton sourceFields' title='Derive source field from destination control name'><span class='fas'>&#xf021;</span></button></td><td><b>Destination</b><button class='titleButton setDestinations' title='Set all destinations to the same as the top one'><span class='fas'>&#xf358;</span></button><button class='titleButton destinations' title='Add all page controls as destinations'><span class='fas'>&#xf055;</span></button></td><td><b>Destination field</b><button class='titleButton destinationFields' title='Derive destination field from source control name'><span class='fas'>&#xf021;</span></button></td><td><b>Copy type</b><button class='titleButton setCopyTypes' title='Set all copy types to the same as the top one'><span class='fas'>&#xf358;</span></button></td><td><button class='titleButton swap' title='Swap all source and destinations'><span class='fas'>&#xf362;</span></button></td></tr>");
-			
-		// add pageSort listener
-		addListener( table.find("button.pageSort").click( {cell:cell, datacopyAction:datacopyAction, property:property}, function(ev) {
+		table.append("<tr><td><b>Source</b><button class='titleButton setSources' title='Set all sources to the same as the top one'><span class='fas'>&#xf358;</span></button><button class='titleButton sources' title='Add all page controls as sources'><span class='fas'>&#xf055;</span></button><button class='titleButton pageSortSource' title='Sort sources according to their order on the page'><span class='fas'>&#xf160;</span></button></td><td><b>Source field</b><button class='titleButton sourceFields' title='Derive source field from destination control name'><span class='fas'>&#xf021;</span></button></td><td><b>Destination</b><button class='titleButton setDestinations' title='Set all destinations to the same as the top one'><span class='fas'>&#xf358;</span></button><button class='titleButton destinations' title='Add all page controls as destinations'><span class='fas'>&#xf055;</span></button><button class='titleButton pageSortDestination' title='Sort destinations according to their order on the page'><span class='fas'>&#xf160;</span></button></td><td><b>Destination field</b><button class='titleButton destinationFields' title='Derive destination field from source control name'><span class='fas'>&#xf021;</span></button></td><td><b>Copy type</b><button class='titleButton setCopyTypes' title='Set all copy types to the same as the top one'><span class='fas'>&#xf358;</span></button></td><td><button class='titleButton swap' title='Swap all source and destinations'><span class='fas'>&#xf362;</span></button></td></tr>");
+		
+		var pageSort = function(controlField) { return function(ev) {
 			// add an undo snapshot
 			addUndo();
 			// get the data copies
@@ -4989,15 +4988,20 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 			var allControls = getControls();
 			var newDataCopies = allControls.flatMap(function(control) {
 				return dataCopies.filter(function(copy) {
-					return copy.source === control.id;
+					return copy[controlField] === control.id;
 				});
 			}).concat(dataCopies.filter(function(copy) {
-				return copy.source == "";
+				return !copy[controlField];
 			}));
 			ev.data.datacopyAction[ev.data.property.key] = newDataCopies;
 			// refresh
 			Property_datacopyCopies(ev.data.cell, ev.data.datacopyAction, ev.data.property); 
-		}));
+		}};
+		
+		// add pageSortSource listener
+		addListener( table.find("button.pageSortSource").click( {cell:cell, datacopyAction:datacopyAction, property:property}, pageSort("source")));
+		// add pageSortDestination listener
+		addListener( table.find("button.pageSortDestination").click( {cell:cell, datacopyAction:datacopyAction, property:property}, pageSort("destination")));
 		// add sources listener
 		addListener( table.find("button.sources").click( {cell:cell, datacopyAction:datacopyAction, property:property}, function(ev) {
 			// add an undo snapshot
