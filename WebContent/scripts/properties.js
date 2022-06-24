@@ -7054,8 +7054,8 @@ function Property_controlControls(cell, controlAction, property, details) {
 			}						
 		}));
 		
-		if (controls.length === 0 && !controlAction.migratedToBulk) {
-			var parameter = controlAction[controlAction.parameterKey];
+		if (controls.length === 0 && controlAction.control !== _page.id && !controlAction.migratedToBulk) {
+			var parameter = controlAction[controlAction.parameterKey] || "";
 			controls.push({source: controlAction.control, actionType: controlAction.actionType, parameter: parameter});
 			controlAction.migratedToBulk = true;
 		}
