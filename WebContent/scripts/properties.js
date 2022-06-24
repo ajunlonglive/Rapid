@@ -5277,6 +5277,7 @@ function Property_controlActionDuration(cell, controlAction, property, details) 
 	if (controlAction.actionType.indexOf("slide") == 0 || controlAction.actionType.indexOf("fade") == 0) {
 		// show the duration
 		Property_integer(cell, controlAction, property);
+		controlAction.parameterKey = "duration";
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
@@ -5288,6 +5289,7 @@ function Property_controlActionClasses(cell, controlAction, property, details) {
 	if (controlAction.actionType == "addClass" || controlAction.actionType == "removeClass" || controlAction.actionType == "toggleClass" || controlAction.actionType == "removeChildClasses") {
 		// add thegtext
 		Property_select(cell, controlAction, property, details);
+		controlAction.parameterKey = "styleClass";
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
@@ -5299,6 +5301,7 @@ function Property_controlActionCommand(cell, controlAction, property, details) {
 	if (controlAction.actionType == "custom") {
 		// add the bigtext
 		Property_bigtext(cell, controlAction, property, details);
+		controlAction.parameterKey = "command";
 	} else {
 		// remove this row
 		cell.closest("tr").remove();
@@ -7050,6 +7053,12 @@ function Property_controlControls(cell, controlAction, property, details) {
 				Property_controlControls(ev.data.cell, ev.data.controlAction, ev.data.property); 
 			}						
 		}));
+		
+		if (controls.length === 0 && !controlAction.migratedToBulk) {
+			var parameter = controlAction[controlAction.parameterKey];
+			controls.push({source: controlAction.control, actionType: controlAction.actionType, parameter: parameter});
+			controlAction.migratedToBulk = true;
+		}
 		
 		// show current choices (with delete and move)
 		for (var i = 0; i < controls.length; i++) {
