@@ -397,14 +397,17 @@ public class RapidHttpServlet extends HttpServlet {
 	// send the user an exception in a formatted page - used by both Rapid and Designer servelets
 	public void sendException(RapidRequest rapidRequest, HttpServletResponse response, Exception ex) throws IOException {
 
-		// set the status
+		// set the response status
 		response.setStatus(500);
+
+		// set the response type - it's just text
+		response.setContentType("text/text");
 
 		// get a writer to put the content in
 		PrintWriter out = response.getWriter();
 
 		// print the message
-		out.print( ex.getLocalizedMessage());
+		out.print(ex.getLocalizedMessage());
 
 		// if showStackTrace is set in web.xml
 		boolean showStackTrace = Boolean.parseBoolean(getServletContext().getInitParameter("showStackTrace"));
