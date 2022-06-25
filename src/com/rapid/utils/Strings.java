@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -116,24 +116,24 @@ public class Strings {
 	}
 
 	public static String toSaturatedRGB(int number) {
-		
+
 		final int hashR = hash32(number + 1);
 		final int hashG = hash32(hashR);
 		final int hashB = hash32(hashG);
-		
+
 		// clamp values to range 0 to MAX_VALUE
 		final int r = Math.abs(hashR);
 		final int g = Math.abs(hashG);
 		final int b = Math.abs(hashB);
-		
+
 		final int min = Math.min(Math.min(r, g), b);
 		final int max = Math.max(Math.max(r, g), b);
 		final int range = max - min;
-		
+
 		final byte red = (byte) (r == min ? 0 : r == max ? -16 : (new Double(Byte.MAX_VALUE - 16) / (new Double(r) / range)));
 		final byte green = (byte) (g == min ? 0 : g == max ? -16 : (new Double(Byte.MAX_VALUE - 16) / (new Double(g) / range)));
 		final byte blue = (byte) (b == min ? 0 : b == max ? -16 : (new Double(Byte.MAX_VALUE - 16) / (new Double(b) / range)));
-		
+
 		final String hexString = encodeHexString(new byte[] {red, green, blue});
 		return "#" + hexString;
 	}
@@ -161,10 +161,10 @@ public class Strings {
 	}
 
 	public static String deleteSubstring(String text, String textToDelete) {
-		
+
 		// check the location of one string in another
 		int location = text.indexOf(textToDelete);
-		
+
 		// if it contains the string then remove it
 		if(location>=0) {
 			text = text.substring(0, location) + text.substring(location + textToDelete.length());
@@ -172,9 +172,9 @@ public class Strings {
 
 		return text;
 	}
-	
+
 	public static int editPercentage(String word1, String word2) {
-		
+
 		// get the longest of the two words
 		float maxWordLength = (word1.length()>word2.length())?word1.length():word2.length();
 
@@ -182,33 +182,33 @@ public class Strings {
 		float editDistance = editDistance(word1, word2);
 
 		// now calculate the percentage difference
-		float percentageDifference = ((float)100/maxWordLength) * editDistance;
+		float percentageDifference = (100f/maxWordLength) * editDistance;
 
 		// return it
 		return (int)percentageDifference;
 	}
-	
+
 	public static int editDistance(String word1, String word2) {
 		int len1 = word1.length();
 		int len2 = word2.length();
-		
+
 		// len1+1, len2+1, because finally return dp[len1][len2]
 		int[][] dp = new int[len1 + 1][len2 + 1];
-		
+
 		for (int i = 0; i <= len1; i++) {
 			dp[i][0] = i;
 		}
-		
+
 		for (int j = 0; j <= len2; j++) {
 			dp[0][j] = j;
 		}
-		
+
 		//iterate though, and check last char
 		for (int i = 0; i < len1; i++) {
 			char c1 = word1.charAt(i);
 			for (int j = 0; j < len2; j++) {
 				char c2 = word2.charAt(j);
-				
+
 				//if last two chars equal
 				if (c1 == c2) {
 					//update dp value for +1 length
@@ -217,14 +217,14 @@ public class Strings {
 					int replace = dp[i][j] + 1;
 					int insert = dp[i][j + 1] + 1;
 					int delete = dp[i + 1][j] + 1;
-					
+
 					int min = replace > insert ? insert : replace;
 					min = delete > min ? min : delete;
 					dp[i + 1][j + 1] = min;
 				}
 			}
 		}
-	 
+
 		return dp[len1][len2];
 	}
 
