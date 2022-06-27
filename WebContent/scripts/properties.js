@@ -5134,6 +5134,23 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 			}						
 		}));
 		
+		if (!datacopyAction.dataCopies) datacopyAction.dataCopies = [];
+		var dataCopies = datacopyAction.dataCopies
+		if (dataCopies.length === 0 && !datacopyAction.migratedToBulk) {
+			
+			datacopyAction.dataDestinations.forEach(function(destination) {
+				dataCopies.push({
+					source: datacopyAction.dataSource,
+					sourceField: datacopyAction.dataSourceField || "",
+					destination: destination.itemId,
+					destinationField: destination.field || "",
+					type: "replace"
+				});
+			});
+			
+			datacopyAction.migratedToBulk = true;
+		}
+		
 		// show current choices (with delete and move)
 		for (var i = 0; i < dataCopies.length; i++) {
 			

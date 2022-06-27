@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -72,7 +72,8 @@ This powerful control moves data around your application. The following differnt
 	            <changeValueJavaScript>datacopySource</changeValueJavaScript>
 	            <getValuesFunction>
 	                <![CDATA[
-// for backwards compatibility	                
+this.migratedToBulk = false;
+// for backwards compatibility
 if (this.dataSource == "System.user") this.dataSource = "System.user name";
 // dateTime only available for certain copy types
 var hasDatetime = ['replace', 'child', 'row', 'append'].some(function(val) { return val === this.copyType; });
