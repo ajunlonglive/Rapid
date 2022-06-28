@@ -90,12 +90,36 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        </property>
 	        
 	        <property>
+	            <key>selectAll</key>
+	            <name>Select all</name>
+				<visibility>
+					<key>multi</key>
+					<value>true</value>
+				</visibility>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Show buttons to select/deselect all options.</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>slide</key>
 	            <name>Slide down</name>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <refreshHtml>true</refreshHtml>
 	            <refreshProperties>true</refreshProperties>
 	            <helpHtml>Makes the contents hide or show when tapped, similar to how a dropdown list functions.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>search</key>
+	            <name>Searchable</name>
+				<visibility>
+					<key>slide</key>
+					<value>true</value>
+				</visibility>
+	            <changeValueJavaScript>checkbox</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Includes a search box in the dropdown.</helpHtml>
 	        </property>
 	        
 	        <property>
@@ -132,6 +156,14 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
 	            <refreshHtml>false</refreshHtml>
 	            <helpHtml>Click away from the open list to close it.</helpHtml>
+	        </property>
+	        
+	        <property>
+	            <key>maxHeight</key>
+	            <name>Max height</name>
+	            <changeValueJavaScript>text</changeValueJavaScript>
+	            <refreshHtml>true</refreshHtml>
+	            <helpHtml>Maximum height (with unit) of the options (optional).</helpHtml>
 	        </property>
 	             
 	    </properties>
@@ -188,7 +220,12 @@ span.listSlider {
 	float: right;
 	font-family: FontAwesome-solid;
 	pointer-events: none;
-} 
+}
+
+.list .listOptions {
+	overflow-y: auto;
+}
+
 	                ]]>
 	            </contents>
 	        </resource>
@@ -196,7 +233,7 @@ span.listSlider {
 	    
 	    <getHtmlFunction>
 	        <![CDATA[
-// assume we have no initial values	
+// assume we have no initial values
 var values = [];
 // if an initial value was given split on comma
 if (this.value) values = this.value.split(",");
@@ -208,6 +245,8 @@ var options = "";
 var selectedCount = 0;
 // check we have options
 if (this.options) {
+	var maxHeight = (this.maxHeight || "").trim();
+	if (maxHeight) options += "<div class='listOptions' style='max-height:" + maxHeight + "; display: none;'>";
 	// if the options are a string turn them in an array
 	if ($.type(this.options) == "string") this.options = JSON.parse(this.options);
 	// loop the options
@@ -225,8 +264,9 @@ if (this.options) {
 			}
 		}
 		// append the options
-		options += "<li class='listOption" + (selected ? " listSelected" : "") + "'" + (this.slide ? " style='display:none'" : "") + " data-value='" + escapeApos(value) + "'>" + this.options[i].text + "</li>";
+		options += "<li class='listOption" + (selected ? " listSelected" : "") + "'" + (this.slide && !this.maxHeight ? " style='display:none'" : "") + " data-value='" + escapeApos(value) + "'>" + this.options[i].text + "</li>";
 	}
+	if (maxHeight) options += "</div>";
 }
 // check we have a header or can slide
 if (this.header || this.slide) {
@@ -235,9 +275,9 @@ if (this.header || this.slide) {
 	if (!headerText) headerText = "Header text";
 	if (this.slide && selectedCount > 0) {
 		headerText = headerText.substr(0, headerText.length - 2);
-		options = "<span class='listSelectedCount'>" + selectedCount + "</span><span class='fas listSlider'>&#xf078;</span><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + headerText + "</li>" + options;
+		options = "<span class='fas listSlider'>&#xf078;</span><li class='listSelectedCountText'><span class='listSelectedCount'>" + selectedCount + "</span><span class='listSelectedText'>" + (selectedCount === 0 ? headerText : "selected") + "</span></li><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + headerText + "</li><li class='tools' style='display:none'>" + (this.search ? "<input type='text' placeholder='Filter' class='search'>" : "") + (this.selectAll ? "<button type='button' class='select-all'>Select all</button><button type='button' class='deselect-all'>Clear</button>" : "") + "</li>" + options;
 	} else {
-		options = "<span class='listSelectedCount' style='display:none;'></span><span class='fas listSlider'>&#xf078;</span><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + headerText + "</li>" + options;
+		options = "<span class='fas listSlider'>&#xf078;</span><li class='listSelectedCountText'><span class='listSelectedCount' style='display:none;'></span><span class='listSelectedText'>" + (selectedCount === 0 ? headerText : "selected") + "</span></li><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + headerText + "</li><li class='tools' style='display:none'>" + (this.search ? "<input type='text' placeholder='Filter' class='search'>" : "") + (this.selectAll ? "<button type='button' class='select-all'>Select all</button><button type='button' class='deselect-all'>Clear</button>" : "") + "</li>" + options;
 	}
 }
 // place into the list
@@ -253,7 +293,7 @@ return html;
 	    
 	    <getDetailsFunction>
 	        <![CDATA[
-return {header: this.header, slide: this.slide && { selectAway: this.selectAway, clickAway: this.clickAway }, multi:this.multi};	        
+return {header: this.header, slide: this.slide && { selectAway: this.selectAway, clickAway: this.clickAway, search: this.search }, multi: this.multi && { selectAll: this.selectAll }, maxHeight: this.maxHeight };
 	        ]]>
 	    </getDetailsFunction>
 	    	    	    
@@ -262,9 +302,13 @@ return {header: this.header, slide: this.slide && { selectAway: this.selectAway,
 if (data != null && data !== undefined) {
 	var control = $("#" + id);
 	var list = control.is("ul") ? control : control.find("ul");
+	var header = list.find("li.listHeader");
+	var selectedCount = list.find(".listSelectedCount");
+	var listSelectedText = list.find(".listSelectedText");
+	var hide = !list.is(".listVisible");
+	if (details.maxHeight) list = list.find(".listOptions");
 	data = makeDataObject(data, field);
 	if (data.rows && data.fields) {
-		var hide = !list.is(".listVisible");
 		for (var i in data.rows) {
 			var row = data.rows[i];		
 			var text = "";
@@ -277,33 +321,33 @@ if (data != null && data !== undefined) {
 			}
 			if (!text) text = row[0];
 			if (!value && row[1]) value = row[1];
-			list.append("<li class='listOption'" + (hide ? " style='display:none;'" : "") + " data-value='" + value + "'>" + text + "</li>");
-			list.children().last().click( details, function(ev) {
-				if (!ev.data.multi) list.children().removeClass("listSelected");
+			list.append("<li class='listOption'" + (hide && !details.maxHeight ? " style='display:none;'" : "") + " data-value='" + value + "'>" + text + "</li>");
+			list.find("li.listOption").last().click( details, function(ev) {
+				if (!ev.data.multi) list.find(".listOption").removeClass("listSelected");
 				$(ev.target).toggleClass("listSelected");
 				if (ev.data.slide) {
 					var text = "";
-					var header = list.children("li.listHeader");
 					var count = 0;
-					var selectedCount = list.children("span.listSelectedCount");
-					list.children("li.listSelected").each( function() { 
+					list.find("li.listSelected").each( function() { 
 							text += $(this).html() + ", "; 
-							count ++;
-					});				
+							count++;
+					});
 					if (count > 0) {
 						text = text.substr(0, text.length - 2);
 						selectedCount.text(count).show();
+						listSelectedText.text("selected");
 					} else {
-						text = ev.data.header;
+						text = details.header;
 						selectedCount.hide();
-					}					
-					if (!details.multi) selectedCount.hide();									
-					header.html(text);		
+						listSelectedText.text(details.header);
+					}
+					header.html(text);
 				}
 				if (details.slide && details.slide.selectAway) {
 					header.removeClass("listVisible");
 					list.removeClass("listVisible");
-					list.children("li.listOption").slideUp(250, function() {
+					var slidables = list.find((details.maxHeight ? ".listOptions, " : ".listOption, ") + ".tools");
+					slidables.slideUp(250, function() {
 						list.children("span.listSlider").html("&#xf078;");
 					});
 				}
@@ -386,62 +430,126 @@ return "#" + this.id + " span.listSlider";
 	        <![CDATA[
 var control = $("#" + id);
 var list = control.is("ul") ? control : control.find("ul");
+var selectedCount = list.find(".listSelectedCount");
+var listSelectedText = list.find(".listSelectedText");
+
 if (details.slide) {
-	var header = list.children("li.listHeader");
-	var selectedCount = list.children("span.listSelectedCount");
+	var header = list.find("li.listHeader, .listSelectedCountText");
+	var slidables = list.find((details.maxHeight ? ".listOptions, " : ".listOption, ") + ".tools");
 	header.click( function(ev) {
 		header.toggleClass("listVisible");
 		list.toggleClass("listVisible");
-		list.children("li.listOption").slideToggle(250, function() {
+		slidables.slideToggle(250, function() {
 			if (header.hasClass("listVisible")) {
-				list.children("span.listSlider").html("&#xf077;");
+				list.find("span.listSlider").html("&#xf077;");
 			} else {
-				list.children("span.listSlider").html("&#xf078;");
+				list.find("span.listSlider").html("&#xf078;");
 			}
 		});  				
 	});	
 	
 	// if clickAway, listen for clicks that don't originate from the list and close it
 	if (details.slide.clickAway) {
-		$("body").click(function(ev) {
+		$(window).click(function(ev) {
 			if (!$.contains(control[0], ev.target)) {
 				header.removeClass("listVisible");
 				list.removeClass("listVisible");
-				list.children("li.listOption").slideUp(250, function() {
-					list.children("span.listSlider").html("&#xf078;");
+				slidables.slideUp(250, function() {
+					list.find("span.listSlider").html("&#xf078;");
 				});
 			}
 		});
 	}
 }
 
-list.children("li.listOption").click( details, function(ev) {
-	if (!ev.data.multi) list.children().removeClass("listSelected");
+var header = list.find("li.listHeader");
+list.find("li.listOption").click( details, function(ev) {
+	if (!ev.data.multi) list.find(".listOption").removeClass("listSelected");
 	$(ev.target).toggleClass("listSelected");
 	if (ev.data.slide) {
 		var text = "";
 		var count = 0;
-		list.children("li.listSelected").each( function() { 
+		list.find("li.listSelected").each( function() { 
 				text += $(this).html() + ", "; 
-				count ++;
+				count++;
 		});
 		if (count > 0) {
 			text = text.substr(0, text.length - 2);
 			selectedCount.text(count).show();
+			listSelectedText.text("selected");
 		} else {
-			text = ev.data.header;
+			text = details.header;
 			selectedCount.hide();
+			listSelectedText.text(details.header);
 		}
-		header.html(text);	
+		header.html(text);
 	}
 	if (details.slide && details.slide.selectAway) {
 		header.removeClass("listVisible");
 		list.removeClass("listVisible");
-		list.children("li.listOption").slideUp(250, function() {
+		var slidables = list.find((details.maxHeight ? ".listOptions, " : ".listOption, ") + ".tools");
+		slidables.slideUp(250, function() {
 			list.children("span.listSlider").html("&#xf078;");
 		});
 	}
-	list.trigger("change");	
+	list.trigger("change");
+});
+
+if (details.slide && details.slide.search) {
+	var search = list.find(".search");
+	search.on("input click", function() {
+		list.find("li.listOption").each(function() {
+			if ($(this).attr("data-value").toLowerCase().indexOf(search.val().toLowerCase()) != -1
+				|| $(this).text().toLowerCase().indexOf(search.val().toLowerCase()) != -1
+				|| !search.val()) {
+				$(this).slideDown(250);
+			} else {
+				$(this).slideUp(250);
+			}
+		});
+	});
+}
+
+list.find(".select-all").on("click", function() {
+	list.find(".listOption").addClass("listSelected");
+	var text = "";
+	var count = 0;
+	list.find("li.listSelected").each( function() { 
+			text += $(this).html() + ", "; 
+			count ++;
+	});
+	if (count > 0) {
+		text = text.substr(0, text.length - 2);
+		selectedCount.text(count).show();
+		listSelectedText.text("selected");
+	} else {
+		text = details.header;
+		selectedCount.hide();
+		listSelectedText.text(details.header);
+	}
+	header.html(text);
+	list.trigger("change");
+});
+
+list.find(".deselect-all").on("click", function() {
+	list.find(".listOption").removeClass("listSelected");
+	var text = "";
+	var count = 0;
+	list.find("li.listSelected").each( function() { 
+			text += $(this).html() + ", "; 
+			count ++;
+	});
+	if (count > 0) {
+		text = text.substr(0, text.length - 2);
+		selectedCount.text(count).show();
+		listSelectedText.text("selected");
+	} else {
+		text = details.header;
+		selectedCount.hide();
+		listSelectedText.text(details.header);
+	}
+	header.html(text);
+	list.trigger("change");
 });
 	        
 	        ]]>
@@ -456,7 +564,7 @@ list.children("li.listOption").click( details, function(ev) {
 var control = $("#" + id);
 var list = control.is("ul") ? control : control.find("ul");
 var value = "";
-list.children("li.listSelected").each( function() { 
+list.find("li.listSelected").each( function() { 
 	value += $(this).attr("data-value") + ","; 
 });	        
 if (value) {
@@ -479,12 +587,12 @@ if (data != null && data !== undefined) {
 	var control = $("#" + id);
 	var list = control.is("ul") ? control : control.find("ul");
 	var header = list.children("li.listHeader");
-	var selectedCount = list.children("span.listSelectedCount");
-	if (!details.multi || values == null) list.children().removeClass("listSelected");
+	var selectedCount = list.find("span.listSelectedCount");
+	if (!details.multi || values == null) list.find(".listOption").removeClass("listSelected");
 	if (values) {	
 		var headerText = "";
 		var selectCount = 0;
-		list.children("li.listOption").each( function() {		
+		list.find("li.listOption").each( function() {		
 			var option = $(this);
 			var match = false;
 			for (var i in values) {			
