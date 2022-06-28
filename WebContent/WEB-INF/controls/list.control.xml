@@ -347,7 +347,7 @@ if (data != null && data !== undefined) {
 					header.removeClass("listVisible");
 					list.removeClass("listVisible");
 					var slidables = list.find((details.maxHeight ? ".listOptions, " : ".listOption, ") + ".tools");
-					slidables.slideUp(250, function() {
+					slidables.slideUp(200, function() {
 						list.children("span.listSlider").html("&#xf078;");
 					});
 				}
@@ -439,7 +439,7 @@ if (details.slide) {
 	header.click( function(ev) {
 		header.toggleClass("listVisible");
 		list.toggleClass("listVisible");
-		slidables.slideToggle(250, function() {
+		slidables.slideToggle(200, function() {
 			if (header.hasClass("listVisible")) {
 				list.find("span.listSlider").html("&#xf077;");
 			} else {
@@ -454,7 +454,7 @@ if (details.slide) {
 			if (!$.contains(control[0], ev.target)) {
 				header.removeClass("listVisible");
 				list.removeClass("listVisible");
-				slidables.slideUp(250, function() {
+				slidables.slideUp(200, function() {
 					list.find("span.listSlider").html("&#xf078;");
 				});
 			}
@@ -488,7 +488,7 @@ list.find("li.listOption").click( details, function(ev) {
 		header.removeClass("listVisible");
 		list.removeClass("listVisible");
 		var slidables = list.find((details.maxHeight ? ".listOptions, " : ".listOption, ") + ".tools");
-		slidables.slideUp(250, function() {
+		slidables.slideUp(200, function() {
 			list.children("span.listSlider").html("&#xf078;");
 		});
 	}
@@ -502,9 +502,9 @@ if (details.slide && details.slide.search) {
 			if ($(this).attr("data-value").toLowerCase().indexOf(search.val().toLowerCase()) != -1
 				|| $(this).text().toLowerCase().indexOf(search.val().toLowerCase()) != -1
 				|| !search.val()) {
-				$(this).slideDown(250);
+				$(this).slideDown(200);
 			} else {
-				$(this).slideUp(250);
+				$(this).slideUp(200);
 			}
 		});
 	});
