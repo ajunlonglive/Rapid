@@ -435,10 +435,10 @@ var listSelectedText = list.find(".listSelectedText");
 
 if (details.slide) {
 	var header = list.find("li.listHeader, .listSelectedCountText");
-	var slidables = list.find((details.maxHeight ? ".listOptions, " : ".listOption, ") + ".tools");
 	header.click( function(ev) {
 		header.toggleClass("listVisible");
 		list.toggleClass("listVisible");
+		var slidables = list.find((details.maxHeight ? ".listOptions, " : ".listOption, ") + ".tools");
 		slidables.slideToggle(200, function() {
 			if (header.hasClass("listVisible")) {
 				list.find("span.listSlider").html("&#xf077;");
@@ -454,6 +454,7 @@ if (details.slide) {
 			if (!$.contains(control[0], ev.target)) {
 				header.removeClass("listVisible");
 				list.removeClass("listVisible");
+				var slidables = list.find((details.maxHeight ? ".listOptions, " : ".listOption, ") + ".tools");
 				slidables.slideUp(200, function() {
 					list.find("span.listSlider").html("&#xf078;");
 				});
