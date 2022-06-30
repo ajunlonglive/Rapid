@@ -36,7 +36,6 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Authenticator;
-import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -88,15 +87,22 @@ public class Email {
 
 		private String _name;
 		private DataSource _dataSource;
+		private String _cid;
 
-		public Attachment(String name, DataSource dataSource) {
+		public Attachment(String name, DataSource dataSource, String cid) {
 			_name = name;
 			_dataSource = dataSource;
+			_cid = cid;
+		}
+		
+		public Attachment(String name, DataSource dataSource) {
+			this(name, dataSource, null);
 		}
 
 		public String getName() { return _name; }
 		public DataSource getDataSource() { return _dataSource; }
-
+		public String getCID() { return _cid; };
+		
 	}
 
 	// useful for attachments created in memory from strings
@@ -310,10 +316,13 @@ public class Email {
 	            }
 	        };
 	    }
+	    
+	    // if text content is null or empty, show change to something useful
+    	if (text == null || text.length() == 0) text = "Please view this email in a client that supports html";
 
 	    // get the default session
     	Session session = Session.getInstance(_properties, _authenticator);
-
+  
     	try {
 
 	    	// create the message
@@ -343,7 +352,7 @@ public class Email {
 	        if (gotAttachments) {
 
 	        	// Create the message part
-	            BodyPart messageBodyPart = new MimeBodyPart();
+	        	MimeBodyPart messageBodyPart = new MimeBodyPart();
 
 	            // set the text part
 	            messageBodyPart.setText(text);
@@ -352,8 +361,24 @@ public class Email {
 	            if (html != null) messageBodyPart.setContent(html, "text/html; charset=utf-8");
 
 	            // Create a multipart message
-	            Multipart multipart = new MimeMultipart();
-
+	            Multipart multipart = null;
+	            
+	            // loop the attachments looking for any content ID
+	            for (Attachment attachment : attachments) {
+	            	// may be null
+	            	if (attachment != null) {
+	            		// if this attachment has a content id
+	            		if (attachment.getCID() != null) {
+	            			// make the multipart related so the attachment image shows inline
+	            			multipart = new MimeMultipart("related");
+	            			break;
+	            		}
+	            	}
+	            }
+	            
+	            // no attachments had a content id for inline so go with non-related
+	            if (multipart == null) multipart = new MimeMultipart();
+	            
 	            // Set body message part
 	            multipart.addBodyPart(messageBodyPart);
 
@@ -363,7 +388,16 @@ public class Email {
 	            	if (attachment != null) {
 			            messageBodyPart = new MimeBodyPart();
 			            messageBodyPart.setFileName(attachment.getName());
-			            messageBodyPart.setDataHandler( new DataHandler(attachment.getDataSource()));
+			            // if this attachment has a content id for inline images
+			            if (attachment.getCID()!=null) {
+			            	// set the content id of this attachment (would be provided when generating the html and passed in the attachment constructor)
+			            	messageBodyPart.setContentID("<"+attachment.getCID()+">");
+			            	// say that it's inline
+			            	messageBodyPart.setDisposition(MimeBodyPart.INLINE);
+			            }
+			            
+			            messageBodyPart.setDataHandler(new DataHandler(attachment.getDataSource()));
+			            // add this part
 			            multipart.addBodyPart(messageBodyPart);
 	            	}
 	            }
@@ -391,12 +425,11 @@ public class Email {
 
     // overload to above for non-html
     public static void send(String from, String to, String subject, String text) throws AddressException, MessagingException {
-    	send(from, to, subject, text, null, null);
+    	send(from, to, subject, text, null, (Email.Attachment[])null);
     }
 
     // overload to above for no attachments
     public static void send(String from, String to, String subject, String text, String html) throws AddressException, MessagingException {
-    	send(from, to, subject, text, html, null);
+    	send(from, to, subject, text, html, (Email.Attachment[])null);
     }
-
 }
