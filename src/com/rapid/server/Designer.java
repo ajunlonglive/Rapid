@@ -1227,7 +1227,7 @@ public class Designer extends RapidHttpServlet {
 
 							// app details
 							if ("summary".equals(actionName) || "detail".equals(actionName)) {
-								
+
 								int statusId = application.getStatus();
 								String status = statusId == 0 ? "In development" : statusId == 1 ? "Live" : statusId == 2 ? "Under maintenance" : null;
 								if (status != null) out.print("Status:\t" + status + "\r\n");
@@ -1239,12 +1239,12 @@ public class Designer extends RapidHttpServlet {
 								if (application.getModifiedDate() != null) out.print("Modified date:\t" + df.format(application.getModifiedDate()) + "\r\n");
 								// safe modified by
 								if (application.getModifiedBy() != null) out.print("Modified by:\t" + application.getModifiedBy() + "\r\n");
-								
+
 								if (application.getStartPageId() != null) out.print("Start page:\t" + application.getStartPageId() + "\r\n");
-								
+
 								// description
 								if (application.getDescription() != null && application.getDescription().trim().length() > 0) out.print("Description:\t" + application.getDescription() + "\r\n");
-								
+
 								out.print("Form settings:\t" + application.getIsForm() + "\r\n");
 								if (application.getIsForm()) {
 									// form
@@ -1287,7 +1287,7 @@ public class Designer extends RapidHttpServlet {
 								// theme
 								out.print("Theme:\t" + application.getThemeType() + "\r\n");
 							}
-							
+
 							// App parameters
 							List<Parameter> parameters = application.getParameters();
 							out.print("\r\nApplication parameters:\t" + parameters.size() + "\r\n");
@@ -1297,7 +1297,7 @@ public class Designer extends RapidHttpServlet {
 								out.print("\tValue:\t" + parameter.getValue() + "\r\n");
 							}
 							out.println();
-							
+
 							// DB connections
 							List<DatabaseConnection> connections = application.getDatabaseConnections();
 							out.print("\r\nDatabase connections:\t" + connections.size() + "\r\n");
@@ -1308,7 +1308,7 @@ public class Designer extends RapidHttpServlet {
 								out.print("\tUsername:\t" + connection.getUserName() + "\r\n");
 							}
 							out.println();
-							
+
 							// App settings
 							String settings = application.getSettingsId();
 							if (settings != null && !settings.isEmpty()) out.print("Settings:\t" + settings + "\r\n");
@@ -1637,7 +1637,7 @@ public class Designer extends RapidHttpServlet {
 								out.print("\r\n");
 
 							} // page loop
-							
+
 							// App Resources
 							Resources resources = application.getAppResources();
 							out.println("\r\nResources:\t" + resources.size() + "\r\n");
@@ -1646,12 +1646,12 @@ public class Designer extends RapidHttpServlet {
 								if (resource.getContent() != null) out.print("Content:\t" + resource.getContent() + "\r\n");
 							}
 							out.println();
-							
+
 							// App CSS
 							String styles = application.getStyles();
 							out.print("Styles:\t\r\n");
 							out.print(styles + "\r\n");
-							
+
 							// close the writer
 							out.close();
 
@@ -2598,20 +2598,20 @@ public class Designer extends RapidHttpServlet {
 												appNew.setStatus(Application.STATUS_DEVELOPMENT);
 
 												// get the previous version
-												Application appOld = getApplications().get(appOldId);
+												Application appPrev = getApplications().get(appOldId);
 
 												// if we're keeping settings
 												if (keepSettings) {
 
 													// if we had one
-													if (appOld != null) {
+													if (appPrev != null) {
 
 														// update database connections from old version
-														appNew.setDatabaseConnections(appOld.getDatabaseConnections());
+														appNew.setDatabaseConnections(appPrev.getDatabaseConnections());
 
 														// update parameters from old version
-														appNew.setParameters(appOld.getParameters());
-														
+														appNew.setParameters(appPrev.getParameters());
+
 														// update settings from old version
 														Application latestVersion = getApplications().get(appId);
 														Settings oldSettings = Settings.load(context, latestVersion);
@@ -2816,56 +2816,124 @@ public class Designer extends RapidHttpServlet {
 
 												}
 
+												/*
+
+												This was a different attempt tp only remove and add users to the new version from the previous that weren't already there but it doesn't take passwords into account
+
 												// get the security for this application
-												SecurityAdapter security = appNew.getSecurityAdapter();
+												SecurityAdapter securityNew = appNew.getSecurityAdapter();
 
 												// if we're keeping settings, and there is an old app, and the security adapter allows users to be added
-												if (keepSettings && appOld != null && SecurityAdapter.hasManageUsers(context, appNew.getSecurityAdapterType())) {
+												if (keepSettings && appPrev != null && SecurityAdapter.hasManageUsers(context, appNew.getSecurityAdapterType())) {
 
 													// a Rapid request we'll use to delete users from the new app
 													RapidRequest deleteRequest = new RapidRequest(this, request, appNew);
 
-													// get all current users of the new app
-													Users users = security.getUsers(rapidRequest);
+													// get all users of the new app to remove
+													Users usersNewToRemove = securityNew.getUsers(rapidRequest);
+													// get all users of the new app to not add back as they're already there
+													Users usersNewToNotAdd = securityNew.getUsers(rapidRequest);
 
-													// if there are users
-													if (users != null && users.size() > 0) {
+													// get the security adapter from the previous version we want to keep the users from
+													SecurityAdapter securityPrev = appPrev.getSecurityAdapter();
 
-														// remove all current users
-														for (int i = 0; i < users.size(); i++) {
-															// get this user
-															User user = users.get(i);
-															// set their name in the delete Rapid request
-															deleteRequest.setUserName(user.getName());
-															// delete them
-															security.deleteUser(deleteRequest);
-															// one less to do
-															i--;
+													// get any old users (from the previous version)
+													Users usersPrev = securityPrev.getUsers(rapidRequest);
+
+													// if there are users from the previous version
+													if (usersPrev != null && usersPrev.size() > 0) {
+
+														// if there are current users
+														if (usersNewToRemove != null && usersNewToRemove.size() > 0) {
+
+															// remove any old users from the current users list (we don't want to delete them, just to add them back)
+															usersNewToRemove.removeAll(usersPrev);
+
+															// remove all new users that aren't previous version users
+															for (int i = 0; i < usersNewToRemove.size(); i++) {
+																// get this user
+																User user = usersNewToRemove.get(i);
+																// set their name in the delete Rapid request
+																deleteRequest.setUserName(user.getName());
+																// delete users currently in the app from the import that we don't want in the new version
+																securityNew.deleteUser(deleteRequest);
+															}
+
+															// remove new users from previous users so we don't add them back again
+															usersPrev.removeAll(usersNewToNotAdd);
+
 														}
 
-													} // users check
-
-													// get the old security adapter
-													SecurityAdapter securityOld = appOld.getSecurityAdapter();
-
-													// get any old users
-													users = securityOld.getUsers(rapidRequest);
-
-													// if there are users
-													if (users != null && users.size() > 0) {
-
-														// add old users to the new app
-														for (User user : users) {
+														// add previous users to the new app that aren't already there
+														for (User userPrev : usersPrev) {
 
 															// add the old user to the new app
-															security.addUser(rapidRequest, user);
+															securityNew.addUser(rapidRequest, userPrev);
 
 														}
 
 													} else {
 
 														// if we failed to get users using the specified security make the new "safe" Rapid security adapter for the new app
-														security = new RapidSecurityAdapter(context, appNew);
+														securityNew = new RapidSecurityAdapter(context, appNew);
+
+														// add it to the new app
+														appNew.setSecurityAdapter(context, "rapid");
+
+													} // old users check
+
+												} // new app allows adding users and there is an old app to get them from
+
+												*/
+
+												// get the security for this application
+												SecurityAdapter securityNew = appNew.getSecurityAdapter();
+
+												// if we're keeping settings, and there is an old app, and they're both Rapid
+												if (keepSettings && appPrev != null && "rapid".equals(appPrev.getSecurityAdapterType()) && "rapid".equals(appNew.getSecurityAdapterType())) {
+
+													// a Rapid request we'll use to delete users from the new app
+													RapidRequest deleteRequest = new RapidRequest(this, request, appNew);
+
+													// get all current users of the new app
+													Users usersNew = securityNew.getUsers(rapidRequest);
+
+													// if there are users
+													if (usersNew != null && usersNew.size() > 0) {
+
+														// remove all current of the new app
+														for (int i = 0; i < usersNew.size(); i++) {
+															// get this user
+															User user = usersNew.get(i);
+															// set their name in the delete Rapid request
+															deleteRequest.setUserName(user.getName());
+															// delete them
+															securityNew.deleteUser(deleteRequest);
+														}
+
+													} // users check
+
+													// get the old security adapter
+													SecurityAdapter securityOld = appPrev.getSecurityAdapter();
+
+													// get any old users from the previous version
+													Users usersPrev = securityOld.getUsers(rapidRequest);
+
+													// if there are users
+													if (usersPrev != null && usersPrev.size() > 0) {
+
+														// add old users to the new app
+														for (User userOld : usersPrev) {
+
+															// add the old user to the new app
+															securityNew.addUser(rapidRequest, userOld);
+
+														}
+
+													} else {
+
+														// if we failed to get users using the specified security make the new "safe" Rapid security adapter for the new app
+														securityNew = new RapidSecurityAdapter(context, appNew);
 
 														// add it to the new app
 														appNew.setSecurityAdapter(context, "rapid");
@@ -2885,7 +2953,7 @@ public class Designer extends RapidHttpServlet {
 												try {
 
 													// get the current user's record from the adapter
-													user = security.getUser(importRapidRequest);
+													user = securityNew.getUser(importRapidRequest);
 
 												} catch (SecurityAdapaterException ex) {
 
@@ -2894,18 +2962,18 @@ public class Designer extends RapidHttpServlet {
 													// set a new Rapid security adapter for the app (it will construct it)
 													appNew.setSecurityAdapter(context, "rapid");
 													// retrieve the security adapter we just asked to be made
-													security = appNew.getSecurityAdapter();
+													securityNew = appNew.getSecurityAdapter();
 												}
 
 												// check the current user is present in the app's security adapter
 												if (user != null) {
 													// now check the current user password is correct too
-													if (security.checkUserPassword(importRapidRequest, userName, rapidRequest.getUserPassword())) {
+													if (securityNew.checkUserPassword(importRapidRequest, userName, rapidRequest.getUserPassword())) {
 														// we have the right user with the right password
 														gotUser = true;
 													} else {
 														// remove this user in case there is one with the same name but the password does not match
-														security.deleteUser(importRapidRequest);
+														securityNew.deleteUser(importRapidRequest);
 													}
 												}
 
@@ -2916,16 +2984,16 @@ public class Designer extends RapidHttpServlet {
 													// create a new user based on the Rapid user
 													user = new User(rapidUser);
 													// add the new user to this application
-													security.addUser(importRapidRequest, user);
+													securityNew.addUser(importRapidRequest, user);
 												}
 
 												// add Admin roles for the new user if not present
-												if (!security.checkUserRole(importRapidRequest, com.rapid.server.Rapid.ADMIN_ROLE))
-													security.addUserRole(importRapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
+												if (!securityNew.checkUserRole(importRapidRequest, com.rapid.server.Rapid.ADMIN_ROLE))
+													securityNew.addUserRole(importRapidRequest, com.rapid.server.Rapid.ADMIN_ROLE);
 
 												// add Design role for the new user if not present
-												if (!security.checkUserRole(importRapidRequest, com.rapid.server.Rapid.DESIGN_ROLE))
-													security.addUserRole(importRapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
+												if (!securityNew.checkUserRole(importRapidRequest, com.rapid.server.Rapid.DESIGN_ROLE))
+													securityNew.addUserRole(importRapidRequest, com.rapid.server.Rapid.DESIGN_ROLE);
 
 												// reload the pages (actually clears down the pages collection and reloads the headers)
 												appNew.getPages().loadpages(context);
