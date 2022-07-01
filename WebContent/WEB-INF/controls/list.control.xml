@@ -449,9 +449,13 @@ if (details.slide) {
 	});	
 	
 	// if clickAway, listen for clicks that don't originate from the list and close it
+	var elementLastMouseDown;
+	$(window).on("mousedown", function(ev) {
+		elementLastMouseDown = ev.target;
+	});
 	if (details.slide.clickAway) {
 		$(window).click(function(ev) {
-			if (!$.contains(control[0], ev.target)) {
+			if (!$.contains(control[0], elementLastMouseDown)) {
 				header.removeClass("listVisible");
 				list.removeClass("listVisible");
 				var slidables = list.find((details.maxHeight ? ".listOptions, " : ".listOption, ") + ".tools");
