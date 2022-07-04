@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2018 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -167,9 +167,9 @@ public class Pages {
 		// store the application
 		_application = application;
 		// initialise the page headers collection
-		_pageHeaders = new HashMap<String,PageHeader>();
+		_pageHeaders = new HashMap<>();
 		// initialise the pages collection
-		_pages = new HashMap<String,Page>();
+		_pages = new HashMap<>();
 		// create a filter for finding .page.xml files
 		_filenameFilter = new FilenameFilter() {
 	    	@Override
@@ -372,7 +372,7 @@ public class Pages {
 		_sortedPageHeaders = null;
 
 		// create a new map for caching page files by id's
-	    _pageHeaders = new HashMap<String,PageHeader>();
+	    _pageHeaders = new HashMap<>();
 
 	    // initiate pages folder
 		File pagesFolder = new File(_application.getConfigFolder(servletContext) + "/pages");
@@ -405,6 +405,26 @@ public class Pages {
     		    // get the title
     		    String pageTitle = xpathTitle.evaluate(doc);
 
+    		    // on 19/11/2021 added page id into page file name so if pages had the same name, deleting one wouldn't delete both files. However this can result in Rapid updates where the old-style page from a previous version is not removed
+
+    		    // if this is the Rapid app and this page is already in the app
+    		    if ("rapid".equals(_application.getId()) && _pageHeaders.containsKey(pageId)) {
+    		    	// get the path of this page file
+    		    	String pageFilePath = pageFile.getAbsolutePath();
+    		    	// if the file name contains the id
+    		    	if (pageFilePath.endsWith("_" + pageId + ".page.xml")) {
+    		    		// this is the one to keep, delete the old page file
+    		    		File deletePageFile = new File(pageFilePath.replace("_" + pageId + ".page.xml", ".page.xml"));
+    		    		// if this file exists, delete it
+    		    		if (deletePageFile.exists()) deletePageFile.delete();
+    		    	} else {
+    		    		// delete this page file and don't add
+    		    		pageFile.delete();
+    		    		// skip to the next page without adding this page
+    		    		continue;
+    		    	}
+    		    }
+
     		    // cache the page id against the file so we don't need to use the expensive parsing operation again
     		    _pageHeaders.put(pageId, new PageHeader(pageId, pageName, pageTitle, pageFile));
 
@@ -429,7 +449,7 @@ public class Pages {
 					// if the number of seconds between now and the last get time is greater than our age
 					if (now.getTime() - pageHeader.getLastGetDateTime().getTime() > maxPageAge * 1000) {
 						// initialise if need be
-						if (clearPages == null) clearPages = new ArrayList<PageHeader>();
+						if (clearPages == null) clearPages = new ArrayList<>();
 						// add this id for clearing
 						clearPages.add(pageHeader);
 					}
