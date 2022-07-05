@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -438,8 +438,8 @@ public class FormAuthenticationAdapter extends RapidAuthenticationAdapter {
 						if (!publicAccess && _publicResources.size() > 0) {
 							// loop the public resources
 							for (String publicResource : _publicResources) {
-								// check it
-								if (requestPath.startsWith(publicResource)) {
+								// check the request path starts with the public resource path, including
+								if (requestPath.startsWith(publicResource) || (publicResource.contains("?") && (requestPath + "?" + request.getQueryString()).startsWith(publicResource))) {
 									// set local public access
 									publicAccess = true;
 									// we're done
