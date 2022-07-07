@@ -308,6 +308,13 @@ if (data !== undefined) {
 				if (html) control.append(html);
 			}
 		}
+		setTimeout(function() {
+			var value = control.val() !== null ? control.val() : control.find("option").first().attr("value");
+			control.attr("data-value", value);
+			control.find("+ span input").val(
+				control.find("[value='" + value + "']").first().text()
+			);
+		});
 	}
 }
         
