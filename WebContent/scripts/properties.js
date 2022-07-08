@@ -960,7 +960,7 @@ function getDialogue(cell, propertyObject, property, details, width, title, opti
 			"z-index": _dialogueZindex++
 		});
 		// show this drop down
-		dialogue.slideDown(300, function() {
+		dialogue.slideDown(200, function() {
 			windowResize("PropertyDialogue show");
 		});			
 		
@@ -1238,7 +1238,7 @@ function Property_bigtext(cell, propertyObject, property, details) {
 		});
 		
 		//display animated with slideDown effect
-		myCodeMirrorDialogue.slideDown(300, function() {	
+		myCodeMirrorDialogue.slideDown(200, function() {	
 			// focus it so a click anywhere else fires the unfocus and hides the textbox
 			myCodeMirror.focus();
 			// set the cursor at the end of existing content

@@ -1144,12 +1144,12 @@ select:focus-within {
 }
 
 select option {
-  background: #D5D6D2;
+  background: #F8F8F8;
   color: black;
 }
 
 select optgroup {
-  background: #C5C6C2;
+  background: #EEE;
 }
 
 #controlPanel, #propertiesPanel, table.propertiesPanelTable, table.stylesPanelTable, .propertyDialogue {
@@ -1223,13 +1223,9 @@ select optgroup {
   background: #FFF;
   margin: 0px !important;
   cursor: pointer;
-  border: 1px solid #999;
-  background: transparent linear-gradient(#FFF, #E0E0E0);
-}
-
-#designerTools input:hover[type=checkbox]:before {
-  border: 1px solid #6F6F6F;
-  background: transparent linear-gradient(#EBEBEB, #999);
+  border: 1px solid #AAA;
+  background: #F8F8F8;
+  border-radius: 2px;
 }
 
 #designerTools input:active[type=checkbox]:before {
@@ -1242,25 +1238,20 @@ select optgroup {
   display: block;
   content: '';
   margin: 0px;
-  background-color: #FFF;
-  border: 1px solid #600;
-  background: transparent linear-gradient(#EBEBEB, #BABABA);
-}
-
-#designerTools input:hover[type=checkbox]:checked:before {
-  background: transparent linear-gradient(#EBEBEB, #999);
+  border: 1px solid #900;
+  background: #800;
 }
 
 #designerTools input[type=checkbox]:checked:after {
   content: '';
   position: absolute;
-  margin-top: -12.5px !important;
+  margin-top: -13px !important;
   margin-left: 4px !important;
   border-radius: 2px;
-  border-right: 3px solid #4D0000;
-  border-bottom: 3px solid #4D0000;
+  border-right: 3px solid #FFF;
+  border-bottom: 3px solid #FFF;
   width: 3px !important;
-  height: 7px !important;
+  height: 8px !important;
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);

@@ -65,7 +65,6 @@ table.propertiesPanelTable  {
 	padding-left: 5px;
 	box-sizing: border-box;
 	border: none;
-	/*transition: background 0.3s ease;*/
 }
 
 .propertiesPanelTable input:focus {
@@ -74,15 +73,6 @@ table.propertiesPanelTable  {
 
 .propertiesPanelTable td[data-dialogueid] {
     padding-left: 5px;
-}
-
-.propertiesPanelTable tr:hover td:first-child:not(.propertyHeader) {
-	background: #D5D6D2;
-	font-weight: bold;
-}
-
-.propertiesPanelTable tr:hover td:nth-child(2), .propertiesPanelTable tr:hover td:nth-child(2) input, .propertiesPanelTable tr:hover td:nth-child(2) select {
-	background: #D5D6D2;
 }
 
 .propertiesPanelTable input[type=radio] {
@@ -153,12 +143,8 @@ td.propertySubHeader select:hover {
 
 .propertiesPanelTable td.propertyAdd {
 	padding: 0;
-	background: #D5D6D2;
-}
-
-.propertiesPanelTable.propertiesDialogueTable tr:hover td {
-	background: #D5D6D2;
-	font-weight: bold;
+	background: #EEE;
+	border-top: solid 4px #EEE;
 }
 
 .propertyAdd select {
@@ -178,7 +164,7 @@ img.validationHelp {
 
 i.actionHelp, img.actionHelp {
 	float: right;
-	color: #777;
+	color: #888;
 	margin-top: 1px;
 	margin-right: -17px;
 }
@@ -186,8 +172,8 @@ i.actionHelp, img.actionHelp {
 i.propertyHelp, img.propertyHelp {
 	float: right;
 	margin-right: -17px;
-	color: #777;
-	font-size: 15px;	
+	color: #888;
+	font-size: 15px;
 }
 
 [class^="fa"],
@@ -313,15 +299,16 @@ div.propertyDialogue {
 	right: 10px;
 	display: none;
 	z-index: 10012;
-	background: #D5D6D2;
+	background: #EEE;
 	padding: 10px;
 	-webkit-touch-callout: none;
-  	-webkit-user-select: none;
-  	-khtml-user-select: none;
-  	-moz-user-select: -moz-none;
-  	-ms-user-select: none;
-  	user-select: none;
-	box-shadow: 0 2px 3px 3px rgba(0, 0, 0, 0.25), 0 1px 5px 2px rgba(0, 0, 0, 0.25);
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: -moz-none;
+	-ms-user-select: none;
+	user-select: none;
+	box-shadow: 0 0 0 1px #00000022, 0 1px 6px 3px #00000022;
+	border-radius: 2px;
 }
 
 .propertyDialogue span.fa {
@@ -372,7 +359,7 @@ div.propertyDialogue {
 
 .propertySubHeader {
 	text-transform: uppercase;
-	background: #D5D6D2;
+	background: #EEE;
 	text-align: right;
 }
 
@@ -405,8 +392,13 @@ i.dialogueClose {
 	font-size: 11px;
 }
 
+table.dialogueTable tr:first-child td {
+	border-left: solid 1px #DDD;
+	padding-left: 4px;
+}
+
 .dialogueTable tr:not(:first-child) td:not(:last-child) {
-	border: 1px solid silver;
+	border: 1px solid #DDD;
 }
 
 .dialogueTable td {
@@ -622,14 +614,9 @@ td.paddingLeft5 {
 }
 
 .propertyDialogue button {
-	background-color: #494949;
-  	color:white;
-  	border: 1px solid #000;
-  	transition: background 0.3s ease;
-}
-
-.propertyDialogue button:hover {
-	background-color: #aaa;
+  background: none;
+  border: none;
+  transition: background 0.3s ease;
 }
 
 .propertyDialogue .ok {
@@ -644,15 +631,15 @@ td.paddingLeft5 {
 }
 
 .titleButton {
-  	padding: 2px 5px;
+  	padding: 4px;
   	margin-left:5px;
 	margin-right:1px;
 	margin-bottom:1px;
-	float: right;
+  	float: right;
 }
 
 .titleButton span {
-	font-size: 10px;
+	font-size: 13px;
 }
 
 .propertyButton {
