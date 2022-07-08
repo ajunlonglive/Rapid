@@ -4502,6 +4502,7 @@ $.extend( Datepicker.prototype, {
 			for ( month = 0; month < 12; month++ ) {
 				if ( ( !inMinYear || month >= minDate.getMonth() ) && ( !inMaxYear || month <= maxDate.getMonth() ) ) {
 					monthHtml += "<option value='" + month + "'" +
+						( month === new Date().getMonth() ? " class='current'" : "" ) +
 						( month === drawMonth ? " selected='selected'" : "" ) +
 						">" + monthNamesShort[ month ] + "</option>";
 				}
@@ -4536,6 +4537,7 @@ $.extend( Datepicker.prototype, {
 				inst.yearshtml += "<select class='ui-datepicker-year' data-handler='selectYear' data-event='change'>";
 				for ( ; year <= endYear; year++ ) {
 					inst.yearshtml += "<option value='" + year + "'" +
+						( year === new Date().getFullYear() ? " class='current'" : "" ) +
 						( year === drawYear ? " selected='selected'" : "" ) +
 						">" + year + "</option>";
 				}
