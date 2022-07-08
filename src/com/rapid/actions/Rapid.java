@@ -3636,7 +3636,7 @@ public class Rapid extends Action {
 									String statusBarHighlightColour = app.getStatusBarHighlightColour();
 									result.put("statusBarHighlightColour", statusBarHighlightColour);
 									String setStatusBarTextColour = app.getStatusBarTextColour();
-									result.put("setStatusBarTextColour", setStatusBarTextColour);
+									result.put("statusBarTextColour", setStatusBarTextColour);
 									String statusBarIconColour = app.getStatusBarIconColour();
 									result.put("statusBarIconColour", statusBarIconColour);
 								} else {
