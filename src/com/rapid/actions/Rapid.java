@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -3627,7 +3627,7 @@ public class Rapid extends Action {
 									String securityType = app.getSecurityAdapterType();
 									result.put("securityType", securityType);
 									Theme theme = app.getTheme(servletContext);
-									String themeName = theme == null ? "" : theme.getName();
+									String themeName = theme == null ? "" : theme.getType();
 									result.put("theme", themeName);
 									String styles = app.getStyles();
 									result.put("styles", styles);
