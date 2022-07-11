@@ -1238,8 +1238,8 @@ select optgroup {
   display: block;
   content: '';
   margin: 0px;
-  border: 1px solid #900;
-  background: #800;
+  border: 1px solid #494949;
+  background: #fff;
 }
 
 #designerTools input[type=checkbox]:checked:after {
@@ -1248,8 +1248,8 @@ select optgroup {
   margin-top: -13px !important;
   margin-left: 4px !important;
   border-radius: 2px;
-  border-right: 3px solid #FFF;
-  border-bottom: 3px solid #FFF;
+  border-right: 3px solid #494949;
+  border-bottom: 3px solid #494949;
   width: 3px !important;
   height: 8px !important;
   -webkit-transform: rotate(45deg);
