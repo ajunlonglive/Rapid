@@ -1,6 +1,5 @@
 /*
 
-
 Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
@@ -7006,7 +7005,7 @@ function Property_controlControls(cell, controlAction, property, details) {
 		var text = "";
 		
 		// add a header
-		table.append("<tr><td><b>Control</b><button class='titleButton setSources' title='Set all controls to the same as the top one'><span class='fas'>&#xf358;</span></button><button class='titleButton sources' title='Add all page controls as sources'><span class='fas'>&#xf055;</span></button></td><td><b>Action</b><button class='titleButton setActionTypes' title='Set all action types to the same as the top one'><span class='fas'>&#xf358;</span></button></td><td><b>Parameter</b><button class='titleButton setParameters' title='Set all properties to the same as the top one'><span class='fas'>&#xf358;</span></button></td><td></td></tr>");
+		table.append("<tr><td><b>Control</b><button class='titleButton setSources' title='Set all controls to the same as the top one'><span class='fas'>&#xf358;</span></button><button class='titleButton sources' title='Add all page controls as sources'><span class='fas'>&#xf055;</span></button></td><td><b>Action</b><button class='titleButton setActionTypes' title='Set all action types to the same as the top one'><span class='fas'>&#xf358;</span></button></td><td><b>Parameter</b><button class='titleButton setParameters' title='Set all parameter values to the same as the top one'><span class='fas'>&#xf358;</span></button></td><td></td></tr>");
 			
 		// add sources listener
 		addListener( table.find("button.sources").click( {cell:cell, controlAction:controlAction, property:property}, function(ev) {
