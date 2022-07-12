@@ -1693,7 +1693,7 @@ function Property_imageFile(cell, propertyObject, property, details) {
 	}
 	
 	// append the  form control and the submit button
-	table.append("<tr><td><form id='form_" + propertyObject.id + "' method='post' enctype='multipart/form-data' target='uploadIFrame' action='designer?action=uploadImage&a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id + "&c=" + propertyObject.id + "' style='margin-top:10px'><label><input id='file_" + propertyObject.id + "' name='file' type='file' accept='image/*' hidden><button type='button' style='pointer-events:none;'>Upload image</button></label></form></td></tr>");
+	table.append("<tr><td><form id='form_" + propertyObject.id + "' method='post' enctype='multipart/form-data' target='uploadIFrame' action='designer?action=uploadImage&a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id + "&c=" + propertyObject.id + "' style='margin-top:10px'><label class='buttonLabel'><input id='file_" + propertyObject.id + "' name='file' type='file' accept='image/*' hidden><button type='button' style='pointer-events:none;'>Upload image</button></label></form></td></tr>");
 	
 	addListener( $("#file_" + propertyObject.id).change( {id : propertyObject.id}, function (ev) {
 		// get the file value
@@ -2739,7 +2739,7 @@ function Property_databaseQuery(cell, propertyObject, property, details) {
 	
 	// add the multi-row, database connection, and test button
 	table.append("<tr><td>Multi-row input data?&nbsp;<input class='multi' type='checkbox'" + (query.multiRow ? "checked='checked'" : "" ) + " style='vertical-align: middle;margin-top: -3px;'/></td>" +
-			"<td style='text-align: left;overflow:inherit;padding:0 10px;'>" + databaseConnection + "<button style='float:right;'>Test SQL</button><span class='ok'>OK</span></td>" +
+			"<td style='text-align: left;overflow:inherit;padding:0 10px;'>" + databaseConnection + "<button style='float:right;' class='buttonBorder'>Test SQL</button><span class='ok'>OK</span></td>" +
 			"<td style='text-align: right;'>Avoid XSS?&nbsp;<input class='avoidXSS' type='checkbox'" + (query.avoidXSS ? "checked='checked'" : "" ) + " style='vertical-align: middle;margin-top: -3px;'/></td></tr>");
 	
 	// get a reference to the multi-data check box
