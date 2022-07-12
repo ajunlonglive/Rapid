@@ -7000,7 +7000,8 @@ function Property_controlControls(cell, controlAction, property, details) {
 		// build what we show in the parent cell
 		var controls = [];
 		// get the value if it exists
-		if (controlAction[property.key]) controls = controlAction[property.key];	
+		if (controlAction[property.key]) controls = controlAction[property.key];
+		else controlAction[property.key] = controls;
 		// make some text for our cell (we're going to build in in the loop)
 		var text = "";
 		
