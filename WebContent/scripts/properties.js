@@ -5137,7 +5137,7 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 		var dataCopies = datacopyAction.dataCopies
 		if (dataCopies.length === 0 && !datacopyAction.migratedToBulk) {
 			
-			datacopyAction.dataDestinations.forEach(function(destination) {
+			if (datacopyAction.dataDestinations) datacopyAction.dataDestinations.forEach(function(destination) {
 				dataCopies.push({
 					source: datacopyAction.dataSource,
 					sourceField: datacopyAction.dataSourceField || "",
