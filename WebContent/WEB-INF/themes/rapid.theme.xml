@@ -878,8 +878,12 @@ input.custom-combobox-input.ui-autocomplete-input {
   transition: background 0.5s ease;
 }
 
-input.custom-combobox-input.ui-autocomplete-input {
+input.custom-combobox-input.ui-autocomplete-input:focus {
 	cursor: text;
+}
+
+span.custom-combobox input.custom-combobox-input.ui-autocomplete-input:not([type=radio]):not([type=checkbox]):not(.input1):not(.input2) {
+  padding-right: 25px;
 }
 
 select option,
