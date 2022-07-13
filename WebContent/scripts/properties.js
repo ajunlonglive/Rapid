@@ -58,7 +58,7 @@ function getControlOptions(selectId, ignoreId, type, noGroup) {
 	for (var i in controls) {
 		var control = controls[i];
 		// note how only controls with names are included, and type is only matched if included
-		if (control.id != ignoreId && control.name && types.includes(control.type)) options += "<option value='" + control.id + "' " + (control.id == selectId ? "selected='selected'" : "") + ">" + control.name + "</option>"; 
+		if (control.id != ignoreId && control.name && types.indexOf(control.type) > -1) options += "<option value='" + control.id + "' " + (control.id == selectId ? "selected='selected'" : "") + ">" + control.name + "</option>"; 
 	}
 	// wrap if we had some and we're allowing groups
 	if (options && !noGroup) options = "<optgroup label='Page controls'>" + options + "</optgroup>";
