@@ -52,7 +52,7 @@ function getPageOptions(selectId, ignoreId) {
 
 // this function returns a set of options for a dropdown of controls
 function getControlOptions(selectId, ignoreId, type, noGroup) {
-	var types = type ? type.split(",") : { includes: function() { return true; } };
+	var types = type ? type.split(",") : { indexOf: function() { return 0; } };
 	var controls = getControls();
 	var options = "";
 	for (var i in controls) {
