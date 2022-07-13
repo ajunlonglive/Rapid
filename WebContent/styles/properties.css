@@ -622,8 +622,9 @@ td.paddingLeft5 {
 
 .propertyDialogue button.buttonBorder {
 	background: unset;
-	border: 1px solid black;
+	border: 1px solid #DDD;
 	transition: background 0.3s ease;
+	background: #FFF;
 }
 
 .propertyDialogue button.buttonBorder:hover {
@@ -633,8 +634,9 @@ td.paddingLeft5 {
 .propertyDialogue label.buttonLabel {
 	cursor: pointer;
 	padding: 2px;
-	border: 1px solid black;
+	border: 1px solid #DDD;
 	transition: background 0.3s ease;
+	background: #FFF;
 }
 
 .propertyDialogue label.buttonLabel:hover {

@@ -123,12 +123,12 @@ hr {
 	transition: left 0.2s ease-in-out;
 	position: fixed;
 	overflow-y: scroll !important;
-    max-height: 100vh;
-    padding: 0px 10px 00px 10px;
-    box-sizing: border-box;
+	max-height: 100vh;
+	padding: 0 10px 0 10px;
+	box-sizing: border-box;
 	left: 0px;
 	top: 0px;
-	width: 195px; 
+	width: 195px;
 	min-width: 195px;
 	border-right: 1px solid #191919;
 	background: #dedede;
