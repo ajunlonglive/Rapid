@@ -71,7 +71,7 @@ function getControlOptions(selectId, ignoreId, type, noGroup) {
 				var pageControlOptions = "";												
 				for (var j in _pages[i].controls) {
 					var otherPageControl = _pages[i].controls[j];					
-					if (otherPageControl.otherPages && types.includes(otherPageControl.type)) {
+					if (otherPageControl.otherPages && types.indexOf(otherPageControl.type)) {
 						pageControlOptions +=  "<option value='" + otherPageControl.id + "' " + (otherPageControl.id == selectId ? "selected='selected'" : "") + ">" + otherPageControl.name + "</option>"; 
 					}
 				}
