@@ -1828,7 +1828,7 @@ if (!grid.is("table")) grid = grid.find("table").last();
 // check there are details	        
 if (details) {
 	
-	// if any storeage type
+	// if any html5 api / persistent storeage type
 	if (details.dataStorageType == "L" || details.dataStorageType == "S" || details.dataStorageType == "B") {
 		var gridKey = _appId + id;
 		// watch the storage and only store once
@@ -1839,6 +1839,12 @@ if (details) {
 				setData_grid($(ev), id, null, details, data);
 			}
 		});
+	}
+	
+	// if page storeage type
+	if (details.dataStorageType == "P") {
+		// ensure page storeage object is empty as if in a dialogue used before it might have been populated in parent page from previous use
+		saveGridDataStoreData(id, details, null);
 	}
 	
 	// if this is a fixed header

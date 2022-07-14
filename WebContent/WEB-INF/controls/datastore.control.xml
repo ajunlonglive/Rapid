@@ -231,6 +231,16 @@ if (data != null && data !== undefined) {
 	        </event>
 	    </events>
 	    
+	    <initJavaScript>
+	        <![CDATA[
+	// if page storeage type
+	if (details && details.dataStorageType == "P") {
+		// ensure page storeage object is empty as if in a dialogue used before it might have been populated in parent page from previous use
+		saveDataStoreData(id, details, null);
+	}
+	        ]]>	        
+	    </initJavaScript>
+	    
 	    <runtimeProperties>
 	        
 	        <runtimeProperty>
