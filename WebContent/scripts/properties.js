@@ -4963,7 +4963,7 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 	if (datacopyAction.copyType == "bulk") {	
 		
 		// retrieve or create the dialogue
-		var dialogue = getDialogue(cell, datacopyAction, property, details, 710, "Bulk data copies", {sizeX: true});		
+		var dialogue = getDialogue(cell, datacopyAction, property, details, 770, "Bulk data copies", {sizeX: true});		
 		// grab a reference to the table
 		var table = dialogue.find("table").first();
 		// make sure table is empty
@@ -6991,7 +6991,7 @@ function Property_controlControls(cell, controlAction, property, details) {
 	if (controlAction.targetingType === "bulk") {
 		
 		// retrieve or create the dialogue
-		var dialogue = getDialogue(cell, controlAction, property, details, 710, "Bulk control actions", {sizeX: true});		
+		var dialogue = getDialogue(cell, controlAction, property, details, 500, "Bulk control actions", {sizeX: true});		
 		// grab a reference to the table
 		var table = dialogue.find("table").first();
 		// make sure table is empty
@@ -7147,7 +7147,7 @@ function Property_controlControls(cell, controlAction, property, details) {
 		}));
 
 		// add the add
-		table.append("<tr><td colspan='8'><span class='propertyAction' style='margin-left:5px;'>add...</span></td></tr>");
+		table.append("<tr><td colspan='4'><span class='propertyAction' style='margin-left:5px;'>add...</span></td></tr>");
 		// find the add
 		var destinationAdd = table.find("span.propertyAction").last();
 		// listener to add output
