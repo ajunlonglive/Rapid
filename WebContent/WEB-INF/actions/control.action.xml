@@ -74,6 +74,7 @@ This action runs JQuery functions against specific controls
 	                return "<option value=''>Please select...</option><optgroup label='Page'><option value='" + _page.id + "'>page</option></optgroup>" + getControlOptions(this.control);
 	               	]]>
 	            </getValuesFunction>
+	            <refreshProperties>true</refreshProperties>
 	            <helpHtml>Selects a control on the page to apply the action to.</helpHtml>
 	        </property>
 	        
@@ -97,7 +98,13 @@ This action runs JQuery functions against specific controls
                     <value>single</value>
                 </visibility>
 	            <changeValueJavaScript>controlActionType</changeValueJavaScript>
-	            <getValuesFunction>return ["hide","show","toggle","slideUp","slideDown","slideToggle","fadeOut","fadeIn","fadeToggle","focus","enable","disable","addClass","removeClass","toggleClass","removeChildClasses","removeValidation","scrollTo", "hideDialogue","hideAllDialogues","showError","clearQueue","custom"];</getValuesFunction>
+	            <getValuesFunction>
+if (this.control == _page.id) {
+	return ["hide","show","toggle","fadeOut","fadeIn","fadeToggle","enable","disable","addClass","removeClass","toggleClass","removeChildClasses","removeValidation","resize","scrollTo","hideAllDialogues","showError","clearQueue","custom"];
+} else {
+	return ["hide","show","toggle","slideUp","slideDown","slideToggle","fadeOut","fadeIn","fadeToggle","focus","enable","disable","addClass","removeClass","toggleClass","removeChildClasses","removeValidation","scrollTo","hideDialogue","hideAllDialogues","showError","clearQueue","custom"];
+}
+	            </getValuesFunction>
 	            <refreshProperties>true</refreshProperties>
 	            <helpHtml>Sets a specified action to be carried out. Useful for validation and page load events.</helpHtml>
 	        </property>

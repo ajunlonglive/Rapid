@@ -7084,19 +7084,14 @@ function Property_controlControls(cell, controlAction, property, details) {
 			var control = controls[i];
 						
 			// add a row
-			table.append("<tr><td><select class='source'><option value=''>Please select...</option>" + getControlOptions(control.source) + "</select></td><td><select class='action' style='min-width:80px;'>" + getControlActionOptions(control.actionType) + "</select></td><td><input class='parameter' value='" + control.parameter + "'></td><td style='width:45px'>" +
+			table.append("<tr><td><select class='source'><option value=''>Please select...</option><optgroup label='Page'><option value='" + _page.id + "'" + (control.source == _page.id ? " selected" : "") + ">page</option></optgroup>" + getControlOptions(control.source) + "</select></td><td><select class='action' style='min-width:80px;'>" + getControlActionOptions(control.actionType) + "</select></td><td><input class='parameter' value='" + control.parameter + "'></td><td style='width:45px'>" +
 					"<div class='iconsPanel'>" +
 					"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
 					"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
 					"</div></td></tr>");
 			
-			// get the source data item
-			var source = getDataItemDetails(control.source);
-			// get the destination data item
-			var destination = getDataItemDetails(control.destination);
 			// apend to the text
-			text += control.actionType + ": " + source.name + ", ";
-			
+			text += getDataItemDetails(control.source).name + ":" + control.actionType + ",";
 		}
 		
 		// source listeners
@@ -7180,7 +7175,7 @@ function Property_controlControls(cell, controlAction, property, details) {
 }
 
 function getControlActionOptions(controlType) {
-	var actions = ["hide","show","toggle","slideUp","slideDown","slideToggle","fadeOut","fadeIn","fadeToggle","focus","enable","disable","addClass","removeClass","toggleClass","removeChildClasses","removeValidation","scrollTo", "hideDialogue","hideAllDialogues","showError","clearQueue","custom"];
+	var actions = ["hide","show","toggle","slideUp","slideDown","slideToggle","fadeOut","fadeIn","fadeToggle","focus","enable","disable","addClass","removeClass","toggleClass","removeChildClasses","removeValidation","resize","scrollTo","hideDialogue","hideAllDialogues","showError","clearQueue","custom"];
 	return actions.map(function(value) {
 		var isSelected = value === controlType ? " selected" : "";
 		return "<option" + isSelected + ">" + value + "</option>";

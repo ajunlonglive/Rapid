@@ -25,6 +25,8 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 
 package com.rapid.actions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.rapid.core.Action;
@@ -32,9 +34,6 @@ import com.rapid.core.Application;
 import com.rapid.core.Page;
 import com.rapid.server.RapidHttpServlet;
 import com.rapid.server.RapidRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 /*
 
@@ -60,13 +59,13 @@ public class Control extends Action {
 		// get the control Id and command
 		String controlId = getProperty("control");
 		String controlsJSON = getProperty("controls");
-		
+
 		// prepare the js
 		String js = "";
-		
+
 		// if we have a control id
 		if ((controlId != null && !"".equals(controlId)) || (controlsJSON != null && !"".equals(controlsJSON))) {
-			
+
 			try {
 				// normalise single and bulk actions
 				JSONArray controlActions;
@@ -91,17 +90,17 @@ public class Control extends Action {
 					singleControl.put("duration", getProperty("duration"));
 					singleControl.put("styleClass", getProperty("styleClass"));
 				}
-				
+
 				for (int controlIndex = 0; controlIndex < controlActions.length(); controlIndex++) {
 					JSONObject controlAction = controlActions.getJSONObject(controlIndex);
-					
+
 					String source = controlAction.getString("source");
 					if (source.isEmpty()) continue;
 					// select the control
 					js += "$(\"#" + source + "\")";
-					
+
 					String actionType = controlAction.getString("actionType");
-					
+
 					// check the type
 					if ("custom".equals(actionType) || actionType == null) {
 						// get the command
@@ -156,6 +155,9 @@ public class Control extends Action {
 							js = "hideControlValidation('" + controlId + "');";
 						} else if ("showError".equals(actionType)) {
 							js += "showError(server, status, message);";
+						} else if ("resize".equals(actionType)) {
+							// change to resize the window
+							js = "$(window).resize();";
 						} else if ("scrollTo".equals(actionType)) {
 							// check if page (or control js not populated)
 							if (page.getId().equals(controlId) || js.length() == 0) {
@@ -179,14 +181,14 @@ public class Control extends Action {
 						js += "ev.stopImmediatePropagation();";
 					}
 				}
-				
+
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		} else {
 			js = "/* no control specified for control action " + getId() + " */";
 		}
-		
+
 		// return the js
 		return js;
 	}
