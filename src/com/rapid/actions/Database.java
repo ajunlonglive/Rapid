@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -595,8 +595,6 @@ public class Database extends Action {
 	private static String _namedParameterSlotRegex = "(\\?\"[^\"]+\")|(\\?(?=[a-zA-Z])\\w*)";
 	// finds ? followed by a name in quotes, or ? followed by 0 or more numbers, or ? on their own
 	private static String _parameterSlotRegex = "(\\?\"[^\"]+\")|(\\?\\w\\S*)|\\?";
-	// finds ? followed by a number
-	private static String _unspecifySlotsRegex = "(\\?\\d*)";
 
 	// determine if a string needs escaping for XSS
 	private int escapeXSSPos(String value) {
@@ -1485,13 +1483,13 @@ public class Database extends Action {
 		// split on the single quote - we only want to replace parameters outside of them
 		String[] stringParts = sql.split("'");
 		// replace the first part of the sql which goes up to the first single quote
-		sql = stringParts[0].replaceAll(_unspecifySlotsRegex, "\\?");
+		sql = stringParts[0].replaceAll(_parameterSlotRegex, "\\?");
 		// loop the remaining parts from index 1 onwards
 		for (int partIndex = 1; partIndex < stringParts.length; partIndex++) {
 			// if this is an even numbered part
 			if (partIndex % 2 == 0) {
 				// its outside of a quoted string so replace the ? numbers
-				sql += "'" + stringParts[partIndex].replaceAll(_unspecifySlotsRegex, "\\?");
+				sql += "'" + stringParts[partIndex].replaceAll(_parameterSlotRegex, "\\?");
 			} else {
 				// its within quotes so add back as it was
 				sql += "'" + stringParts[partIndex];
