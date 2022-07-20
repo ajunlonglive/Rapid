@@ -6697,7 +6697,7 @@ function Property_pdfInputs(cell, propertyObject, property, details) {
 	var text = "";
 	
 	// add a header (change between "Style" or "Label" on third column if PDFWriter)
-	table.append("<tr><td><b>Control</b></td><td><b>Field</b></td><td colspan='2'><b>" + (propertyObject.type == "pdfwriter" ? "Style" : "Label") + "</b><button class='titleButton' title='Add all page data controls'><span class='fas'>&#xf055;</span></td></tr>");
+	table.append("<tr><td><b>Control</b></td><td><b>Field</b></td><td colspan='2'><b>" + (propertyObject.type == "pdfwriter" ? "Style" : "Label") + "</b><button class='titleButton pageSortSource' title='Sort sources according to their order on the page'><span class='fas'>&#xf160;</span></button><button class='titleButton addAll' title='Add all page data controls'><span class='fas'>&#xf055;</span></button></td></tr>");
 		
 	// show current choices (with delete and move)
 	for (var i = 0; i < inputs.length; i++) {
@@ -6776,8 +6776,27 @@ function Property_pdfInputs(cell, propertyObject, property, details) {
 		
 	}));
 	
+	// add pageSortSource listener
+	addListener( table.find("button.pageSortSource").click( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
+		// add an undo snapshot
+		addUndo();
+		// get the data inputs
+		var inputs = ev.data.propertyObject[ev.data.property.key];
+		var allControls = getControls();
+		var newInputs = allControls.flatMap(function(control) {
+			return inputs.filter(function(input) {
+				return input["itemId"] === control.id;
+			});
+		}).concat(inputs.filter(function(input) {
+			return !input["itemId"];
+		}));
+		ev.data.propertyObject[ev.data.property.key] = newInputs;
+		// refresh
+		Property_pdfInputs(ev.data.cell, ev.data.propertyObject, ev.data.property); 
+	}));
+	
 	// add add all listener
-	addListener( table.find("button.titleButton").click( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
+	addListener( table.find("button.addAll").click( {cell: cell, propertyObject: propertyObject, property: property, details: details}, function(ev) {
 		// add an undo snapshot
 		addUndo();
 		// get the list of inputs
@@ -6869,7 +6888,7 @@ function Property_pdfInputs(cell, propertyObject, property, details) {
 					// we're done
 					break;
 				} // found a control after this one so insert before the found one
-			} // loop dataCopies
+			} // loop inputs
 			// if we haven't inserted yet do so now
 			if (!inserted) inputs.push({itemId: insertControl.itemId, field: "", label: insertControl.label});
 		} // loop inserts
