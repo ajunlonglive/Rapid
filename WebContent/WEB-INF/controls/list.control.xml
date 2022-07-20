@@ -82,6 +82,18 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	        </property>
 	        
 	        <property>
+	            <key>summary</key>
+	            <name>Summary</name>
+	            <changeValueJavaScript>select</changeValueJavaScript>
+	            <getValuesFunction>
+	            return [{ "value": "C", "text": "Count" }, { "value": "L", "text": "List" }, { "value": "CL", "text": "Count and list" }];
+	            </getValuesFunction>
+	            <refreshHtml>true</refreshHtml>
+	            <refreshProperties>true</refreshProperties>
+	            <helpHtml>How to summarise the selection.</helpHtml>
+	        </property>
+	        
+	        <property>
 	            <key>multi</key>
 	            <name>Multi select</name>
 	            <changeValueJavaScript>checkbox</changeValueJavaScript>
@@ -214,7 +226,8 @@ li.listOption {
 
 span.listSelectedCount {
 	float: left;
-} 
+	margin-right: 0.2em;
+}
 
 span.listSlider {
 	float: right;
@@ -224,6 +237,12 @@ span.listSlider {
 
 .list .listOptions {
 	overflow-y: auto;
+}
+
+.listHeader {
+	text-overflow: ellipsis;
+	overflow-x: hidden;
+	white-space: nowrap;
 }
 
 	                ]]>
@@ -273,12 +292,8 @@ if (this.header || this.slide) {
 	// put something in headerText if nothing
 	if (!headerText) headerText = this.header;
 	if (!headerText) headerText = "Header text";
-	if (this.slide && selectedCount > 0) {
-		headerText = headerText.substr(0, headerText.length - 2);
-		options = "<span class='fas listSlider'>&#xf078;</span><li class='listSelectedCountText'><span class='listSelectedCount'>" + selectedCount + "</span><span class='listSelectedText'>" + (selectedCount === 0 ? headerText : "selected") + "</span></li><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + headerText + "</li><li class='tools' style='display:none'>" + (this.search ? "<input type='text' placeholder='Filter' class='search'>" : "") + (this.selectAll ? "<button type='button' class='select-all'>Select all</button><button type='button' class='deselect-all'>Clear</button>" : "") + "</li>" + options;
-	} else {
-		options = "<span class='fas listSlider'>&#xf078;</span><li class='listSelectedCountText'><span class='listSelectedCount' style='display:none;'></span><span class='listSelectedText'>" + (selectedCount === 0 ? headerText : "selected") + "</span></li><li class='listHeader" + (this.slide ? "" : " listVisible") + "'>" + headerText + "</li><li class='tools' style='display:none'>" + (this.search ? "<input type='text' placeholder='Filter' class='search'>" : "") + (this.selectAll ? "<button type='button' class='select-all'>Select all</button><button type='button' class='deselect-all'>Clear</button>" : "") + "</li>" + options;
-	}
+	if (this.slide && selectedCount > 0) headerText = headerText.substr(0, headerText.length - 2);
+	options = "<span class='fas listSlider'>&#xf078;</span>" + (this.summary === "C" || this.summary === "CL" || this.summary === undefined ? "<span class='listSelectedCount' " + (this.slide && selectedCount > 0 ? "" : "style='display:none;'") + ">" + selectedCount + "</span>" : "") + "<li class='listHeader" + (this.slide ? "" : " listVisible") + "' " + (this.summary === "L" || this.summary === "CL" || this.summary === undefined || (!selectedCount > 0) ? "" : "style='display:none;'") + ">" + headerText + "</li><li class='tools' style='display:none'>" + (this.search ? "<input type='text' placeholder='Filter' class='search'>" : "") + (this.selectAll ? "<button type='button' class='select-all'>Select all</button><button type='button' class='deselect-all'>Clear</button>" : "") + "</li>" + options;
 }
 // place into the list
 var html = this.fixedHeight ? 
@@ -293,7 +308,7 @@ return html;
 	    
 	    <getDetailsFunction>
 	        <![CDATA[
-return {header: this.header, slide: this.slide && { selectAway: this.selectAway, clickAway: this.clickAway, search: this.search }, multi: this.multi && { selectAll: this.selectAll }, maxHeight: this.maxHeight };
+return {header: this.header, slide: this.slide && { selectAway: this.selectAway, clickAway: this.clickAway, search: this.search }, multi: this.multi && { selectAll: this.selectAll }, maxHeight: this.maxHeight, summary: this.summary };
 	        ]]>
 	    </getDetailsFunction>
 	    	    	    
@@ -304,7 +319,6 @@ if (data != null && data !== undefined) {
 	var list = control.is("ul") ? control : control.find("ul");
 	var header = list.find("li.listHeader");
 	var selectedCount = list.find(".listSelectedCount");
-	var listSelectedText = list.find(".listSelectedText");
 	var hide = !list.is(".listVisible");
 	if (details.maxHeight) list = list.find(".listOptions");
 	data = makeDataObject(data, field);
@@ -335,11 +349,13 @@ if (data != null && data !== undefined) {
 					if (count > 0) {
 						text = text.substr(0, text.length - 2);
 						selectedCount.text(count).show();
-						listSelectedText.text("selected");
 					} else {
 						text = details.header;
 						selectedCount.hide();
-						listSelectedText.text(details.header);
+					}
+					if (!(details.summary === "L" || details.summary === "CL" || details.summary === undefined)) {
+						if (count > 0) header.hide();
+						else header.show();
 					}
 					header.html(text);
 				}
@@ -431,11 +447,10 @@ return "#" + this.id + " span.listSlider";
 var control = $("#" + id);
 var list = control.is("ul") ? control : control.find("ul");
 var selectedCount = list.find(".listSelectedCount");
-var listSelectedText = list.find(".listSelectedText");
 
 if (details.slide) {
-	var header = list.find("li.listHeader, .listSelectedCountText");
-	header.click( function(ev) {
+	var header = list.find("li.listHeader");
+	list.find("li.listHeader, span.listSelectedCount, span.listSlider").click( function(ev) {
 		header.toggleClass("listVisible");
 		list.toggleClass("listVisible");
 		var slidables = list.find((details.maxHeight ? ".listOptions, " : ".listOption, ") + ".tools");
@@ -481,11 +496,13 @@ list.find("li.listOption").click( details, function(ev) {
 		if (count > 0) {
 			text = text.substr(0, text.length - 2);
 			selectedCount.text(count).show();
-			listSelectedText.text("selected");
 		} else {
 			text = details.header;
 			selectedCount.hide();
-			listSelectedText.text(details.header);
+		}
+		if (!(details.summary === "L" || details.summary === "CL") || details.summary === undefined) {
+			if (count > 0) header.hide();
+			else header.show();
 		}
 		header.html(text);
 	}
@@ -526,11 +543,9 @@ list.find(".select-all").on("click", function() {
 	if (count > 0) {
 		text = text.substr(0, text.length - 2);
 		selectedCount.text(count).show();
-		listSelectedText.text("selected");
 	} else {
 		text = details.header;
 		selectedCount.hide();
-		listSelectedText.text(details.header);
 	}
 	header.html(text);
 	list.trigger("change");
@@ -547,11 +562,13 @@ list.find(".deselect-all").on("click", function() {
 	if (count > 0) {
 		text = text.substr(0, text.length - 2);
 		selectedCount.text(count).show();
-		listSelectedText.text("selected");
 	} else {
 		text = details.header;
 		selectedCount.hide();
-		listSelectedText.text(details.header);
+	}
+	if (!(details.summary === "L" || details.summary === "CL") || details.summary === undefined) {
+		if (count > 0) header.hide();
+		else header.show();
 	}
 	header.html(text);
 	list.trigger("change");
@@ -591,7 +608,6 @@ if (data != null && data !== undefined) {
 	}
 	var control = $("#" + id);
 	var list = control.is("ul") ? control : control.find("ul");
-	var listSelectedText = list.find(".listSelectedText");
 	var header = list.children("li.listHeader");
 	var selectedCount = list.find("span.listSelectedCount");
 	if (!details.multi || values == null) list.find(".listOption").removeClass("listSelected");
@@ -615,10 +631,13 @@ if (data != null && data !== undefined) {
 		if (selectCount > 0) {
 			headerText = headerText.substring(0,headerText.length - 2);			
 			if (details.multi && details.slide) selectedCount.text(selectCount).show();
-			listSelectedText.text("selected");
 		} else {			
 			headerText = details.header;
 			selectedCount.hide();
+		}
+		if (!(details.summary === "L" || details.summary === "CL" || details.summary === undefined)) {
+			if (selectCount > 0) header.hide();
+			else header.show();
 		}
 		header.html(headerText);	
 	} else {
