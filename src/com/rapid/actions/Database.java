@@ -1416,8 +1416,10 @@ public class Database extends Action {
 					String name = parts[0];
 					if (parts.length > 1) name += "." + parts[1].toLowerCase().replace(" ", "");
 					for (int idIndex = 2; idIndex < parts.length; idIndex++) name += "." + parts[idIndex];
-					// use the letters after the ? as the key to find the parameter
-					parameterIndex = parameterIndexesByControlName.get(name);
+					// use the letters after the ? as the key to find the parameter, put it in a string first, in case we get a null back which won't convert to int
+					Integer parameterIndexInteger = parameterIndexesByControlName.get(name);
+					// if non-null we can use it
+					if (parameterIndexInteger != null) parameterIndex = parameterIndexInteger;
 				}
 			}
 
