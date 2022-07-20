@@ -591,6 +591,7 @@ if (data != null && data !== undefined) {
 	}
 	var control = $("#" + id);
 	var list = control.is("ul") ? control : control.find("ul");
+	var listSelectedText = list.find(".listSelectedText");
 	var header = list.children("li.listHeader");
 	var selectedCount = list.find("span.listSelectedCount");
 	if (!details.multi || values == null) list.find(".listOption").removeClass("listSelected");
@@ -614,6 +615,7 @@ if (data != null && data !== undefined) {
 		if (selectCount > 0) {
 			headerText = headerText.substring(0,headerText.length - 2);			
 			if (details.multi && details.slide) selectedCount.text(selectCount).show();
+			listSelectedText.text("selected");
 		} else {			
 			headerText = details.header;
 			selectedCount.hide();
