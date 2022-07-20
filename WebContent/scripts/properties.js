@@ -6697,7 +6697,7 @@ function Property_pdfInputs(cell, propertyObject, property, details) {
 	var text = "";
 	
 	// add a header (change between "Style" or "Label" on third column if PDFWriter)
-	table.append("<tr><td><b>Control</b></td><td><b>Field</b></td><td colspan='2'><b>" + (propertyObject.type == "pdfwriter" ? "Style" : "Label") + "</b><button class='titleButton pageSortSource' title='Sort sources according to their order on the page'><span class='fas'>&#xf160;</span></button><button class='titleButton addAll' title='Add all page data controls'><span class='fas'>&#xf055;</span></button></td></tr>");
+	table.append("<tr><td><b>Control</b></td><td><b>Field</b></td><td colspan='2'><b>" + (propertyObject.type == "pdfwriter" ? "Style" : "Label") + "</b><button class='titleButton addAll' title='Add all page data controls'><span class='fas'>&#xf055;</span></button><button class='titleButton pageSortSource' title='Sort sources according to their order on the page'><span class='fas'>&#xf160;</span></button></td></tr>");
 		
 	// show current choices (with delete and move)
 	for (var i = 0; i < inputs.length; i++) {
