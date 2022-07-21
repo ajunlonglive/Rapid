@@ -199,14 +199,13 @@ public class Applications {
 		Versions versions = getVersions(id);
 		// if we got some
 		if (versions != null) {
+			List<Application> sortedApps = versions.sort();
 			// loop them and retain highest version
-			for (String versionId : versions.keySet()) {
-				// get the application version
-				Application applicationVersion = versions.get(versionId);
+			for (Application app : sortedApps) {
 				// if this application created date is later and the right status
-				if (applicationVersion.getStatus() == status || status < 0) {
+				if (app.getStatus() == status || status < 0) {
 					// retain version
-					application = applicationVersion;
+					application = app;
 				}
 			}
 		}
