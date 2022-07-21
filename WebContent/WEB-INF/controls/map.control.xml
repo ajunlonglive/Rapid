@@ -3,7 +3,7 @@
 
 <!-- 
 
-Copyright (C) 2021 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
@@ -337,6 +337,34 @@ return "#" + this.id;
 	    <initJavaScript>
 	        <![CDATA[	        
 loadMapJavaScript(id, details);
+
+var saveClickLocation = function(click) {
+	var data = {
+		fields: ["lat", "lng"],
+		rows: [[click.latLng.lat(), click.latLng.lng()]]
+	};
+	_maps[id].lastClickLocation = data;
+};
+
+if (window.Proxy) {
+	_maps = new Proxy(_maps, {
+		set: function(maps, field, map) {
+			if (field === id) map.addListener("mousedown", saveClickLocation);
+			maps[field] = map;
+		},
+		get: function(maps, field) {
+			return maps[field];
+		}
+	});
+} else {
+	// IE
+	var interval = setInterval(function() {
+		if (_maps[id]) {
+			clearInterval(interval);
+			_maps[id].addListener("mousedown", saveClickLocation);
+		}
+	});
+}
 	        ]]>	        
 	    </initJavaScript>	    
 	    
@@ -506,6 +534,18 @@ if (map && selectedIndex > -1 && map.markers.length > selectedIndex) {
 } else {
 	return null;
 }	                
+					]]>
+	            </getPropertyFunction>
+	        </runtimeProperty>
+	        
+	        <runtimeProperty>
+	            <type>lastClickLocation</type>
+	            <name>Last click</name>
+	            <getPropertyFunction>
+	                <![CDATA[
+// get the map
+var map = _maps[id];
+return JSON.stringify(map.lastClickLocation);
 					]]>
 	            </getPropertyFunction>
 	        </runtimeProperty>
