@@ -28,7 +28,6 @@ package com.rapid.core;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -89,13 +88,13 @@ public class Applications {
 				String s2Part = s2.substring(0, s2PartEnd);
 				int comparison = 0;
 				try {
-					String s1LetterFree = s1Part.replaceAll("[^0-9]", "");
-					String s2LetterFree = s2Part.replaceAll("[^0-9]", "");
+					String s1LetterFree = s1Part.replaceAll("\\D", "");
+					String s2LetterFree = s2Part.replaceAll("\\D", "");
 					int n1 = Integer.parseInt(s1LetterFree);
 					int n2 = Integer.parseInt(s2LetterFree);
 					comparison = Integer.compare(n1, n2);
 				} catch (NumberFormatException ex) {
-					comparison = s1Part.compareTo(s2Part);
+					comparison = s1Part.compareToIgnoreCase(s2Part);
 				}
 				if (comparison == 0) {
 					String s1Tail = null;
@@ -199,13 +198,13 @@ public class Applications {
 		Versions versions = getVersions(id);
 		// if we got some
 		if (versions != null) {
-			List<Application> sortedApps = versions.sort();
+			List<Application> sortedVersions = versions.sort();
 			// loop them and retain highest version
-			for (Application app : sortedApps) {
+			for (Application applicationVersion : sortedVersions) {
 				// if this application created date is later and the right status
-				if (app.getStatus() == status || status < 0) {
+				if (applicationVersion.getStatus() == status || status < 0) {
 					// retain version
-					application = app;
+					application = applicationVersion;
 				}
 			}
 		}
