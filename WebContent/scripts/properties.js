@@ -1692,7 +1692,7 @@ function Property_imageFile(cell, propertyObject, property, details) {
 	}
 	
 	// append the  form control and the submit button
-	table.append("<tr><td><form id='form_" + propertyObject.id + "' method='post' enctype='multipart/form-data' target='uploadIFrame' action='designer?action=uploadImage&a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id + "&c=" + propertyObject.id + "' style='margin-top:10px'><label class='buttonLabel'><input id='file_" + propertyObject.id + "' name='file' type='file' accept='image/*' hidden><button type='button' style='pointer-events:none;'>Upload image</button></label></form></td></tr>");
+	table.append("<tr><td><form id='form_" + propertyObject.id + "' method='post' enctype='multipart/form-data' target='uploadIFrame' action='designer?action=uploadImage&a=" + _version.id + "&v=" + _version.version + "&p=" + _page.id + "&c=" + propertyObject.id + "' style='margin-top:10px'><label style='pointer:cursor;'><input id='file_" + propertyObject.id + "' name='file' type='file' accept='image/*' hidden><button type='button' class='buttonBorder' style='pointer-events:none;'>Upload image</button></label></form></td></tr>");
 	
 	addListener( $("#file_" + propertyObject.id).change( {id : propertyObject.id}, function (ev) {
 		// get the file value

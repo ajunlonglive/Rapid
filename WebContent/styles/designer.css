@@ -131,7 +131,7 @@ hr {
 	width: 195px;
 	min-width: 195px;
 	border-right: 1px solid #191919;
-	background: #dedede;
+	background: #d3e1ee;
 	overflow: hidden;
 	outline: none;
 	text-align: center;
@@ -828,8 +828,8 @@ div.button {
 }
 
 .design-map li.selected {
-	box-shadow: 0 0 0 1px #ccc;
-	background: #eee;
+	box-shadow: 0 0 0 1px #0077FFCC;
+	background: #d4e0ee55;
 }
 
 span.selected {
@@ -849,20 +849,11 @@ Selection Styles
 	left:0px;
 	top:0px;
 	z-index:10004;
-	padding:5px;
 }
 
-.selectionBorderMove {
-	border:2px dashed #6a94dc;
-}
-
-.selectionBorderNoMove {
-	border:2px solid #6a94dc;
-}
-
-.selectionBorderInner {
-	background-color:#d3e1ee;
-	position:absolute;			
+.selectionBorderMove, .selectionBorderNoMove {
+	border: 1px solid #0077FF;
+	outline: 6px solid #0077FF22;
 }
 
 .selectionBorderInnerMove {
@@ -1132,6 +1123,10 @@ Tip styles
   font-family: 'Open Sans', Arial , sans-serif;
   font-size: 12px;
   max-width: 100%;
+}
+
+#designerTools select:hover {
+	background: #b2b2b2;
 }
 
 select:focus {

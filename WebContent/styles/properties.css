@@ -75,6 +75,15 @@ table.propertiesPanelTable  {
     padding-left: 5px;
 }
 
+.propertiesPanelTable tr:hover td:first-child:not(.propertyHeader) {
+	background: #EEE;
+	font-weight: bold;
+}
+
+.propertiesPanelTable tr:hover td:nth-child(2), .propertiesPanelTable tr:hover td:nth-child(2) input, .propertiesPanelTable tr:hover td:nth-child(2) select {
+	background: #EEE;
+}
+
 .propertiesPanelTable input[type=radio] {
 	width: auto;
 	margin-top: 1px;
@@ -621,26 +630,27 @@ td.paddingLeft5 {
 }
 
 .propertyDialogue button.buttonBorder {
-	background: unset;
-	border: 1px solid #DDD;
+	background: #494949;
+	padding: 2px 6px;
 	transition: background 0.3s ease;
-	background: #FFF;
+	color: #FFF;
+	cursor: pointer;
 }
 
 .propertyDialogue button.buttonBorder:hover {
-	background: #fff;
+	background: #b2b2b2;
 }
 
-.propertyDialogue label.buttonLabel {
+.propertyDialogue .buttonLabel {
 	cursor: pointer;
-	padding: 2px;
-	border: 1px solid #DDD;
+	padding: 3px 6px;
 	transition: background 0.3s ease;
-	background: #FFF;
+	background: #494949;
+	color: #FFF;
 }
 
-.propertyDialogue label.buttonLabel:hover {
-	background: #fff;
+.propertyDialogue .buttonLabel:hover {
+	background: #b2b2b2;
 }
 
 .propertyDialogue .ok {
