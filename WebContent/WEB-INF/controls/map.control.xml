@@ -337,34 +337,6 @@ return "#" + this.id;
 	    <initJavaScript>
 	        <![CDATA[	        
 loadMapJavaScript(id, details);
-
-var saveClickLocation = function(click) {
-	var data = {
-		fields: ["lat", "lng"],
-		rows: [[click.latLng.lat(), click.latLng.lng()]]
-	};
-	_maps[id].lastClickLocation = data;
-};
-
-if (window.Proxy) {
-	_maps = new Proxy(_maps, {
-		set: function(maps, field, map) {
-			if (field === id) map.addListener("mousedown", saveClickLocation);
-			maps[field] = map;
-		},
-		get: function(maps, field) {
-			return maps[field];
-		}
-	});
-} else {
-	// IE
-	var interval = setInterval(function() {
-		if (_maps[id]) {
-			clearInterval(interval);
-			_maps[id].addListener("mousedown", saveClickLocation);
-		}
-	});
-}
 	        ]]>	        
 	    </initJavaScript>	    
 	    

@@ -203,7 +203,7 @@ function loadMapJavaScript(id, details) {
 		// if there was one
 		if (details.key) url += "&key=" + details.key;
 		// if there is a heat map add the visualization library
-		if (details.heatmap) url += "&&libraries=visualization";
+		if (details.heatmap) url += "&libraries=visualization";
 		// append to the head and start loading
 		$("head").append("<script async defer id='mapJavaScript' type='text/javascript' src='" + url + "'></script>");
 	}
@@ -218,8 +218,22 @@ function loadedMapJavaScript() {
 	// loop the stored details
 	for (var id in _mapDetails) {
 		// build or rebuild the map by id
-		rebuildLoadedMap(id);			
+		rebuildLoadedMap(id);
+		// store the map IDs in an iterable form
+		_maps.push(id);
 	}
+	// add click even to each map, storing the latlog for the map control's lastClickLocation runtime property
+	_maps.forEach(function(id) {
+		// mousedown is used because the control's click event listener is fired before one defined here
+		_maps[id].addListener("mousedown", function(click) {
+			var data = {
+				fields: ["lat", "lng"],
+				rows: [[click.latLng.lat(), click.latLng.lng()]]
+			};
+			_maps[id].lastClickLocation = data;
+		});
+	});
+	
 	// if all controls are loaded
 	if (window["_loadingPages"] && _loadingControls < 1) {
 		// loop any pages waiting to load
