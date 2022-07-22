@@ -86,7 +86,7 @@ in a file named "COPYING".  If not, see <http://www.gnu.org/licenses/>.
 	            <name>Summary</name>
 	            <changeValueJavaScript>select</changeValueJavaScript>
 	            <getValuesFunction>
-	            return [{ "value": "C", "text": "Count" }, { "value": "L", "text": "List" }, { "value": "CL", "text": "Count and list" }];
+	            return [{ "value": "C", "text": "Count" }, { "value": "L", "text": "Values" }, { "value": "CL", "text": "Count and values" }];
 	            </getValuesFunction>
 	            <refreshHtml>true</refreshHtml>
 	            <refreshProperties>true</refreshProperties>
@@ -599,10 +599,10 @@ if (value) {
 	   	        <setPropertyJavaScript>
 			        <![CDATA[
 if (data != null && data !== undefined) {
-	var data = makeDataObject(data);			        
+	var data = makeDataObject(data, field);			        
 	var values = [];
 	if (data && data.rows[0][0]) {
-		values = data.rows[0][0].split(",");
+		values = String(data.rows[0][0]).split(",");
 	} else {
 		values = null;
 	}
