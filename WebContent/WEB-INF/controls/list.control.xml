@@ -599,7 +599,22 @@ if (value) {
 	   	        <setPropertyJavaScript>
 			        <![CDATA[
 if (data != null && data !== undefined) {
-	var data = makeDataObject(data, field);			        
+	var data = makeDataObject(data, field);
+	// assume first value
+  	var value = data.rows[0][0];
+  	// if a field was provided
+  	if (field) {
+  		value = "";
+  		for (var i in data.fields) {
+  			if (data.fields[i] && field.toLowerCase() == data.fields[i].toLowerCase()) {
+ 				for (var j = 0; j < data.rows.length; j++) {
+ 					value += (j > 0 ? "," : "") + data.rows[j][i];
+  				}
+				break;
+  			}
+  		}
+		data = makeDataObject(value);
+  	}
 	var values = [];
 	if (data && data.rows[0][0]) {
 		values = String(data.rows[0][0]).split(",");
