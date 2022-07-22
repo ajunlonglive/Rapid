@@ -220,17 +220,17 @@ function loadedMapJavaScript() {
 		// build or rebuild the map by id
 		rebuildLoadedMap(id);
 		// store the map IDs in an iterable form
-		_maps.push(id);
+		_maps.push(_maps[id]);
 	}
 	// add click even to each map, storing the latlog for the map control's lastClickLocation runtime property
-	_maps.forEach(function(id) {
+	_maps.forEach(function(map) {
 		// mousedown is used because the control's click event listener is fired before one defined here
-		_maps[id].addListener("mousedown", function(click) {
+		map.addListener("mousedown", function(click) {
 			var data = {
 				fields: ["lat", "lng"],
 				rows: [[click.latLng.lat(), click.latLng.lng()]]
 			};
-			_maps[id].lastClickLocation = data;
+			map.lastClickLocation = data;
 		});
 	});
 	
