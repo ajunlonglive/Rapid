@@ -740,8 +740,8 @@ function sizeBorder(control) {
 		height += 1;
 		_selectionBorder.css("z-index","10010");
 	} else {
-		width = width * _scale + 2;
-		height = height * _scale + 2;
+		width = width * _scale;
+		height = height * _scale;
 		_selectionBorder.css("z-index","10004");
 	}
 	// if the width is greater than the screen reduce by width of border
@@ -812,8 +812,8 @@ function positionBorder(x, y) {
 		} else {			
 			// position the selection border
 			_selectionBorder.css({
-				left: x + _mouseDownXOffset - 8, // 8 = padding + border + 1 pixel	
-				top: y + _mouseDownYOffset - 8 // 8 = padding + border + 1 pixel
+				left: x + _mouseDownXOffset, // 8 = padding + border + 1 pixel	
+				top: y + _mouseDownYOffset // 8 = padding + border + 1 pixel
 			});				
 		}
 	}
