@@ -110,7 +110,7 @@ public class Logic extends Action {
 		// private instance variables
 		private Value _value1, _value2;
 		private String _operation;
-		private String _caseInsensitive = "";
+		private String _function;
 
 		// properties
 
@@ -129,10 +129,14 @@ public class Logic extends Action {
 		public Condition(JSONObject jsonCondition) {
 			JSONObject jsonValue1 = jsonCondition.optJSONObject("value1");
 			if (jsonValue1 != null) _value1 = new Value(jsonValue1);
+			// get the operation from the designer json
 			_operation = jsonCondition.optString("operation");
+			// if the operation is "text" (for case insensitive text comparison)
 			if ("text".equals(_operation)) {
-				_operation = "===";
-				_caseInsensitive = ".toLowerCase()";
+				// put the operation back to equals
+				_operation = "==";
+				// set the function to lower case
+				_function = ".toLowerCase()";
 			}
 			JSONObject jsonValue2 = jsonCondition.optJSONObject("value2");
 			if (jsonValue2 != null) _value2 = new Value(jsonValue2);
@@ -144,9 +148,16 @@ public class Logic extends Action {
 			// check we have everything we need to make a condition
 			if (_value1 != null && _operation != null && _value2 != null) {
 				// get the left side
-				String leftSide = _value1.getArgument(rapidRequest, application, page) + _caseInsensitive;
+				String leftSide = _value1.getArgument(rapidRequest, application, page);
 				// get the right side
-				String rightSide = _value2.getArgument(rapidRequest, application, page) + _caseInsensitive;
+				String rightSide = _value2.getArgument(rapidRequest, application, page);
+				// if we have a function
+				if (_function != null) {
+					// append the function if we have a left side we can use
+					if (leftSide != null && !"null".equals(leftSide)) leftSide += _function;
+					// append the function if we have a right side we can use
+					if (rightSide != null && !"null".equals(rightSide)) rightSide += _function;
+				}
 				// get the leftId
 				String leftId = _value1.getId();
 				// get the rightId
@@ -164,10 +175,10 @@ public class Logic extends Action {
 						// check for !=
 						if ("!=".equals(_operation)) {
 							// if != on the left set to undefined or no value with an and
-							leftSide = "undefined && " + rightSide;
+							leftSide = rightSide + " && undefined";
 						} else {
 							// if on the left set to undefined or no value
-							leftSide = "undefined || !" + rightSide;
+							leftSide = "!" + rightSide + " || undefined";
 						}
 					} else {
 						// check for !=
@@ -180,7 +191,7 @@ public class Logic extends Action {
 						}
 					}
 
-					// construct the condition with an additional = (so ===, !===, etc)
+					// construct the condition with an additional = for the undefined (so ===, !===, etc)
 					js = leftSide + " " + _operation + "= " + rightSide;
 
 				} else {
@@ -201,7 +212,6 @@ public class Logic extends Action {
 						// going to need extra brackets
 						brackets = true;
 					}
-
 
 					// if right side is System.true or System.false or System.null
 					if ("System.true".equals(rightId) || "System.false".equals(rightId) || "System.null".equals(rightId)) {
