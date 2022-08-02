@@ -3810,7 +3810,7 @@ function Property_logicConditions(cell, action, property, details) {
 		var condition = conditions[i];
 		
 		// add cells
-		table.append("<tr><td></td><td style='width:150px;'></td><td></td><td style='width:40px;'>" +
+		table.append("<tr><td></td><td style='width:120px;min-width:120px;'></td><td></td><td style='width:40px;'>" +
 				"<div class='iconsPanel'>" +
 				"<div class='reorder fa-stack fa-sm' title='Drag to change order'><i class='fas fa-arrow-up fa-stack-1x'></i><i class='fas fa-arrow-down fa-stack-1x'></i></div>" +
 				"<div class='delete fa-stack fa-sm'><i class='delete fas fa-trash-alt' title='Click to delete'></i></div>" +
