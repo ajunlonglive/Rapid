@@ -740,8 +740,8 @@ function sizeBorder(control) {
 		height += 1;
 		_selectionBorder.css("z-index","10010");
 	} else {
-		width = Math.round(width * _scale);
-		height = Math.round(height * _scale);
+		width = Math.round(width * _scale) + 2; // rounded numbers work better with 2px to be outside control and it's dashed border
+		height = Math.round(height * _scale) + 2; // rounded numbers work better with 2px to be outside control and it's dashed border
 		_selectionBorder.css("z-index","10004");
 	}
 	// if the width is greater than the screen reduce by width of border
@@ -812,8 +812,8 @@ function positionBorder(x, y) {
 		} else {			
 			// position the selection border
 			_selectionBorder.css({
-				left: x + _mouseDownXOffset - 6, // 6 = padding + border + 1 pixel	
-				top: y + _mouseDownYOffset - 6// 6 = padding + border + 1 pixel
+				left: x + _mouseDownXOffset - 7, // 6 = padding + border + 1 pixel	
+				top: y + _mouseDownYOffset - 7// 6 = padding + border + 1 pixel
 			});				
 		}
 	}
