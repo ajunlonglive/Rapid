@@ -849,11 +849,21 @@ Selection Styles
 	left:0px;
 	top:0px;
 	z-index:10004;
+	padding:5px;
 }
 
-.selectionBorderMove, .selectionBorderNoMove {
-	border: 1px solid #0077FF;
-	outline: 6px solid #0077FF22;
+.selectionBorderMove {
+	border:1px dashed #0077ffcc;
+}
+
+.selectionBorderNoMove {
+	border:1px solid #0077ffcc;
+}
+
+.selectionBorderInner {
+	background-color:#0077ffcc;
+	opacity: 0.25;
+	position:absolute;			
 }
 
 .selectionBorderInnerMove {
@@ -865,31 +875,30 @@ Selection Styles
 }
 
 .selectionBorderInner#selectionBorderLeft {
-	width:5px;
-	height:100%;	
-	top:0px;
-	margin-left:-5px;		
+	width: 5px;
+	height: 100%;	
+	top: 0px;
+	margin-left: -5px;		
 }
 
 .selectionBorderInner#selectionBorderTop {
-	width:100%;
-	height:5px;
+	width: 100%;
+	height: 5px;
 	left: 0px;
-	margin-top:-5px;
+	margin-top: -5px;
+	margin-left: 5px;
 }
 
 .selectionBorderInner#selectionBorderRight {
-	width:5px;
-	height:100%;
-	right:0px;
-	margin-top:-5px;
+	width: 5px;
+	height: 100%;
+	right: 0px;
 }
 
 .selectionBorderInner#selectionBorderBottom {
-	width:100%;
+	width: calc(100% - 10px);
 	height:5px;
 	bottom:0px;
-	margin-left:-5px;
 }
 
 .selectionInsertCover {

@@ -740,8 +740,8 @@ function sizeBorder(control) {
 		height += 1;
 		_selectionBorder.css("z-index","10010");
 	} else {
-		width = width * _scale;
-		height = height * _scale;
+		width = Math.round(width * _scale);
+		height = Math.round(height * _scale);
 		_selectionBorder.css("z-index","10004");
 	}
 	// if the width is greater than the screen reduce by width of border
@@ -750,8 +750,8 @@ function sizeBorder(control) {
 	_selectionBorder.css({
 		"width": width, // an extra pixel either side
 		"height": height, // an extra pixel either side
-		"margin-right": -width, // with overflow stop additional horizontal scroll bars
-		"margin-bottom": - height // with overflow stop additional vertical scroll bars
+		"margin-right": -width, // with overflow to stop additional horizontal scroll bars
+		"margin-bottom": -height // with overflow to stop additional vertical scroll bars
 	});
 	// get the control class
 	var controlClass = _controlTypes[control.type];
@@ -812,8 +812,8 @@ function positionBorder(x, y) {
 		} else {			
 			// position the selection border
 			_selectionBorder.css({
-				left: x + _mouseDownXOffset, // 8 = padding + border + 1 pixel	
-				top: y + _mouseDownYOffset // 8 = padding + border + 1 pixel
+				left: x + _mouseDownXOffset - 6, // 6 = padding + border + 1 pixel	
+				top: y + _mouseDownYOffset - 6// 6 = padding + border + 1 pixel
 			});				
 		}
 	}
