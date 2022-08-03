@@ -168,6 +168,7 @@ public class Control extends Action {
 								js = "$('html, body').scrollTop(" + js + "offset().top);";
 							}
 						} else if ("hideDialogue".equals(actionType)) {
+							// use hideDialogue which will walk up the tree to the nearest dialogue on a control
 							js += "hideDialogue(false,'" + controlId + "');";
 						} else {
 							// just call the action type (hide/show/toggle)

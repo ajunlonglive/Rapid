@@ -100,7 +100,7 @@ This action runs JQuery functions against specific controls
 	            <changeValueJavaScript>controlActionType</changeValueJavaScript>
 	            <getValuesFunction>
 if (this.control == _page.id) {
-	return ["hide","show","toggle","fadeOut","fadeIn","fadeToggle","enable","disable","addClass","removeClass","toggleClass","removeChildClasses","removeValidation","resize","scrollTo","hideAllDialogues","showError","clearQueue","custom"];
+	return ["resize","hide","show","toggle","fadeOut","fadeIn","fadeToggle","enable","disable","addClass","removeClass","toggleClass","removeChildClasses","removeValidation","scrollTo","hideDialogue","hideAllDialogues","showError","clearQueue","custom"];
 } else {
 	return ["hide","show","toggle","slideUp","slideDown","slideToggle","fadeOut","fadeIn","fadeToggle","focus","enable","disable","addClass","removeClass","toggleClass","removeChildClasses","removeValidation","scrollTo","hideDialogue","hideAllDialogues","showError","clearQueue","custom"];
 }

@@ -222,9 +222,25 @@ $.fn.extend({
   }
 });
 
-// this overrides the focus so that if focus is fired when the page is invisible, focus can be set once the page is made visible by Rapid
+// A closure for jQuery overrides that don't collide with other items in the global name space
 (function($) {
-	// a reference to the original focus method
+	
+	// this overrides hide to hide dialogues properly
+    var hide_orignal = $.fn.hide; // maintain a reference to the existing function
+    // override the focus method
+    $.fn.hide = function() {
+    	// if there was an event of type DOMContentLoaded
+    	if (this.is(".dialogue")) {
+	    	// hide the dialogue properly
+    		this.hideDialogue(false, this.attr("id"));
+			// reset the arguments
+			arguments = [];
+    	} 
+		// apply and return the original method
+        return hide_orignal.apply(this, arguments);
+    };
+
+	// this overrides the focus so that if focus is fired when the page is invisible, focus can be set once the page is made visible by Rapid
     var focus_orignal = $.fn.focus; // maintain a reference to the existing function
     // override the focus method
     $.fn.focus = function(type) {
@@ -246,10 +262,8 @@ $.fn.extend({
 		// apply and return the original method
         return focus_orignal.apply(this, arguments);
     };
-})(jQuery);
 
-// thanks to http://stackoverflow.com/questions/2200494/jquery-trigger-event-when-an-element-is-removed-from-the-dom/10172676#10172676
-(function($) {
+  // thanks to http://stackoverflow.com/questions/2200494/jquery-trigger-event-when-an-element-is-removed-from-the-dom/10172676#10172676
   $.event.special.destroyed = {
     remove: function(o) {
       if (o.handler) {
