@@ -1,13 +1,13 @@
 /*
 
-Copyright (C) 2014 - Gareth Edwards / Rapid Information Systems
+Copyright (C) 2022 - Gareth Edwards / Rapid Information Systems
 
 gareth.edwards@rapid-is.co.uk
 
 
 This file is part of the Rapid Application Platform
 
-RapidSOA is free software: you can redistribute it and/or modify
+Rapid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version. The terms require you to include
@@ -44,8 +44,8 @@ function showDialogue(url, onShow) {
 	var dialogue = $("#dialogue");
 	// retain a reference to the dialogueCover div
 	var dialogueCover = $("#dialogueCover");
-	// hide it (but it must retain its geometry)
-	dialogue.hide();
+	// make sure it's hidden but retains its geometry
+   	dialogue.css("visibility","hidden");
 
 	// request the dialogue		
 	$.ajax({
@@ -124,10 +124,10 @@ function showDialogue(url, onShow) {
 	            	// this seems to be the best way to avoid the resizing/flicker when showing
 	            	window.setTimeout( function() {
 	            		// show the dialogue
-	            		dialogue.show();	        
+	            		dialogue.css("visibility","visible");	        
 	            		// set the focus now that we're visible 
 	            		$('[data-focus]').focus();
-	            	}, 200);
+	            	}, 300);
 	            	
 	            	// if any wait half a sec
                 	if (onShow) {

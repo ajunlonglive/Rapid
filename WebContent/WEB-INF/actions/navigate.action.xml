@@ -453,7 +453,7 @@ function Action_navigate(url, dialogue, id, popup, dismissibleDialogue, closeAct
 	            		if (window["_rapidmobile"]) $(window).resize();
 	            		// set the focus now that we're visible 
 	            		$('[data-focus]').focus();
-	            	}, 200);
+	            	}, 300);
 		           	           	        	            	            	            
 		    	}
 		    	        	       	        	        	        	        		
