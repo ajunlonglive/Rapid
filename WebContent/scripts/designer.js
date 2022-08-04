@@ -812,8 +812,8 @@ function positionBorder(x, y) {
 		} else {			
 			// position the selection border
 			_selectionBorder.css({
-				left: x + _mouseDownXOffset - 7, // 6 = padding + border + 1 pixel	
-				top: y + _mouseDownYOffset - 7// 6 = padding + border + 1 pixel
+				left: Math.round(x + _mouseDownXOffset - 7), // 7 = padding + border + 1 pixel gap fo dash
+				top: Math.round(y + _mouseDownYOffset - 7) // 7 = padding + border + 1 pixel gap for dash
 			});				
 		}
 	}

@@ -744,6 +744,7 @@ div.button {
 
 .buttons button {
 	color: white;
+	background: #494949;
 	margin-top: 5px;
 	margin-right: -4px;
 	vertical-align: middle;
@@ -751,11 +752,12 @@ div.button {
 	border: none;
 	font-family: 'Open Sans', Arial;
 	font-size: 12px; 
-	background: #494949;
+	transition: background 0.3s ease;
 }
 
 .buttons button:not([disabled]):hover {
 	background: #b2b2b2;
+	color: black;
 }
 
 .buttons .buttonImage {
@@ -1136,6 +1138,7 @@ Tip styles
 
 #designerTools select:hover {
 	background: #b2b2b2;
+	color: black;
 }
 
 select:focus {
