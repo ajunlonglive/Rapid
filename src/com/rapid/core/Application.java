@@ -861,7 +861,7 @@ public class Application {
 	public String getSettingsId() { return _settingsId; }
 	public void setSettingsId(String settingsId) { _settingsId = settingsId; }
 
-	// a settings object that if present we'll get and set with instead of the other properties. No getting so should not be marshalled into the application.xml
+	// a settings object that if present we'll get and set with instead of the other properties. No getter so should not be marshalled into the application.xml
 	public void setSettings(Settings settings) { _settings = settings; }
 
 	// constructors
@@ -1015,7 +1015,7 @@ public class Application {
 							Map<String, String> staticParameters = new HashMap<>();
 							// map parameter names (up to '(') to a function of parameter's parameters to dynamic value
 							Map<String, Function<String[], String>> dynamicParameters = new HashMap<>();
-							
+
 							for (Parameter parameter : parameters) {
 								String header = parameter.getName();
 								String expression = parameter.getValue();
@@ -1035,11 +1035,11 @@ public class Application {
 									staticParameters.put(header, expression);
 								}
 							}
-							
+
 							// text alone is a scope. An escaped parameter reference is a higher scope on the stack
 							Stack<StringBuilder> scopes = new Stack<>();
 							scopes.add(new StringBuilder());
-							
+
 							// scan string...
 							// appending to stack head, and climbing stack on '[['
 							// applying parameter substitutions, popping, and appending to new stack head on ']]'
@@ -1100,7 +1100,7 @@ public class Application {
 								scopes.peek().append(nonScope);
 							}
 							string = scopes.get(0).toString();
-						
+
 						} catch (Exception ex) {
 							System.out.println(ex);
 						}
@@ -1609,7 +1609,7 @@ public class Application {
 		if (css != null) {
 			Matcher cssSelectorMatcher = Pattern.compile("^(?<selector>.*)\\{", Pattern.MULTILINE).matcher(css);
 			Pattern cssClassPattern = Pattern.compile("\\.(?<className>[\\w\\d\\-\\_]+)");
-			
+
 			selectorScan: while (cssSelectorMatcher.find()) {
 				String selector = cssSelectorMatcher.group("selector");
 				if (selector == null) continue selectorScan;
@@ -2820,13 +2820,13 @@ public class Application {
 		// marshal the application object to the temp file
 		FileOutputStream fos = new FileOutputStream(tempFile.getAbsolutePath());
 
-		// turn the use of properties off so the real ones go in the application.xml file
+		// turn the use of settings off so the real ones go in the application.xml file
 		_useSettings = false;
 
 		// marshall this application object into its .application.xml file
 		RapidHttpServlet.getMarshaller().marshal(this, fos);
 
-		// turn the use of properties back on
+		// turn the use of settings back on
 		_useSettings = true;
 
 		// close the file output stream

@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -2267,6 +2266,12 @@ public class Rapid extends Action {
 
 							} // rapid master check
 
+
+							// look for any settingsId
+							String settingsId = jsonAction.optString("settingsId", null);
+							// if there was one have the app use it
+							if (settingsId != null) app.setSettingsId(settingsId);
+
 							if ("GETDBCONN".equals(action)) {
 
 								// must have rapid admin
@@ -2275,11 +2280,8 @@ public class Rapid extends Action {
 									// get the index
 									int index = jsonAction.getInt("index");
 
-									String settingsId = jsonAction.optString("settingsId", null);
-									Settings settings = Settings.load(servletContext, app, settingsId);
-
-									// get the database connections
-									List<DatabaseConnection> dbConns = settings == null ? app.getDatabaseConnections() : settings.getDatabaseConnections();
+									// get the database connections (will switch to settings if being used)
+									List<DatabaseConnection> dbConns = app.getDatabaseConnections();
 
 									// check we have database connections
 									if (dbConns != null) {
@@ -2345,9 +2347,8 @@ public class Rapid extends Action {
 								// check the parameters
 								if (app.getParameters() != null) {
 
-									String settingsId = jsonAction.optString("settingsId", null);
-									Settings settings = Settings.load(servletContext, app, settingsId);
-									List<Parameter> parameters = settings == null ? app.getParameters() : settings.getParameters();
+									// get the parameters (will switch to settings if being used)
+									List<Parameter> parameters = app.getParameters();
 
 									// check we have the one requested
 									if (index >= 0 && index < parameters.size()) {
@@ -2410,7 +2411,7 @@ public class Rapid extends Action {
 								boolean pageNameIds = jsonAction.optBoolean("pageNameIds");
 								boolean showControlIds = jsonAction.optBoolean("showControlIds");
 								boolean showActionIds = jsonAction.optBoolean("showActionIds");
-								String settingsId = jsonAction.optString("settingsId", null);
+								// settingsId is now before the action check as its used by the individual GET and SAVE actions
 
 								String formAdapter = jsonAction.optString("formAdapter");
 								boolean formShowSummary = jsonAction.optBoolean("formShowSummary");
@@ -2532,7 +2533,7 @@ public class Rapid extends Action {
 								String statusBarTextColour = jsonAction.optString("statusBarTextColour");
 								String statusBarIconColour = jsonAction.optString("statusBarIconColour");
 
-								String settingsId = jsonAction.optString("settingsId", null);
+								// getting of settingsId is done before the action check as its reused by the individusl GET and SAVEs
 								Settings settings = Settings.load(servletContext, app, settingsId);
 
 								// put the values on the app (which will apply to the settings object if in use)
@@ -2563,11 +2564,8 @@ public class Rapid extends Action {
 								// get the index
 								int index = jsonAction.getInt("index");
 
-								String settingsId = jsonAction.optString("settingsId", null);
-								Settings settings = Settings.load(servletContext, app, settingsId);
-
 								// get the database connections
-								List<DatabaseConnection> dbConns = settings == null ? app.getDatabaseConnections() : settings.getDatabaseConnections();
+								List<DatabaseConnection> dbConns = app.getDatabaseConnections();
 
 								// if there weren't any
 								if (dbConns == null) {
@@ -2774,24 +2772,18 @@ public class Rapid extends Action {
 
 							} else if ("SAVESECURITYADAPT".equals(action)) {
 
+								// get the values we use
 								String securityAdapter = jsonAction.getString("securityAdapter").trim();
-
 								boolean deviceSecurity = jsonAction.optBoolean("deviceSecurity");
-
 								String storePasswordDuration = jsonAction.optString("storePasswordDuration");
 
-								String settingsId = jsonAction.optString("settingsId", null);
-								Settings settings = Settings.load(servletContext, app, settingsId);
-
-								if (settings == null) app.setSecurityAdapterType(securityAdapter);
-								else settings.setSecurityAdapterType(securityAdapter);
-
+								// put them in the app (will switch to settings if being used)
+								app.setSecurityAdapterType(securityAdapter);
 								app.setDeviceSecurity(deviceSecurity);
-
 								app.setStorePasswordDuration(storePasswordDuration);
 
-								if (settings == null) app.save(rapidServlet, rapidActionRequest, true);
-								else settings.save(servletContext, app);
+								// save! (will switch to settings if being used)
+								app.save(rapidServlet, rapidActionRequest, true);
 
 								// add the application to the response
 								result.put("message", "Security adapter saved");
@@ -2967,11 +2959,8 @@ public class Rapid extends Action {
 
 							} else if ("NEWDBCONN".equals(action)) {
 
-								String settingsId = jsonAction.optString("settingsId", null);
-								Settings settings = Settings.load(servletContext, app, settingsId);
-
-								// get the database connections
-								List<DatabaseConnection> dbConns = settings == null ? app.getDatabaseConnections() : settings.getDatabaseConnections();
+								// get the database connections  (will switch to settings if being used)
+								List<DatabaseConnection> dbConns = app.getDatabaseConnections();
 								// instantiate if null
 								if (dbConns == null) dbConns = new ArrayList<>();
 
@@ -2990,7 +2979,7 @@ public class Rapid extends Action {
 								// add it to the collection
 								dbConns.add(dbConn);
 
-								// save the app
+								// save the app  (will switch to settings if being used)
 								app.save(rapidServlet, rapidActionRequest, true);
 
 								// add the application to the response
@@ -3001,13 +2990,10 @@ public class Rapid extends Action {
 								// get the index
 								int index = jsonAction.getInt("index");
 
-								String settingsId = jsonAction.optString("settingsId", null);
-								Settings settings = Settings.load(servletContext, app, settingsId);
+								// get the database connections  (will switch to settings if being used)
+								List<DatabaseConnection> dbConns = app.getDatabaseConnections();
 
-								// get the database connections
-								List<DatabaseConnection> dbConns = settings == null ? app.getDatabaseConnections() : settings.getDatabaseConnections();
-
-								// remeber whether we found the connection
+								// remember whether we found the connection
 								boolean foundConnection = false;
 
 								// check we have database connections
@@ -3018,7 +3004,7 @@ public class Rapid extends Action {
 										// remove the database connection
 										dbConns.remove(index);
 
-										// save the app
+										// save the app  (will switch to settings if being used)
 										try { app.save(rapidServlet, rapidActionRequest, true); }
 										catch (Exception ex) { throw new JSONException(ex);	}
 
@@ -3131,11 +3117,8 @@ public class Rapid extends Action {
 
 							} else if ("NEWPARAM".equals(action)) {
 
-								String settingsId = jsonAction.optString("settingsId", null);
-								Settings settings = Settings.load(servletContext, app, settingsId);
-
-								// get the parameters
-								List<Parameter> parameters = settings == null ? app.getParameters() : settings.getParameters();
+								// get the parameters  (will switch to settings if being used)
+								List<Parameter> parameters = app.getParameters();
 
 								// if there weren't any
 								if (parameters == null) {
@@ -3148,21 +3131,22 @@ public class Rapid extends Action {
 								// add a new parameter to the collection
 								app.getParameters().add(new Parameter());
 
+								// save (will switch to settings if being used)
+								app.save(rapidServlet, rapidRequest, false);
+
 							} else if ("DELPARAM".equals(action)) {
 
 								// get the index
 								int index = jsonAction.getInt("index");
 
-								String settingsId = jsonAction.optString("settingsId", null);
-								Settings settings = Settings.load(servletContext, app, settingsId);
-								List<Parameter> parameters = settings == null ? app.getParameters() : settings.getParameters();
+								// get the settings
+								List<Parameter> parameters = app.getParameters();
 
 								// remove the parameter
 								parameters.remove(index);
 
-								// save the app
-								if (settings == null) app.save(rapidServlet, rapidActionRequest, true);
-								else settings.save(servletContext, app);
+								// save the app  (will switch to settings if being used)
+								app.save(rapidServlet, rapidActionRequest, true);
 
 								// set the result message
 								result.put("message", "Parameter deleted");
@@ -3174,9 +3158,8 @@ public class Rapid extends Action {
 								String description = jsonAction.getString("description");
 								String value = jsonAction.getString("value");
 
-								String settingsId = jsonAction.optString("settingsId", null);
-								Settings settings = Settings.load(servletContext, app, settingsId);
-								List<Parameter> parameters = settings == null ? app.getParameters() : settings.getParameters();
+								// get the parameters (will switch to settings if being used)
+								List<Parameter> parameters = app.getParameters();
 
 								// fetch the parameter
 								Parameter parameter = parameters.get(index);
@@ -3186,9 +3169,8 @@ public class Rapid extends Action {
 								parameter.setDescription(description);
 								parameter.setValue(value);
 
-								// save the app
-								if (settings == null) app.save(rapidServlet, rapidActionRequest, true);
-								else settings.save(servletContext, app);
+								// save the app (will switch to settings if being used)
+								app.save(rapidServlet, rapidActionRequest, true);
 
 								// set the result message
 								result.put("message", "Parameter details saved");
@@ -3248,11 +3230,8 @@ public class Rapid extends Action {
 								// get the index
 								int index = jsonAction.getInt("index");
 
-								String settingsId = jsonAction.optString("settingsId", null);
-								Settings settings = Settings.load(servletContext, app, settingsId);
-
-								// get the database connections
-								List<DatabaseConnection> dbConns = settings == null ? app.getDatabaseConnections() : settings.getDatabaseConnections();
+								// get the database connections (will switch to settings if being used)
+								List<DatabaseConnection> dbConns = app.getDatabaseConnections();
 
 								// remember whether we found the connection
 								boolean foundConnection = false;
@@ -3264,7 +3243,7 @@ public class Rapid extends Action {
 
 										// retrieve the details from the json
 										String driverClass = jsonAction.getString("driver").trim();
-										String connectionString =app.insertParameters(servletContext, jsonAction.getString("connectionString").trim());
+										String connectionString = app.insertParameters(servletContext, jsonAction.getString("connectionString").trim());
 										String connectionAdapterClass = jsonAction.getString("connectionAdapter").trim();
 										String userName = jsonAction.getString("userName").trim();
 										String password = jsonAction.getString("password");
@@ -3288,7 +3267,7 @@ public class Rapid extends Action {
 										// get a data factory
 										DataFactory dataFactory = new DataFactory(connectionAdapter);
 										// get a connection
-										Connection connection = dataFactory.getConnection(rapidActionRequest);
+										dataFactory.getConnection(rapidActionRequest);
 										// close it
 										dataFactory.close();
 
@@ -3619,7 +3598,7 @@ public class Rapid extends Action {
 							}
 
 							if ("GETSETTINGSDETAILS".equals(action)) {
-								
+
 								String settingsId = jsonAction.optString("settingsId", null);
 								Settings settings = Settings.load(servletContext, app, settingsId);
 
