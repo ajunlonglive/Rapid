@@ -2413,8 +2413,27 @@ public class Designer extends RapidHttpServlet {
 												df.close();
 											}
 
+											// assume we are going to rethrow the error, but we might not, typically if it relates to the nulls we added
+											boolean rethrowError = true;
+
+											// get the exception message
+											String message = ex.getMessage();
+											// if we had a message (almost certainly should!)
+											if (message != null) {
+												// if it's any of the popular database messages about the nulls we used to test the sql statement
+												if (message.startsWith("Cannot insert the value NULL into column") || message.contains("column does not allow nulls") || // SQL Server
+													message.contains("cannot insert NULL into") || (message.contains("cannot update ") && message.endsWith(" to NULL")) || // Oracle
+													message.endsWith("cannot be null") // MySQL
+												) {
+													// turn off the rethrow as the syntax as if we got this error we know the syntax is correct
+													rethrowError = false;
+													// log on info so there is some record
+													logger.info("SQL check ignored: " + message, ex);
+												}
+											}
+
 											// rethrow to inform user
-											throw ex;
+											if (rethrowError) throw ex;
 
 										}
 

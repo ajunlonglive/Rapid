@@ -593,8 +593,8 @@ public class Database extends Action {
 
 	// finds ? followed by a name optionally in quotes, or ? followed by a name of lower and/or upper case letters - we'll find any of these first and convert them to numbers, only limitation is names outside of quotes can't start with numbers
 	private static String _namedParameterSlotRegex = "(\\?\"[^\"]+\")|(\\?(?=[a-zA-Z])\\w*)";
-	// finds ? followed by a name in quotes, or ? followed by 0 or more numbers, or ? on their own
-	private static String _parameterSlotRegex = "(\\?\"[^\"]+\")|(\\?\\w\\S*)|\\?";
+	// finds ? followed by a name in quotes, or ? followed by 0 or more numbers, or ? on their own. Note how \S doesn't include the ) so we include it manually
+	private static String _parameterSlotRegex = "(\\?\"[^\"]+\")|(\\?\\w(\\S[\\)])*)|\\?"; //
 
 	// determine if a string needs escaping for XSS
 	private int escapeXSSPos(String value) {
