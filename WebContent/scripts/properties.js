@@ -3166,6 +3166,9 @@ function Property_pageVariables(cell, page, property, details, textOnly) {
 			// make sure table is empty
 			table.children().remove();
 			
+			// add header row
+			table.append("<tr><td>Name</td><td colspan='2'>Session</td></tr>");
+			
 			// show variables
 			for (var i in variables) {
 				// add the line
@@ -3220,7 +3223,7 @@ function Property_pageVariables(cell, page, property, details, textOnly) {
 			}));
 				
 			// have an add row
-			table.append("<tr><td colspan='2'><span class='propertyAction'>add...</span></td></tr>");
+			table.append("<tr><td colspan='3'><span class='propertyAction'>add...</span></td></tr>");
 			// get a reference to the add
 			var add = table.find("span.propertyAction").last();
 			// add a listener
