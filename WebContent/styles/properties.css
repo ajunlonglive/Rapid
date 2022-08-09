@@ -185,7 +185,7 @@ i.propertyHelp, img.propertyHelp {
 	font-size: 15px;
 }
 
-.actionHelp:hover, .headerHelp:hover, .eventHelp:hover, .propertyHelp:hover, .validationHelp:hover {
+.actionHelp:hover, .controlHelp:hover, .eventHelp:hover, .headerHelp:hover, .propertyHelp:hover, .validationHelp:hover {
 	transform: scale(1.2);
 }
 
