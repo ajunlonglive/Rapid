@@ -179,13 +179,14 @@ i.actionHelp, img.actionHelp {
 }
 
 i.propertyHelp, img.propertyHelp {
-	float: right;
-	margin-right: -17px;
+	float: right;	
 	color: #888;
 	font-size: 15px;
+	margin-right: -17px;
 }
 
 .actionHelp:hover, .controlHelp:hover, .eventHelp:hover, .headerHelp:hover, .propertyHelp:hover, .validationHelp:hover {
+	cursor: default;
 	transform: scale(1.2);
 }
 
