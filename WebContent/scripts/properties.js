@@ -5173,8 +5173,14 @@ function Property_datacopyCopies(cell, datacopyAction, property, details) {
 			var source = getDataItemDetails(dataCopy.source);
 			// get the destination data item
 			var destination = getDataItemDetails(dataCopy.destination);
-			// apend to the text
-			text += source.name + " to " + destination.name + ",";
+			// if the source is a field
+			if (source.name == "System.field") {
+				// apend the field value
+				text += dataCopy.sourceField + " to " + destination.name + ",";
+			} else {
+				// apend the source name to the text
+				text += source.name + " to " + destination.name + ",";
+			}
 			
 		}
 		
