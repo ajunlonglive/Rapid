@@ -829,7 +829,7 @@ div.button {
 	background-color: #ccc;
 }
 
-.design-map li.selected {
+.design-map ul:not(#pageMapList) > li.selected {
 	box-shadow: 0 0 0 1px #0077FFCC;
 	background: #d4e0ee55;
 }
