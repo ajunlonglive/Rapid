@@ -148,7 +148,7 @@ function getSystemValueOptions(selectId, input) {
 function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 
 	var options = "";
-	var selectedOption = "";
+	var selectedControlOptions = "";
 	var controls = getControls();
 	var gotSelected = false;
 	
@@ -170,28 +170,24 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 	if (controls && controls.length > 0) {
 		// start control options
 		var controlOptions = "";
+		// loop the controls - we'll work out what to included/use below
 		for (var i in controls) {
-			// retrieve the control
+			// retrieve the control from the loop
 			var control = controls[i];
 			// get the control class
 			var controlClass = _controlTypes[control.type];
 			// if we're not ignoring the control and it has a name
 			if (controlClass && control.id != ignoreId && control.name) {
-				// get any run time properties
+				// get any run time properties for the control (they could also be inputs/outputs)
 				var properties = controlClass.runtimeProperties;
-				// if it has a get data function (for input), or a setDataJavaScript
-				if ((input && controlClass.getDataFunction) || (!input && controlClass.setDataJavaScript)) {
-					if (control.id == selectId && !gotSelected) {
-						controlOptions += "<option value='" + control.id + "' selected='selected'>" + control.name + "</option>";
-						gotSelected = true;
-					} else {
-						controlOptions += "<option value='" + control.id + "' >" + control.name + "</option>";
-					}
-					if (_selectedControl && control.id == _selectedControl.id && _selectedControl.name && _selectedControl.type !== "page") {	
-						selectedOption = "<optgroup label='Selected control'>";
-						if (!properties) properties = [];
-						// promote if array
-						if (Array.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+				// if there are runtimeProperties in the class promote if array (due to xml to json conversion)
+				if (properties && Array.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+				// if this is the control selected in the designer, and it has a name, and isn't the page
+				if (_selectedControl && !selectedControlOptions && control.id == _selectedControl.id) {
+					// start the optional selected control group
+					selectedControlOptions = "<optgroup label='Selected control'><option value='" + control.id + "' >" + control.name + "</option>";
+					// if there are runtimeProperties in the class
+					if (properties) {
 						// loop them
 						for (var i in properties) {
 							// get the property
@@ -202,22 +198,32 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 								var key = control.id + "." + property.type;
 								// is this an advanced property and this is off for the control?
 								var propertyTooAdvanced = control.advancedProperties != true && property.advanced == true;
-								// is this property selected?
-								var propertyIsSelected = (key == selectId && !gotSelected) ;
 								// don't show advanced properties unless the control allows or if the advanced property is already selected
-								if (!propertyTooAdvanced || propertyIsSelected) {
+								if (!propertyTooAdvanced) {
 									// add the option
-									selectedOption += "<option value='" + key + "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
+									selectedControlOptions += "<option value='" + key + "'>" + control.name + "." + property.name + "</option>";
 								}
-							}
-						}
-						selectedOption += "</optgroup>";
-					}
-				}
+							} // property get/set input/output check
+						} // properties loop
+					} // properties check
+					// close the group
+					selectedControlOptions += "</optgroup>";
+				} // selected control and option not made yet check
+				// if it has a get data function (for input), or a setDataJavaScript
+				if ((input && controlClass.getDataFunction) || (!input && controlClass.setDataJavaScript)) {
+					// if this control is the one we want to be selected in the dropdown (usually the current property value) and we haven't added the option for the selected control yet
+					if (control.id == selectId && !gotSelected) {
+						// add an option with selected for the control
+						controlOptions += "<option value='" + control.id + "' selected='selected'>" + control.name + "</option>";
+						// remember that we have done the selected option
+						gotSelected = true;
+					} else {
+						// add a simple option for the control
+						controlOptions += "<option value='" + control.id + "' >" + control.name + "</option>";
+					}					
+				} // input/output get/set check
 				// if there are runtimeProperties in the class
-				if (properties && control.name) {
-					// promote if array
-					if (Array.isArray(properties.runtimeProperty)) properties = properties.runtimeProperty;
+				if (properties) {
 					// loop them
 					for (var i in properties) {
 						// get the property
@@ -235,14 +241,14 @@ function getDataOptions(selectId, ignoreId, input, hasDatetime, hasClipboard) {
 								// add the option
 								controlOptions += "<option value='" + key + "' " + (propertyIsSelected ? "selected='selected'" : "") + ">" + control.name + "." + property.name + "</option>";
 							}
-						}
-					}
+						} // property get/set input/output check
+					} // properties loop
 				} // properties check				
-			} // controls loop				
-		} // controls check
-		// wrap if we had some and we're allowing groups
-		if (selectedOption || controlOptions) options += selectedOption + "<optgroup label='Page controls'>" + controlOptions + "</optgroup>";
-	}
+			} // class / ignore / name check
+		} // controls loop
+		// wrap control options
+		if (controlOptions) options += selectedControlOptions + "<optgroup label='Page controls'>" + controlOptions + "</optgroup>";
+	} // controls check
 
 	// other page controls can be used for input
 	if (_page && _pages) {
