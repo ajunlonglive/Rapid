@@ -128,7 +128,8 @@ function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColu
 		var columns = details.columns || details.dynamicColumns;
 		// get the column fields in lower case for case-insensitive matching
 		var columnFields = columns.map(function(column) {
-			return column.field.toLowerCase();
+			// check there is a field before lower-casing and adding to the array
+			if (column.field) return column.field.toLowerCase();
 		});
 
 		// loop the rows
@@ -181,7 +182,7 @@ function Action_downloadCSV(ev, actionId, controlId, fileName, includeHiddenColu
 			var controlData = getData(controlId, details)
 			// get a lower-case array of the control fields for case-insensitve matching
 			var controlFieldsLowercase = controlData.fields.map(function(field) { return field.toLowerCase(); });
-			// an array of outputs which are contol field indexes produced by lowe-case matching 
+			// an array of outputs which are contol field indexes produced by lower-case matching 
 			var indexes = outputFieldsLowerCase.map(function(outputField) {
 				return controlFields.indexOf(outputField);
 			});
