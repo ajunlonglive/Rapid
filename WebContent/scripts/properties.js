@@ -3186,8 +3186,8 @@ function Property_pageVariables(cell, page, property, details, textOnly) {
 				var input = $(ev.target);
 				// get the value
 				var value = input.val();
-				// get the index
-				var index = input.closest("tr").index();
+				// get the index (less the header)
+				var index = input.closest("tr").index() - 1;
 				// update value
 				ev.data.page.variables[index].name = value;
 				// refresh to update the names into the main property preview
