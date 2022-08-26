@@ -3203,7 +3203,7 @@ function Property_pageVariables(cell, page, property, details, textOnly) {
 				// get the value
 				var value = input.prop("checked");
 				// get the index
-				var index = input.closest("tr").index();
+				var index = input.closest("tr").index() - 1;
 				// update value
 				ev.data.page.variables[index].session = value;
 			}));
@@ -3217,7 +3217,7 @@ function Property_pageVariables(cell, page, property, details, textOnly) {
 				// get the input
 				var input = $(ev.target);
 				// remove from parameters
-				ev.data.variables.splice(input.closest("tr").index(),1);
+				ev.data.variables.splice(input.closest("tr").index() - 1,1);
 				// remove row
 				input.closest("tr").remove();
 			}));
