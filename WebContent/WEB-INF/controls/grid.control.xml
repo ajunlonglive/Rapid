@@ -1062,15 +1062,16 @@ if (data !== undefined && data !== "") {
 	// make a data object
 	data = makeDataObject(data, field);
 	
+	// dontStore comes from a storage event listener and should prevent a new storage event
+	var shouldStore = details.dontStore !== true;
+	// save any datastore data (could be null which is the standard to empty the control/storage)
+	if (details && details.dataStorageType && shouldStore) saveGridDataStoreData(id, details, data);
+
 	// if we have some rows to load
 	if (data && data.rows) {
-		
-		// save any datastore data
-		// dontStore comes from a storage event listener and should prevent a new storage event
-		var shouldStore = details.dontStore !== true;
-		if (details && details.dataStorageType && shouldStore) saveGridDataStoreData(id, details, data);
-		
-		if (!data.selectedPageIndex) data.selectedPageIndex = 0;
+	
+		// default the selectedPageIndex to 0, if not set
+		if (!data.selectedPageIndex) data.selectedPageIndex = 0;		
 		
 		// retain number of rows we're about to load
 		_gridLoaders[id].rows = data.rows.length;
