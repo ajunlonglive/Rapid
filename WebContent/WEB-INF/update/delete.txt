@@ -8,6 +8,9 @@
 /scripts_min/jquery-3.3.1.min.js
 /scripts_min/jquery-ui-1.10.3.min.js
 
+# mysql
+/WEB-INF/lib/mysql-connector-java-5.1.31-bin.jar
+
 # log4j
 /WEB-INF/lib/log4j-1.2.16.jar
 /WEB-INF/lib/log4j-api-2.6.2.jar
