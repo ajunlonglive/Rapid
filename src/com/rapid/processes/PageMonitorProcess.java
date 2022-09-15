@@ -26,6 +26,9 @@ public class PageMonitorProcess extends Process {
 		// required to invoke super
 		super(servletContext, parameters);
 
+		// set visible to false here so that it's applied during updates to not see this process (that wouldn't change the xml to turn it off there)
+		_visible = false;
+
 		// assume default page max age
 		_maxPageAge = MAX_AGE;
 		// try and read the value from web.xml
