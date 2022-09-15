@@ -1305,6 +1305,8 @@ public class RapidServletContextListener implements ServletContextListener {
 
 			// load a process object from the xml, it will add itself to the list of processes
 			Process process = loadProcess(xmlFile, servletContext);
+			// add it to the collection which we emptied above
+			processes.add(process);
 			// inc the visible count if visible
 			if (process.isVisible()) visibleProcesses ++;
 
@@ -1312,6 +1314,20 @@ public class RapidServletContextListener implements ServletContextListener {
 
 		// log that we've loaded the visible ones
 		_logger.info(visibleProcesses + " process" + (visibleProcesses == 1 ? "" : "es") + " loaded");
+
+		// sort them
+		Collections.sort(processes, new Comparator<Process>() {
+
+			@Override
+			public int compare(Process p1, Process p2) {
+				// sort by name, case insensitive
+				return Comparators.AsciiCompare(p1.getProcessName(), p2.getProcessName(), false);
+			}
+
+		});
+
+		// retain the full processes list we just sorted in the context
+		servletContext.setAttribute("processes", processes);
 
 		// return the size
 		return visibleProcesses;
